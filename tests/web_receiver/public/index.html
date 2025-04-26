@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+</head>
+<body>
+    <h1>Uploaded Images</h1>
+    <div id="image-gallery"></div>
+
+    <script>
+        // Function to fetch and display images
+        function loadImages() {
+            fetch('http://localhost:3000/images')  // Update this to your server's IP if needed
+                .then(response => response.json())
+                .then(images => {
+                    const gallery = document.getElementById('image-gallery');
+                    gallery.innerHTML = '';  // Clear existing images
+                    images.forEach(image => {
+                        const img = document.createElement('img');
+                        img.src = `http://localhost:3000/uploads/${image}`;  // URL for the uploaded image
+                        img.alt = 'Uploaded Image';
+                        img.style.width = '200px';
+                        img.style.margin = '10px';
+                        gallery.appendChild(img);
+                    });
+                })
+                .catch(err => console.error('Error loading images:', err));
+        }
+
+        // Initial load
+        loadImages();
+
+        // Optional: Reload images every 5 seconds
+        setInterval(loadImages, 0);  // Reload every 5 seconds
+    </script>
+</body>
+</html>
