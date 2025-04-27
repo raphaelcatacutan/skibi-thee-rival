@@ -4,19 +4,19 @@
  * @param {Card} realTarget
  */
 async function battleSequence(realTurn, realTarget) {
-	const attackType = Math.floor(Math.random() * 10);
+	const attackType = random(1, 10);
 
 	const targetDelulu = realTurn.getDelulu() ? realTurn : realTarget;
 	const turnDelulu = realTurn.getDelulu() ? realTarget : realTurn;
 	const targetZucc = realTarget.getZucc() ? realTarget : realTurn;
 	const turnZucc = realTurn.getZucc() ? realTurn : realTarget;
 
-	if (attackType >= 0 && attackType <= 5) {
+	if (attackType >= 1 && attackType <= 3) {
 		console.group(`Basic Attack`);
 		turnDelulu.basicAttack(targetDelulu, false);
         if (realTurn.getDelulu()) realTurn.setDelulu(false);
 		console.groupEnd();
-	} else if (attackType > 5 && attackType <= 7) {
+	} else if (attackType >= 4 && attackType <= 5) {
 		console.group(`Critical Attack`);
 		turnDelulu.basicAttack(targetDelulu, true);
         if (realTurn.getDelulu()) realTurn.setDelulu(false);
@@ -31,18 +31,23 @@ async function battleSequence(realTurn, realTarget) {
 			[() => turnDelulu.burnAttack(targetDelulu), 15],
 			[() => turnDelulu.earthquakeAttack(targetDelulu), 15],
 			[() => targetDelulu.setDelulu(true), someoneDelulu ? 0 : 10],
-			[() => realTurn.setZucc(true), someoneZuccing ? 0: 25],
-			[() => targetZucc.gyattHarden(true), 15],
-			[() => targetZucc.heal(), 10],
+			[() => realTurn.setZucc(true), someoneZuccing ? 0: 5],
+			[() => targetZucc.gyattHarden(true), 20],
+			[() => targetZucc.heal(), 15],
 		];
 
 		const selectedSkill = pickSkill(actions);
 		await actions[selectedSkill][0]();
 
         if (selectedSkill >= 5 && targetZucc.getZucc()) targetZucc.setZucc(false);
-        else if (realTurn.getDelulu()) realTurn.setDelulu(false);
+        else if (selectedSkill < 4 && realTurn.getDelulu()) realTurn.setDelulu(false);
 		console.groupEnd();
 	}
+}
+
+function random(min, max, isInt = true) {
+    const value = Math.random() * (max - min) + min;
+    return isInt ? Math.floor(value) : value;
 }
 
 
@@ -64,20 +69,20 @@ class Card {
 
 	constructor(name) {
 		this.name = name;
-		this.maxHp = Math.floor(Math.random() * 1001) + 1500;
+		this.maxHp = random(1500, 2500);
 		this.hp = this.maxHp;
-		this.attackDamage = Math.round(Math.random() * 50 + 200);
+		this.attackDamage = random(150, 250);
 	}
 
 	damage(damage) {
 		damage = Math.round(damage);
 
-		if (this.#isGyattHarden) {
+		if (this.#isGyattHarden && damage > 0) {
 			damage = Math.round(damage * 0.3);
 			console.log(
 				`${this.name} is Gyatt Harden! Damage reduced to ${damage}.`
 			);
-			this.gyattHarden(false); // Reset Gyatt Harden status
+			this.gyattHarden(false);
 		}
 
 		const prevHp = this.hp;
@@ -93,7 +98,7 @@ class Card {
      * @param {boolean} isCritical 
      */
     basicAttack(target, isCritical) {
-        const multiplier = isCritical ? Math.random() * (2 - 1.6) + 1.6 : 1;
+        const multiplier = isCritical ? random(1.6, 2, false) : 1;
         const damage = Math.round(this.attackDamage * multiplier);
         console.log(
             `${this.name} attacks ${target.name} for ${damage} damage${
@@ -104,7 +109,7 @@ class Card {
     }
     
     async consecutiveAttack(cardTarget) {
-        const strikes = Math.floor(Math.random() * 3) + 2; // Random from 2 to 4 strikes
+        const strikes = random(2, 4);
         console.group(`Consecutive Attack: Number of Strikes: ${strikes}`);
         for (let i = 1; i <= strikes && cardTarget.hp > 0; i++) {
             const damage = Math.round(this.attackDamage * 0.7);
@@ -117,7 +122,7 @@ class Card {
     
     burnAttack(cardTarget) {
         console.group("Burn Attack");
-        const multiplier = Math.random() * (2.2 - 1.7) + 1.7;
+        const multiplier = random(1.7, 2.2, true);
         const damage = Math.round(this.attackDamage * multiplier);
         console.log(`${cardTarget.name} is burned and takes ${damage} damage`);
         cardTarget.damage(damage);
@@ -175,7 +180,7 @@ class Card {
     }
     
     heal() {
-        const healAmount = Math.floor(Math.random() * 51) + 250;
+        const healAmount = random(300, 500);
         console.log(`${this.name} heals for ${healAmount} HP!`);
         this.damage(-healAmount);
     }
@@ -189,8 +194,6 @@ class Card {
     }
 }
 
-
-
 function sleep(ms) {
 	// return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -199,8 +202,8 @@ async function startBattle() {
 	const card1 = new Card("Card 1");
 	const card2 = new Card("Card 2");
 	console.log("⚔️ Battle Start!");
-	console.log(`${card1.name}: ${card1.hp} HP`);
-	console.log(`${card2.name}: ${card2.hp} HP`);
+	console.log(`${card1.name}: ${card1.hp} HP ${card1.attackDamage} Base Attack`);
+	console.log(`${card2.name}: ${card2.hp} HP ${card2.attackDamage} Base Attack`);
 
 	let rounds = 0;
 	while (card1.hp > 0 && card2.hp > 0) {
