@@ -37,7 +37,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/data', express.static("./data"));
 app.use('/output', express.static("./output"));
 
-app.use('/', postInput(wss));
+app.use('/api', postInput(wss));
 app.use('/api', getCards);
 app.use('/api', getExtraction);
 app.use('/api', postGeneration)

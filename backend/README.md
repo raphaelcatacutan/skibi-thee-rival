@@ -13,7 +13,7 @@ PORT=5000
 
 Uploads and return a new image and username to the system. After receiving, the image along with an initial text data is saved to `backend/data` folder. To access, use: `http://localhost:5000/data/{fileName.jpg}`
 
-Post Route: `/upload`
+Post Route: `/api/upload`
 
 ### Return
 
@@ -75,7 +75,7 @@ val requestBody = MultipartBody.Builder()
     .build()
 
 val request = Request.Builder()
-    .url("http://192.168.1.13:3000/upload")
+    .url("http://{local_ip}:3000/api/upload")
     .post(requestBody)
     .build()
 ```
