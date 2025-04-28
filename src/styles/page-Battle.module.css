@@ -71,3 +71,17 @@
 Healthbar {
 
 }
+
+.vfx_layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* so clicks pass through */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+

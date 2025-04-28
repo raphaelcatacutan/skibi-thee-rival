@@ -9,6 +9,7 @@ import Loading from "./pages/Loading";
 import NewChallenger from "./pages/NewChallenger";
 import Winner from "./pages/Winner";
 import TestPage from "./pages/TestPage";
+import TestAnimation from "./pages/TestAnimation";
 
 const App: React.FC = () => {
   return (
@@ -19,12 +20,13 @@ const App: React.FC = () => {
           <Link to="/battle">Battle</Link>
         </nav> */}
         <Routes>
-          <Route index element={<Battle />} />
-          <Route path="/testPage" element={<TestPage />} />
+          <Route index element={<TestAnimation />} />
           <Route path="/leaderboards" element={<Leaderboards />} />
           <Route path="/battle" element={<Battle />} />
           <Route path="/loading" element={<Loading />} />
           <Route path="/NewChallenger" element={<NewChallenger />} />
+          <Route path="/testPage" element={<TestPage />} />
+          <Route path="/testAnimation" element={<TestAnimation />} />
           <Route path="/Winner" element={<Winner />} />
         </Routes>
       </BrowserRouter>
