@@ -11,7 +11,7 @@ PORT=5000
 
 ## Post Input Image and Username
 
-Uploads and return a new image and username to the system. After receiving, the image along with an initial text data is saved to `backend/data` folder.
+Uploads and return a new image and username to the system. After receiving, the image along with an initial text data is saved to `backend/data` folder. To access, use: `http://localhost:5000/data/{fileName.jpg}`
 
 Post Route: `/upload`
 
@@ -155,7 +155,7 @@ Get Route: `/api/extract?imagePath={imageFile.jpg}&name={username}`
     ```
 
 ## Post Image Generation
-Takes an image path, text contents, and an output image path as arguments. This post request generates a skibidi image using Gemini.
+Takes an image path, text contents, and an output image path as arguments. This post request generates a skibidi image using Gemini. The image will be stored in `backend/output` folder. To access, use: `http://localhost:5000/output/{fileName.jpg}`
 
 Post Route: `api/generate`
 
@@ -167,7 +167,7 @@ Post Route: `api/generate`
     { "success":true, "outputPath":"abc.jpg" }
     ```
 
-*Sample Web Front-end Usage*
+_Sample Web Front-end Usage_
 ```tsx
 const body = {
     imagePath,
