@@ -9,6 +9,7 @@ interface RoundCount {
 }
 
 export default function(){
+  
   return (
     <div className={styles.background_img}>
       <div id={styles.round_text}>Round 1</div>
@@ -18,7 +19,7 @@ export default function(){
           <CardDisplay></CardDisplay>
         </div>
         <div id={styles.heart_cont}>          
-          <Healthbar health={7} maxHealth={10}></Healthbar>
+          <Healthbar health={30} maxHealth={100}></Healthbar>
           <Healthbar health={7} maxHealth={10}></Healthbar>
         </div>
       </div>
