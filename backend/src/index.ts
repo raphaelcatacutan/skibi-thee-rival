@@ -6,7 +6,8 @@ import WebSocket from 'ws';
 
 import postInput from "./routes/postInput"; 
 import getImagesList from "./routes/getImagesList"; 
-import extractImage from "./routes/extractImage"; 
+import getExtraction from "./routes/getExtraction"; 
+import postGeneration from "./routes/postGeneration"; 
 
 dotenv.config()
 const PORT = process.env.PORT;
@@ -37,4 +38,5 @@ app.use('/data', express.static("./data"));
 
 app.use('/', postInput(wss));
 app.use('/', getImagesList);
-app.use('/api', extractImage);
+app.use('/api', getExtraction);
+app.use('/api', postGeneration)

@@ -3,7 +3,6 @@ import { Request, Response } from "express";
 import { GoogleGenAI, Modality } from "@google/genai";
 import * as fs from "node:fs";
 import * as dotenv from 'dotenv';
-import { parse } from "node:path";
 
 const router = Router();
 const systemInstruction = fs.readFileSync("./assets/extract_prompt.txt", "utf-8");

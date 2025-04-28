@@ -111,7 +111,7 @@ Get Route: `/images`
 -   Status 500: Error reading files
 
 ## Get Image Extraction
-Takes an image path and name as arguments. This get requestion extracts the image details using Gemini. Before returning the `card_prompt` data will be saved to the text file corresponding to the image.
+Takes an image path and name as arguments. This get request extracts the image details using Gemini. Before returning the `card_prompt` data will be saved to the text file corresponding to the image.
 
 Get Route: `/api/extract?imagePath={imageFile.jpg}&name={username}`
 
@@ -153,3 +153,48 @@ Get Route: `/api/extract?imagePath={imageFile.jpg}&name={username}`
     }
     }
     ```
+
+## Post Image Generation
+Takes an image path, text contents, and an output image path as arguments. This post request generates a skibidi image using Gemini.
+
+Post Route: `api/generate`
+
+### Return
+- Status 400: Missing required fields: imagePath, textContent, outputImagePath
+- Status 500: No content parts returned from the model or Internal Server Error
+- Status 200: Image generation successful
+    ```json
+    { "success":true, "outputPath":"abc.jpg" }
+    ```
+
+*Sample Web Front-end Usage*
+```tsx
+const body = {
+    imagePath,
+    textContent,
+    outputImagePath,
+};
+
+try {
+    const res = await fetch("http://localhost:3000/api/generate", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+    });
+
+    const data: ImageGenerationResponse = await res.json();
+
+    if (data.success) {
+    setResponseMessage(data.outputPath || "Image generated successfully!");
+    } else {
+    setResponseMessage("Image generation failed");
+    }
+} catch (error) {
+    console.error("Error:", error);
+    setResponseMessage("An error occurred while generating the image.");
+} finally {
+    setLoading(false);
+}
+```
