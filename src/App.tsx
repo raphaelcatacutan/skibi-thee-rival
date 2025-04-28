@@ -19,7 +19,7 @@ const App: React.FC = () => {
           <Link to="/battle">Battle</Link>
         </nav> */}
         <Routes>
-          <Route index element={<Leaderboards />}/>
+          <Route index element={<Battle />}/>
           <Route path='/leaderboards' element={<Leaderboards />} />
           <Route path='/battle' element={<Battle />} />
           <Route path='/loading' element={<Loading />} />

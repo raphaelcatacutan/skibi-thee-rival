@@ -1,0 +1,28 @@
+@font-face {
+  font-family: pixelated;
+  src: url(../assets/fonts/PressStart2P-Regular.ttf);
+}
+
+.health_cont {
+  width: 360px;
+  height: 30px;
+  background-color: white;
+  display: flex;
+  border-radius: 15px;
+}
+
+#health_curr {
+  position: absolute;
+  width: inherit;
+  height: inherit;
+  background-color: green;
+  border-radius: 15px;
+
+  color: black;
+  font-family: pixelated;
+  text-align: center;
+  align-items: center;
+}
+
+#health_text {
+}
