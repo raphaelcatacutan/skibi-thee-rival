@@ -71,10 +71,41 @@ const TestPage = () => {
     }
   };
 
+  const [imageId, setImageId] = useState<string>("");
+  const [generateResponse, setGenerateResponse] = useState<string | null>(null);
+  const [generating, setGenerating] = useState<boolean>(false);
+
+  const handleGenerateScore = async () => {
+    setGenerating(true);
+    setGenerateResponse(null);
+    try {
+      const res = await fetch("http://localhost:3000/api/score", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setGenerateResponse(`Score updated. New score: ${data.score}`);
+      } else {
+        setGenerateResponse("Failed to update score");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setGenerateResponse("An error occurred while updating score.");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   return (
     <div>
-    <h1>File Upload Status</h1>
-    <p>{message}</p>
+      <h1>File Upload Status</h1>
+      <p>{message}</p>
+
+      <hr/>
       <h1>Image Generation</h1>
 
       <div>
@@ -120,6 +151,30 @@ const TestPage = () => {
         <div>
           <h2>Response:</h2>
           <p>{responseMessage}</p>
+        </div>
+      )}
+
+      <hr/>
+      
+      <h1>Update Score</h1>
+      <div>
+        <label>
+          Image ID:
+          <input
+            type="text"
+            value={imageId}
+            onChange={(e) => setImageId(e.target.value)}
+          />
+        </label>
+        <button onClick={handleGenerateScore} disabled={generating}>
+          {generating ? "Updating..." : "Update Score"}
+        </button>
+      </div>
+
+      {generateResponse && (
+        <div>
+          <h2>Score Update:</h2>
+          <p>{generateResponse}</p>
         </div>
       )}
     </div>

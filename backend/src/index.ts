@@ -8,6 +8,7 @@ import postInput from "./routes/postInput";
 import getCards from "./routes/getCards"; 
 import getExtraction from "./routes/getExtraction"; 
 import postGeneration from "./routes/postGeneration"; 
+import postScore from "./routes/postScore"; 
 
 dotenv.config()
 const PORT = process.env.PORT;
@@ -41,3 +42,4 @@ app.use('/api', postInput(wss));
 app.use('/api', getCards);
 app.use('/api', getExtraction);
 app.use('/api', postGeneration)
+app.use('/api', postScore)
