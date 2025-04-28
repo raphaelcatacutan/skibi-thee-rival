@@ -13,6 +13,10 @@ PORT=5000
 3. The backend will send a websocket message to notify the front end about the file.
     - Status 200: The file is successfully uploaded
         - All clients will receive a data containing the input username and the filename saved.
+        ```json
+        // Example data
+        { "fileName":"1745829510245.jpg", "username": ""}
+        ```
     - Status 500: Failed to process upload
 
 *Example Front-end Usage*
