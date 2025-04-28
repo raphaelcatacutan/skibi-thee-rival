@@ -109,3 +109,47 @@ Get Route: `/images`
     ]
     ```
 -   Status 500: Error reading files
+
+## Get Image Extraction
+Takes an image path and name as arguments. This get requestion extracts the image details using Gemini. Before returning the `card_prompt` data will be saved to the text file corresponding to the image.
+
+Get Route: `/api/extract?imagePath={imageFile.jpg}&name={username}`
+
+### Return
+
+- Status 400: Missing 'name' or 'imagePath' query parameter
+- Status 404: Image file not found
+- Status 500: Failed to generate content
+- Status 200: Extracted and saved image data.
+    ```json
+    {
+    "RaphaelDuhat": {
+        "log_information": {
+        "chosen_animal/fruit": "Duhat",
+        "reason_for_chosen_animal/fruit": "The dark color of the drink in the cup reminded me of the dark purple of a Duhat fruit",
+        "referenced_name": "Tung Tung Tung Sahur",
+        "reason_for_referenced_name": "It has a similar rhythm and syllable structure, and the uncanny creepy vibe matches the unsettling nature of mixing a person's face with a dark-colored fruit."
+        },
+        "image_prompt": "Modify the image without replacing the person, retain facial features and render it as: A surreal, 3D render portrait with warm, muted tones and a rustic nighttime atmosphere. The subject is an anthropomorphic character (Duhat log figure with limbs), with a distinct Duhat skin texture. Lighting is warm artificial light, creating defined shadows. Background is a slightly blurred rustic outdoor setting at night. Colors are dark purples, tans, and warm yellows, textured, with deep shadows and slightly stylized detail. A wooden bat accessory adds a slightly unnerving look. Dimensions: 275×385 px (2.5×3.5 in – 110 ppi)",
+        "card_prompt": {
+        "cardTitle": "RaphaelDuhat",
+        "hpValue": "2300",
+        "damageValue": "180",
+        "critRateValue": "x1.7",
+        "skillNames": [
+            "Duhat Punch",
+            "Duhat Bonk",
+            "Duhatquake",
+            "Delulu Duhat",
+            "Gyatt Duhat",
+            "Zucc Duhat",
+            "Self-Care Duhat"
+        ],
+        "description": "RaphaelDuhat, RaphaelDuhat, he's a fruity kind of guy, some say he gives you buffs and the enemy will cry, but he is more famous with his hp that is really high!",
+        "borderColor": "GREEN",
+        "overlay": "Holographic",
+        "imageSrc": "Image_RaphaelDuhat.jpeg"
+        }
+    }
+    }
+    ```
