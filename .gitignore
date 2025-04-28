@@ -25,3 +25,6 @@ yarn-error.log*
 *.code-workspace
 package-lock.json
 **/.gitignore
+**/uploads/
+**/data/
+**/tests/
