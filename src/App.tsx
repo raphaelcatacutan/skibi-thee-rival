@@ -8,6 +8,7 @@ import Leaderboards from "./pages/Leaderboards";
 import Loading from "./pages/Loading";
 import NewChallenger from "./pages/NewChallenger";
 import Winner from "./pages/Winner";
+import TestPage from "./pages/TestPage";
 
 const App: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const App: React.FC = () => {
         </nav> */}
         <Routes>
           <Route index element={<Battle />} />
+          <Route path="/test" element={<TestPage />} />
           <Route path="/leaderboards" element={<Leaderboards />} />
           <Route path="/battle" element={<Battle />} />
           <Route path="/loading" element={<Loading />} />

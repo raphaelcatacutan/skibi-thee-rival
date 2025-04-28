@@ -1,5 +1,4 @@
 import * as dotenv from 'dotenv';
-import { readFileSync } from 'fs';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import postInput from "./routes/postInput"; 
