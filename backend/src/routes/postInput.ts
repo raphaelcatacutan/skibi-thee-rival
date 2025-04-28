@@ -19,14 +19,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 const router = Router();
 
-class UserInput {
-  fileName: string;
-  username: string;
-
-  constructor(filename = "", username = "") {
-    this.fileName = filename;
-    this.username = username;
-  }
+type UserInput = {
+  fileName: string,
+  username: string
 }
 
 const uploadRoutes = (wss: WebSocket.Server) => {
@@ -48,8 +43,11 @@ const uploadRoutes = (wss: WebSocket.Server) => {
 
       res.status(200).send('File uploaded successfully');
 
-      const payload = new UserInput(filePath, username);
-      const payloadStr = JSON.stringify(payload);
+      const payload: UserInput = {
+        username: username,
+        fileName: filePath
+      };
+      const payloadStr = JSON.stringify({payload});
 
       wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
