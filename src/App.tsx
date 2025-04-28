@@ -20,7 +20,7 @@ const App: React.FC = () => {
         </nav> */}
         <Routes>
           <Route index element={<Battle />} />
-          <Route path="/test" element={<TestPage />} />
+          <Route path="/testPage" element={<TestPage />} />
           <Route path="/leaderboards" element={<Leaderboards />} />
           <Route path="/battle" element={<Battle />} />
           <Route path="/loading" element={<Loading />} />
