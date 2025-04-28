@@ -24,7 +24,7 @@ router.get("/images", (req: Request, res: Response): void => {
       const result = dataFile.map((file) => {
         const filePath = `./data/${file}`;
         const content = fs.readFileSync(filePath, "utf-8");
-        const username = file.split("-")[0]
+        const username = file.split("-")[0].replace("_", " ")
 
         const imageItem: ImageList = {
           imageFile: file.replace(".txt", ".jpg"),
