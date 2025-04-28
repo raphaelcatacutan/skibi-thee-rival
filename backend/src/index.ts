@@ -1,10 +1,11 @@
 import * as dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import postInput from "./routes/postInput"; 
-import getImagesList from "./routes/getImagesList"; 
 import http from 'http';
 import WebSocket from 'ws';
+
+import postInput from "./routes/postInput"; 
+import getImagesList from "./routes/getImagesList"; 
 
 dotenv.config()
 const PORT = process.env.PORT;
@@ -31,7 +32,7 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Welcome to the API');
 });
 
-// Image uploads
-app.use('/uploads', express.static("./uploads"));
+app.use('/data', express.static("./data"));
+
 app.use('/', postInput(wss));
 app.use('/', getImagesList);

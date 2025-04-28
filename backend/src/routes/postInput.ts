@@ -2,26 +2,30 @@ import { Router } from 'express';
 import { Request, Response } from 'express';
 import WebSocket from 'ws';
 import multer from 'multer';
+import fs from 'fs';
 import path from 'path';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, './uploads/'); 
+    cb(null, './data/');
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); 
+    const username = req.body.username || "";
+    const sanitizedUsername = username.replace(/\s+/g, '_'); // Replace spaces with underscores
+    const baseName = Date.now() + path.extname(file.originalname); 
+    cb(null, `${sanitizedUsername}-${baseName}`);
   },
 });
-const upload = multer({ storage: storage }); 
+const upload = multer({ storage: storage });
 const router = Router();
 
 class UserInput {
-  fileName: string
-  username: string 
+  fileName: string;
+  username: string;
 
   constructor(filename = "", username = "") {
-    this.fileName = filename
-    this.username = username
+    this.fileName = filename;
+    this.username = username;
   }
 }
 
@@ -32,13 +36,16 @@ const uploadRoutes = (wss: WebSocket.Server) => {
       return;
     }
 
-    const username = req.body.username || ""; 
+    const username = req.body.username || "";
     const filePath = req.file.filename;
 
     console.log('File received:', req.file);
     console.log('Username received:', username);
 
     try {
+      const txtFilePath = path.join('./data', `${path.basename(filePath, path.extname(filePath))}.txt`);
+      fs.writeFileSync(txtFilePath, '');
+
       res.status(200).send('File uploaded successfully');
 
       const payload = new UserInput(filePath, username);
@@ -59,6 +66,5 @@ const uploadRoutes = (wss: WebSocket.Server) => {
 
   return router;
 };
-
 
 export default uploadRoutes;
