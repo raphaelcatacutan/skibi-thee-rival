@@ -5,7 +5,10 @@ import http from 'http';
 import WebSocket from 'ws';
 
 import postInput from "./routes/postInput"; 
-import getImagesList from "./routes/getImagesList"; 
+import getCards from "./routes/getCards"; 
+import getExtraction from "./routes/getExtraction"; 
+import postGeneration from "./routes/postGeneration"; 
+import postScore from "./routes/postScore"; 
 
 dotenv.config()
 const PORT = process.env.PORT;
@@ -33,6 +36,10 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use('/data', express.static("./data"));
+app.use('/output', express.static("./output"));
 
-app.use('/', postInput(wss));
-app.use('/', getImagesList);
+app.use('/api', postInput(wss));
+app.use('/api', getCards);
+app.use('/api', getExtraction);
+app.use('/api', postGeneration)
+app.use('/api', postScore)

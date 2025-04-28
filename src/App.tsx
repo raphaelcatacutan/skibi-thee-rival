@@ -10,6 +10,7 @@ import NewChallenger from "./pages/NewChallenger";
 import Winner from "./pages/Winner";
 import TestPage from "./pages/TestPage";
 import TestAnimation from "./pages/TestAnimation";
+import CardPreview from "./pages/CardPreview";
 
 const App: React.FC = () => {
   return (
@@ -27,6 +28,7 @@ const App: React.FC = () => {
           <Route path="/NewChallenger" element={<NewChallenger />} />
           <Route path="/testPage" element={<TestPage />} />
           <Route path="/testAnimation" element={<TestAnimation />} />
+          <Route path="/CardPreview" element={<CardPreview />} />
           <Route path="/Winner" element={<Winner />} />
         </Routes>
       </BrowserRouter>

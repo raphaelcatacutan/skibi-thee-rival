@@ -17,7 +17,11 @@
     "@types/react-dom": "^19.1.2",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+<<<<<<< HEAD
     "gsap": "^3.12.7",
+=======
+    "lottie-react": "^2.4.1",
+>>>>>>> 3bb86c470063ef6bdc05859b2cc9b77dcf5c4746
     "multer": "^1.4.5-lts.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

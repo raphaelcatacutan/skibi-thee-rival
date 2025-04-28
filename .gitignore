@@ -28,3 +28,4 @@ package-lock.json
 **/uploads/
 **/data/
 **/tests/
+**/output/
