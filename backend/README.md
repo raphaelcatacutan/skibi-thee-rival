@@ -192,7 +192,7 @@ Get Route: `/api/extract?imagePath={imageFile.jpg}&name={username}`
 
 Takes an image path, text contents, and an output image path as arguments. This post request generates a skibidi image using Gemini. The image will be stored in `backend/output` folder. To access, use: `http://localhost:5000/output/{fileName.jpg}`
 
-Post Route: `api/generate?imagePath={inputPath}&contents={prompt}&outputImagePath={outputPath}`
+Post Route: `api/generate`
 
 ### Return
 
@@ -240,7 +240,7 @@ try {
 
 Takes an imageId as an argument. This post request will increment 1 score to the data file of that image id.
 
-Post Route: `api/score?imageId={imageId}`
+Post Route: `api/score`
 
 ### Return
 
@@ -254,24 +254,32 @@ Post Route: `api/score?imageId={imageId}`
 _Sample Web Front-end Usage_
 
 ```tsx
-try {
-	const res = await fetch("http://localhost:3000/api/score", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({ imageId }),
-	});
-	const data = await res.json();
-	if (data.success) {
-		setGenerateResponse(`Score updated. New score: ${data.score}`);
-	} else {
-		setGenerateResponse("Failed to update score");
+const [imageId, setImageId] = useState<string>("");
+const [generateResponse, setGenerateResponse] = useState<string | null>(null);
+const [generating, setGenerating] = useState<boolean>(false);
+
+const handleGenerateScore = async () => {
+	setGenerating(true);
+	setGenerateResponse(null);
+	try {
+		const res = await fetch("http://localhost:3000/api/score", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ imageId }),
+		});
+		const data = await res.json();
+		if (data.success) {
+			setGenerateResponse(`Score updated. New score: ${data.score}`);
+		} else {
+			setGenerateResponse("Failed to update score");
+		}
+	} catch (error) {
+		console.error("Error:", error);
+		setGenerateResponse("An error occurred while updating score.");
+	} finally {
+		setGenerating(false);
 	}
-} catch (error) {
-	console.error("Error:", error);
-	setGenerateResponse("An error occurred while updating score.");
-} finally {
-	setGenerating(false);
-}
+};
 ```
