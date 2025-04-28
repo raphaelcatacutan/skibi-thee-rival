@@ -1,14 +1,13 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import React from 'react';
-import './App.css';
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import React from "react";
+import "./App.css";
 
 // routers
-import Battle from './pages/Battle';
-import Leaderboards from './pages/Leaderboards';
-import Loading from './pages/Loading';
-import NewChallenger from './pages/NewChallenger';
-import Winner from './pages/Winner';
-
+import Battle from "./pages/Battle";
+import Leaderboards from "./pages/Leaderboards";
+import Loading from "./pages/Loading";
+import NewChallenger from "./pages/NewChallenger";
+import Winner from "./pages/Winner";
 
 const App: React.FC = () => {
   return (
@@ -19,17 +18,16 @@ const App: React.FC = () => {
           <Link to="/battle">Battle</Link>
         </nav> */}
         <Routes>
-          <Route index element={<Battle />}/>
-          <Route path='/leaderboards' element={<Leaderboards />} />
-          <Route path='/battle' element={<Battle />} />
-          <Route path='/loading' element={<Loading />} />
-          <Route path='/NewChallenger' element={<NewChallenger />} />
-          <Route path='/Winner' element={<Winner />} />
+          <Route index element={<Battle />} />
+          <Route path="/leaderboards" element={<Leaderboards />} />
+          <Route path="/battle" element={<Battle />} />
+          <Route path="/loading" element={<Loading />} />
+          <Route path="/NewChallenger" element={<NewChallenger />} />
+          <Route path="/Winner" element={<Winner />} />
         </Routes>
       </BrowserRouter>
     </div>
   );
-}
-
+};
 
 export default App;

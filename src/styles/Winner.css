@@ -1,0 +1,59 @@
+.winner-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .winner-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /*sizes might be replaced later*/
+  .winner-image {
+    width: 375px; /* 750 * 0.5 */
+    height: 525px; /* 1050 * 0.5 */
+    object-fit: contain;
+  }    
+
+  .winner-foreground {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw; /* Adjust as needed */
+    max-width: 500px; /* Ensures it’s not too wide */
+    text-align: center;
+  }
+  
+  .winner-text {
+    font-size: clamp(1.5rem, 5vw, 3rem); /* Adjusts dynamically */
+    font-weight: bold;
+    color: white;
+    margin-bottom: 50px;
+    white-space: nowrap; /* Prevents unexpected wrapping */
+    animation: barrelRoll 2s ease forwards; /* <-- this line */
+  }
+  
+  /* Barrel Roll Animation */
+  @keyframes barrelRoll {
+    0% {
+      transform: rotate(0) scale(0);
+      opacity: 0;
+    }
+    50% {
+      transform: rotate(180deg) scale(1.2);
+      opacity: 1;
+    }
+    100% {
+      transform: rotate(360deg) scale(1);
+    }
+  }
