@@ -4,10 +4,10 @@ import styling from '../styles/page-Leaderboards.module.css'
 
 // to be commented out
 const leaderboardData = [
-  {rank_no: 1, player_name: 'Skibidi'},
-  {rank_no: 1, player_name: 'Skibidi'},
-  {rank_no: 1, player_name: 'Skibidi'},
-  {rank_no: 1, player_name: 'Skibidi'}
+  {rank_no: 1, player_name: 'Skibidi Rizz sIGMA DAWDASDS', win: 5},
+  {rank_no: 1, player_name: 'Skibidi', win: 5},
+  {rank_no: 1, player_name: 'Skibidi', win: 15},
+  {rank_no: 1, player_name: 'Skibidi', win: 5}
 ]
 
 export default function(){
@@ -53,6 +53,7 @@ export default function(){
               <div className={styling.rank_slot} key={player.rank_no}>
                 <div className={styling.rank_count}>{player.rank_no}</div>
                 <div className={styling.rank_name}>{player.player_name}</div>
+                <div className={styling.rank_win}>{player.win}</div>
               </div>
             ))}
         </div>
