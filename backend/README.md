@@ -80,33 +80,66 @@ val request = Request.Builder()
     .build()
 ```
 
-## Get Image List
+## Get Cards
 
-Gets the list of data saved in the system. It will also return if the file was processed already.
+Gets the list of data saved in the system. It can take multiple optional arguments `filter` to filter out data with the specified ids or `isSkibidi` boolean to filter processed data. All return values are sorted in descending score, if score is not present in the saved data, default to 0.
 
-Get Route: `/images`
+Get Route: `/api/images?filter={id1}&filter={id2}&isSkibidi=true`
 
 ### Return
 
 -   Status 200: The files are successfully read.
     ```json
-    [
-    	{
-    		"imageFile": "Iwag-1745842314204.jpg",
-    		"username": "Iwag",
-    		"isSkibidi": false
-    	},
-    	{
-    		"imageFile": "Raphael_James-1745842340801.jpg",
-    		"username": "Raphael James",
-    		"isSkibidi": true // This image was already processed
-    	},
-    	{
-    		"imageFile": "Hello-1745842437688.jpg",
-    		"username": "Hello",
-    		"isSkibidi": false
-    	}
-    ]
+    {
+    "Iwag-1745842437688": {
+        "cardTitle": "21dsdad",
+        "hpValue": "2300",
+        "damageValue": "180",
+        "critRateValue": "x1.8",
+        "skillNames": [
+            "Tarsier Punch",
+            "Coffee Bonk",
+            "Tarsierquake",
+            "Delulu Tarsier",
+            "Gyatt Tarsier",
+            "Zucc Tarsier",
+            "Self-Care Tarsier"
+        ],
+        "description": "RaphaelTarsier is here to make a cheer, he's always near, ready to give you gear! With a HP of 2300 and damage 180, his critical hits will give you so much glee!",
+        "borderColor": "GREEN",
+        "overlay": "Holographic",
+        "imageSrc": "Image_RaphaelTarsierNoSpaces.jpeg",
+        "score": 3,
+        "name": "Iwag"
+    },
+    "Raphael-1745842340801": {
+        "cardTitle": "123",
+        "hpValue": "2300",
+        "damageValue": "180",
+        "critRateValue": "x1.8",
+        "skillNames": [
+            "Tarsier Punch",
+            "Coffee Bonk",
+            "Tarsierquake",
+            "Delulu Tarsier",
+            "Gyatt Tarsier",
+            "Zucc Tarsier",
+            "Self-Care Tarsier"
+        ],
+        "description": "RaphaelTarsier is here to make a cheer, he's always near, ready to give you gear! With a HP of 2300 and damage 180, his critical hits will give you so much glee!",
+        "borderColor": "GREEN",
+        "overlay": "Holographic",
+        "imageSrc": "Image_RaphaelTarsierNoSpaces.jpeg",
+        "score": 1,
+        "name": "Raphael"
+    },
+    "Hello-1745842522941": {
+        // If isSkibidi is not provided, it will also list unprocessed cards
+        // These information are default
+        "score": 0,
+        "name": "Hello"
+    }
+    }
     ```
 -   Status 500: Error reading files
 
@@ -181,15 +214,15 @@ try {
     headers: {
         "Content-Type": "application/json",
     },
-    body: JSON.stringify(body),
+        body: JSON.stringify(body),
     });
 
     const data: ImageGenerationResponse = await res.json();
 
     if (data.success) {
-    setResponseMessage(data.outputPath || "Image generated successfully!");
+        setResponseMessage(data.outputPath || "Image generated successfully!");
     } else {
-    setResponseMessage("Image generation failed");
+        setResponseMessage("Image generation failed");
     }
 } catch (error) {
     console.error("Error:", error);
