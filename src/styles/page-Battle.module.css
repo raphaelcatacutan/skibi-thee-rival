@@ -12,6 +12,11 @@
   justify-content: center;
 }
 
+#round_text {
+  font-size: 5em;
+  text-align: center;
+}
+
 #battle_area {
   background-color: rgba(0, 0, 0, 0.6);
   width: 100%;
