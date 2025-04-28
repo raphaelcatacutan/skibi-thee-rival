@@ -1,6 +1,6 @@
 import Header from "../components/Header";
 import React, { useEffect, useState } from "react";
-import styling from "../styles/page-Loading.module.css";
+import styling from "../styles/page-CardPreview.module.css";
 import bg1 from "../assets/images/scenes/bg_arena.jpg";
 import bg2 from "../assets/images/scenes/bg_disco.jpg";
 import bg3 from "../assets/images/scenes/bg_dojo.jpeg";

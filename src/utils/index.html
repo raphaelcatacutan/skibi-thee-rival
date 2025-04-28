@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Generator</title>
+  <style>
+    @font-face {
+      font-family: 'CardTitleFont';
+      src: url('fonts/FuturaStd-Bold.otf') format('opentype');
+    }
+    @font-face {
+      font-family: 'CardStatFont';
+      src: url('fonts/GillSansStd-Bold.otf') format('opentype');
+    }
+    @font-face {
+      font-family: 'CardDescFont';
+      src: url('fonts/GillSansStd.otf') format('opentype');
+    }
+    @font-face {
+      font-family: 'CardSkillFont';
+      src: url('fonts/FuturaStd-Book.otf') format('opentype');
+    }
+    </style>
+</head>
+<body>
+  <div id="container"></div>
+  <div style="margin: 10px 0;">
+    <label for="overlay-select">Overlay Effect: </label>
+    <select id="overlay-select">
+      <option value="none">None</option>
+      <option value="holographic" selected>Holographic</option>
+      <option value="glitter">Glitter</option>
+      <option value="paper">Paper</option>
+      <option value="foil">Foil</option>
+    </select>
+    
+    <label for="border-color" style="margin-left: 15px;">Border Color: </label>
+    <select id="border-color">
+      <option value="RED">Red</option>
+      <option value="GREEN" selected>Green</option>
+      <option value="BLUE">Blue</option>
+    </select>
+  </div>
+  <div style="margin: 10px 0;">
+    <label>Card Configuration (JSON format):</label><br>
+    <textarea id="card-config" rows="10" cols="80" style="margin: 5px 0;">
+{
+  "cardTitle": "Floyd Jackknife",
+  "hpValue": "2400",
+  "damageValue": "220", 
+  "critRateValue": "x1.5",
+  "skillNames": [
+    "Jackknife Jab",
+    "Langka Fury",
+    "Spiky Defense",
+    "Tropical Storm",
+    "Sweet Revenge",
+    "Zesty Combo",
+    "Final Flourish"
+  ],
+  "description": "Floyd Jackknife, the toughest Langka in town! With his spiky exterior and sweet fighting style, he's both intimidating and irresistible. His Tropical Storm move can wipe out multiple opponents, while his Sweet Revenge punishes anyone who dares to hurt his friends.",
+  "borderColor": "GREEN",
+  "overlay": "holographic",
+  "imageSrc": "Image_Floyd.jpeg"
+}
+    </textarea><br>
+    <button id="apply-config">Apply Configuration</button>
+  </div>
+  <button id="export">Export as PNG</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/konva/8.4.1/konva.min.js"></script>
+  <script>
+    // Set card and image sizes (2.5 x 3.5in at 300ppi = 750x1050px)
+    const cardWidth = 750;
+    const cardHeight = 1050;
+    // Scale factor for converting from 110ppi to 300ppi
+    const scaleFactor = 300 / 110;
+
+    const stage = new Konva.Stage({
+      container: 'container',
+      width: cardWidth,
+      height: cardHeight,
+    });
+
+    const layer = new Konva.Layer();
+    stage.add(layer);
+
+    // Border thickness utility function - call this before creating any rectangles
+    function setBorderThickness(thickness) {
+      // Store the thickness value
+      window.borderThickness = thickness;
+      
+      // Calculate related dimensions based on thickness
+      window.outerRectX = 0;
+      window.outerRectY = 0;
+      window.outerRectWidth = cardWidth;
+      window.outerRectHeight = cardHeight;
+      
+      window.innerRectX = thickness;
+      window.innerRectY = thickness;
+      window.innerRectWidth = cardWidth - (thickness * 2);
+      window.innerRectHeight = cardHeight - (thickness * 2);
+      
+      // Calculate clip dimensions that match the inner rectangle
+      window.clipGroupX = thickness;
+      window.clipGroupY = thickness;
+      window.clipGroupWidth = cardWidth - (thickness * 2);
+      window.clipGroupHeight = cardHeight - (thickness * 2);
+      
+      return thickness;
+    }
+
+    // Overlay effect settings
+    const overlayTypes = {
+      NONE: 'none',
+      HOLO: 'holographic',
+      GLITTER: 'glitter',
+      PAPER: 'paper',
+      FOIL: 'foil'
+    };
+    let currentOverlay = overlayTypes.HOLO; // Default overlay
+    let overlayAnimation = null; // Store animation reference
+
+    // Border gradient presets
+    const borderGradients = {
+      RED: [0, '#ff0000', 0.5, '#ff6666', 1, '#990000'],
+      GREEN: [0, '#2ecc40', 0.5, '#01ff70', 1, '#007f3f'],
+      BLUE: [0, '#0066ff', 0.5, '#66a3ff', 1, '#003d99'],
+      GOLD: [0, '#FFD700', 0.2, '#F0E68C', 0.4, '#B8860B', 0.6, '#C0C0C0', 0.8, '#DAA520', 1, '#FFD700']
+    };
+    let currentBorderGradient = borderGradients.GREEN; // Default gradient
+    let previousBorderGradient = null; // Store previous gradient when foil overrides
+
+    // Function to set border gradient
+    function setBorderGradient(gradientType) {
+      // Store the current gradient before changing
+      if (gradientType === 'GOLD' && currentBorderGradient !== borderGradients.GOLD) {
+        previousBorderGradient = currentBorderGradient;
+      } else if (gradientType !== 'GOLD') {
+        previousBorderGradient = null;
+      }
+      
+      currentBorderGradient = borderGradients[gradientType];
+      // Update the outer rectangle gradient
+      outerRect.fillLinearGradientColorStops(currentBorderGradient);
+      layer.draw();
+    }
+
+    // Function to set overlay effect
+    function setOverlayEffect(effectType) {
+      // If current overlay is foil and we're changing to something else, restore border color
+      if (currentOverlay === overlayTypes.FOIL && effectType !== overlayTypes.FOIL) {
+        // If we previously stored a border gradient, restore it
+        if (previousBorderGradient) {
+          // Find the border color dropdown value that matches our stored gradient
+          const borderSelect = document.getElementById('border-color');
+          for (const option in borderGradients) {
+            if (borderGradients[option] === previousBorderGradient) {
+              borderSelect.value = option;
+              break;
+            }
+          }
+          
+          // Restore previous border gradient
+          outerRect.fillLinearGradientColorStops(previousBorderGradient);
+          previousBorderGradient = null;
+        }
+      }
+      
+      // Remove existing overlay if any
+      if (window.overlayGroup) {
+        window.overlayGroup.destroy();
+        if (overlayAnimation) {
+          overlayAnimation.stop();
+          overlayAnimation = null;
+        }
+      }
+
+      // If no effect is chosen, just return
+      if (effectType === overlayTypes.NONE) {
+        layer.draw();
+        return;
+      }
+
+      // Create new overlay group
+      window.overlayGroup = new Konva.Group({
+        x: 0,
+        y: 0,
+        width: cardWidth,
+        height: cardHeight,
+        opacity: 0.35,
+      });
+      
+      // Apply the selected effect
+      if (effectType === overlayTypes.HOLO) {
+        applyHoloEffect();
+      } else if (effectType === overlayTypes.GLITTER) {
+        applyGlitterEffect();
+      } else if (effectType === overlayTypes.PAPER) {
+        applyPaperEffect();
+      } else if (effectType === overlayTypes.FOIL) {
+        applyFoilEffect();
+      }
+      
+      // Add overlay to layer (after background, before text)
+      layer.add(window.overlayGroup);
+      
+      // Save current overlay type
+      currentOverlay = effectType;
+      
+      layer.draw();
+    }
+
+    // Implementation of holographic effect
+    function applyHoloEffect() {
+      // Holographic rainbow gradient overlay
+      const holoGradient = new Konva.Rect({
+        x: 0,
+        y: 0,
+        width: cardWidth,
+        height: cardHeight,
+        fillLinearGradientStartPoint: { x: 0, y: 0 },
+        fillLinearGradientEndPoint: { x: cardWidth, y: cardHeight },
+        fillLinearGradientColorStops: [
+          0, 'rgba(255, 0, 255, 0.4)',
+          0.2, 'rgba(0, 255, 255, 0.4)',
+          0.4, 'rgba(255, 255, 0, 0.4)',
+          0.6, 'rgba(0, 255, 0, 0.4)',
+          0.8, 'rgba(0, 0, 255, 0.4)',
+          1, 'rgba(255, 0, 255, 0.4)'
+        ],
+      });
+      window.overlayGroup.add(holoGradient);
+
+      // Add subtle movement effect
+      let angle = 0;
+      overlayAnimation = new Konva.Animation((frame) => {
+        angle += 0.01;
+        holoGradient.fillLinearGradientStartPoint({
+          x: cardWidth * 0.5 + Math.sin(angle) * cardWidth * 0.5,
+          y: cardHeight * 0.5 + Math.cos(angle) * cardHeight * 0.5
+        });
+        holoGradient.fillLinearGradientEndPoint({
+          x: cardWidth * 0.5 + Math.sin(angle + Math.PI) * cardWidth * 0.5,
+          y: cardHeight * 0.5 + Math.cos(angle + Math.PI) * cardHeight * 0.5
+        });
+      }, layer);
+      overlayAnimation.start();
+    }
+
+    // Implementation of glitter effect
+    function applyGlitterEffect() {
+      // Create semi-transparent background
+      const glitterBg = new Konva.Rect({
+        x: 0,
+        y: 0,
+        width: cardWidth,
+        height: cardHeight,
+        fill: 'rgba(255, 255, 255, 0.05)',
+      });
+      window.overlayGroup.add(glitterBg);
+      
+      // Add glitter particles
+      const glitterCount = 300;
+      const glitterParticles = [];
+      
+      // Generate random glitter particles
+      for (let i = 0; i < glitterCount; i++) {
+        const x = Math.random() * cardWidth;
+        const y = Math.random() * cardHeight;
+        const size = (Math.random() * 2 + 1) * scaleFactor;
+        const opacity = Math.random() * 0.6 + 0.2;
+        
+        // Choose random glitter color (silver, gold, white)
+        const colors = ['white', '#FFD700', '#C0C0C0'];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        const glitter = new Konva.Circle({
+          x: x,
+          y: y,
+          radius: size,
+          fill: color,
+          opacity: opacity,
+        });
+        
+        window.overlayGroup.add(glitter);
+        glitterParticles.push(glitter);
+      }
+      
+      // Add shimmer animation
+      let frameCount = 0;
+      overlayAnimation = new Konva.Animation((frame) => {
+        frameCount++;
+        // Only update a subset of particles each frame for performance
+        if (frameCount % 5 === 0) {
+          // Randomly change opacity of some particles to create shimmer effect
+          for (let i = 0; i < 20; i++) {
+            const randomIndex = Math.floor(Math.random() * glitterParticles.length);
+            const particle = glitterParticles[randomIndex];
+            
+            if (Math.random() > 0.7) {
+              particle.opacity(Math.random() * 0.6 + 0.2);
+            }
+          }
+        }
+      }, layer);
+      
+      overlayAnimation.start();
+    }
+
+    // Implementation of paper effect
+    function applyPaperEffect() {
+      // Create noise pattern for paper texture
+      const paperPattern = [];
+      const gridSize = 5 * scaleFactor;
+      const noiseOpacity = 0.07;
+      
+      // Create a pattern of small shapes for paper texture
+      for (let x = 0; x < cardWidth; x += gridSize) {
+        for (let y = 0; y < cardHeight; y += gridSize) {
+          // Random brightness variation
+          const brightness = 220 + Math.floor(Math.random() * 35);
+          const opacity = noiseOpacity * (0.5 + Math.random() * 0.5);
+          
+          // Paper grain rectangle
+          const grain = new Konva.Rect({
+            x: x,
+            y: y,
+            width: gridSize,
+            height: gridSize,
+            fill: `rgb(${brightness}, ${brightness}, ${brightness})`,
+            opacity: opacity,
+          });
+          window.overlayGroup.add(grain);
+          paperPattern.push(grain);
+        }
+      }
+      
+      // Add subtle fiber lines
+      for (let i = 0; i < 20; i++) {
+        const y = Math.random() * cardHeight;
+        const lineLength = 20 + Math.random() * 100;
+        const startX = Math.random() * (cardWidth - lineLength);
+        
+        const fiber = new Konva.Line({
+          points: [startX, y, startX + lineLength, y],
+          stroke: 'rgba(255, 255, 255, 0.3)',
+          strokeWidth: 1,
+          opacity: 0.1 + Math.random() * 0.1,
+        });
+        window.overlayGroup.add(fiber);
+      }
+      
+      // Add paper overlay
+      const paperOverlay = new Konva.Rect({
+        x: 0,
+        y: 0,
+        width: cardWidth,
+        height: cardHeight,
+        fillLinearGradientStartPoint: { x: 0, y: 0 },
+        fillLinearGradientEndPoint: { x: cardWidth, y: cardHeight },
+        fillLinearGradientColorStops: [
+          0, 'rgba(250, 250, 250, 0.05)',
+          0.5, 'rgba(230, 230, 230, 0.05)',
+          1, 'rgba(250, 250, 250, 0.05)'
+        ],
+      });
+      window.overlayGroup.add(paperOverlay);
+    }
+    
+    // Implementation of foil effect
+    function applyFoilEffect() {
+      // Base foil shine
+      const foilBase = new Konva.Rect({
+        x: 0,
+        y: 0,
+        width: cardWidth,
+        height: cardHeight,
+        fill: 'rgba(255, 215, 0, 0.1)', // Gold tint
+      });
+      window.overlayGroup.add(foilBase);
+      
+      // Create metallic pattern with alternating gold and silver stripes
+      const stripeCount = 150;
+      const stripeWidth = Math.ceil(cardWidth / stripeCount) + 1;
+      
+      for (let i = 0; i < stripeCount; i++) {
+        const x = i * stripeWidth;
+        // Random metallic colors - mix of gold and silver for more metallic look
+        const colors = [
+          'rgba(255, 215, 0, 0.12)', // Gold
+          'rgba(218, 165, 32, 0.12)', // Goldenrod
+          'rgba(192, 192, 192, 0.12)', // Silver
+          'rgba(230, 232, 250, 0.12)' // Light silver
+        ];
+        const metalColor = colors[Math.floor(Math.random() * colors.length)];
+        
+        const stripe = new Konva.Rect({
+          x: x,
+          y: 0,
+          width: stripeWidth,
+          height: cardHeight,
+          fill: metalColor,
+          opacity: 0.1 + Math.random() * 0.15,
+        });
+        window.overlayGroup.add(stripe);
+      }
+      
+      // Add metallic gradient overlay with more gold/silver color steps
+      const metallicOverlay = new Konva.Rect({
+        x: 0,
+        y: 0,
+        width: cardWidth,
+        height: cardHeight,
+        fillLinearGradientStartPoint: { x: 0, y: 0 },
+        fillLinearGradientEndPoint: { x: cardWidth, y: cardHeight },
+        fillLinearGradientColorStops: [
+          0, 'rgba(255, 215, 0, 0.25)',    // Gold
+          0.15, 'rgba(192, 192, 192, 0.2)', // Silver
+          0.3, 'rgba(212, 175, 55, 0.22)',  // Metallic gold
+          0.45, 'rgba(230, 232, 250, 0.2)', // Light silver
+          0.6, 'rgba(255, 215, 0, 0.25)',   // Gold
+          0.75, 'rgba(192, 192, 192, 0.2)', // Silver 
+          0.9, 'rgba(212, 175, 55, 0.22)',  // Metallic gold
+          1, 'rgba(255, 215, 0, 0.25)'      // Gold
+        ],
+        opacity: 0.5,
+      });
+      window.overlayGroup.add(metallicOverlay);
+      
+      // Store the current border color if not already stored
+      if (!previousBorderGradient) {
+        // Get the current border color from the dropdown
+        const borderSelect = document.getElementById('border-color');
+        previousBorderGradient = borderGradients[borderSelect.value];
+      }
+      
+      // Override border color to gold
+      setBorderGradient('GOLD');
+      
+      // Add shimmer animation that responds to time
+      let angle = 0;
+      overlayAnimation = new Konva.Animation((frame) => {
+        angle += 0.015;
+        const shiftX = Math.sin(angle) * cardWidth * 0.6;
+        const shiftY = Math.cos(angle) * cardHeight * 0.3;
+        
+        metallicOverlay.fillLinearGradientStartPoint({
+          x: cardWidth * 0.5 + shiftX,
+          y: cardHeight * 0.3 + shiftY
+        });
+        
+        metallicOverlay.fillLinearGradientEndPoint({
+          x: cardWidth * 0.5 - shiftX,
+          y: cardHeight * 0.7 - shiftY
+        });
+      }, layer);
+      
+      overlayAnimation.start();
+    }
+    
+    // Initialize with default border thickness scaled for 300ppi
+    setBorderThickness(12 * scaleFactor);
+
+    // First create outer rectangle (the color border)
+    const outerRect = new Konva.Rect({
+      x: window.outerRectX,
+      y: window.outerRectY,
+      width: window.outerRectWidth,
+      height: window.outerRectHeight,
+      cornerRadius: 14 * scaleFactor,
+      fillLinearGradientStartPoint: { x: 0, y: 0 },
+      fillLinearGradientEndPoint: { x: cardWidth, y: cardHeight },
+      fillLinearGradientColorStops: currentBorderGradient,
+    });
+    layer.add(outerRect);
+
+    // Then create an inner rectangle with a smaller radius (to reveal border)
+    const innerRect = new Konva.Rect({
+      x: window.innerRectX,
+      y: window.innerRectY,
+      width: window.innerRectWidth,
+      height: window.innerRectHeight,
+      cornerRadius: 16 * scaleFactor,
+      fill: 'white', // This will be covered by the image 
+    });
+    layer.add(innerRect);
+
+    // Store configuration for initial load
+    window.currentConfiguration = {
+      cardTitle: 'Floydilayo',
+      hpValue: '2000',
+      damageValue: '200',
+      critRateValue: 'x1.8',
+      skillNames: [
+        'Delulu Langka',
+        'Langka Punch',
+        'Langka Bonk',
+        'Langkaquake',
+        'Zucc Langka',
+        'Gyatt Langka',
+        'Self-Care Langka'
+      ],
+      description: "Floydilayo, with his spiky Langka hair, is always ready for a stare! He's got the zesty vibe and the Langka pride. Don't let his chill demeanor fool you, he will always make your mood better, or worst if he is not well-fed. But feed him once he will do the Zesty Leono pose for the camera. He'll strike a pose with his Langka nose, he always grows and shows how it goes!",
+      borderColor: 'GREEN',
+      overlay: 'holographic',
+      imageSrc: 'Image_Floyd.jpeg'
+    };
+    
+    // Load initial image from configuration
+    const imageObj = new Image();
+    imageObj.src = window.currentConfiguration.imageSrc;
+    imageObj.onload = () => {
+      // Create a clip region for the image (same as innerRect dimensions)
+      const clipGroup = new Konva.Group({
+        x: window.clipGroupX,
+        y: window.clipGroupY,
+        width: window.clipGroupWidth,
+        height: window.clipGroupHeight,
+        clipFunc: function(ctx) {
+          const cornerRadius = 16 * scaleFactor;
+          ctx.beginPath();
+          ctx.moveTo(cornerRadius, 0);
+          ctx.lineTo(this.width() - cornerRadius, 0);
+          ctx.quadraticCurveTo(this.width(), 0, this.width(), cornerRadius);
+          ctx.lineTo(this.width(), this.height() - cornerRadius);
+          ctx.quadraticCurveTo(this.width(), this.height(), this.width() - cornerRadius, this.height());
+          ctx.lineTo(cornerRadius, this.height());
+          ctx.quadraticCurveTo(0, this.height(), 0, this.height() - cornerRadius);
+          ctx.lineTo(0, cornerRadius);
+          ctx.quadraticCurveTo(0, 0, cornerRadius, 0);
+          ctx.closePath();
+        }
+      });
+      
+      // Fill card vertically, center horizontally, allow side overflow
+      const scale = window.clipGroupHeight / imageObj.height;
+      const drawHeight = window.clipGroupHeight;
+      const drawWidth = imageObj.width * scale;
+      const imgX = (window.clipGroupWidth - drawWidth) / 2;
+      const imgY = 0;
+      
+      const bgImage = new Konva.Image({
+        x: imgX,
+        y: imgY,
+        image: imageObj,
+        width: drawWidth,
+        height: drawHeight,
+      });
+      
+      // Add image to clip group, then add group to layer
+      clipGroup.add(bgImage);
+      layer.add(clipGroup);
+
+      // Card Title (top left) - with thicker white outline shadow
+      const title = new Konva.Text({
+        x: 22 * scaleFactor,
+        y: 22 * scaleFactor,
+        text: 'Floydilayo',
+        letterSpacing: -1.3 * scaleFactor,
+        fontSize: 22 * scaleFactor,
+        fontFamily: 'CardTitleFont',
+        fontStyle: 'normal',
+        fill: 'black',
+        fontStyle: 'bold',
+        shadowColor: 'white',
+        stroke: 'white',
+        strokeWidth: 0.3 * scaleFactor,
+        width: cardWidth * 0.7,
+        align: 'left',
+      });
+      layer.add(title);
+      window.titleText = title;
+
+      // HP text (top right) - aligned with title, with smaller "HP" text
+      const hpValue = new Konva.Text({
+        x: cardWidth - (60 * scaleFactor),
+        y: 23 * scaleFactor, // Same y level as title
+        text: '2000',
+        fontSize: 18 * scaleFactor,
+        fontFamily: 'CardStatFont',
+        fontStyle: 'normal',
+        fill: 'green',
+        fontStyle: 'bold',
+        shadowColor: 'white',
+        shadowBlur: 0 * scaleFactor,
+        shadowOffset: { x: 1 * scaleFactor, y: 1 * scaleFactor },
+      });
+      
+      const hpLabel = new Konva.Text({
+        x: cardWidth - (77 * scaleFactor),
+        y: 29 * scaleFactor, // Slightly adjusted to align with value
+        text: 'HP',
+        fontSize: 10 * scaleFactor, // Smaller than the number
+        fontFamily: 'CardStatFont',
+        fill: 'green',
+        fontStyle: 'bold',
+        shadowColor: 'white',
+        shadowBlur: 1 * scaleFactor,
+        shadowOffset: { x: 1 * scaleFactor, y: 1 * scaleFactor },
+      });
+      layer.add(hpLabel);
+      layer.add(hpValue);
+      window.hpValueText = hpValue;
+
+      // Skills in slanted columns (slightly larger than description)
+      const skillFontSize = 10 * scaleFactor;
+      const skills = [
+        { text: 'Delulu Langka', x: 100 * scaleFactor, y: cardHeight * 0.45 + (70 * scaleFactor) },
+        { text: 'Langka Punch', x: 60 * scaleFactor, y: cardHeight * 0.45 + (85 * scaleFactor) },
+        { text: 'Langka Bonk', x: cardWidth - (130 * scaleFactor), y: cardHeight * 0.45 + (85 * scaleFactor) },
+        { text: 'Langkaquake', x: 60 * scaleFactor, y: cardHeight * 0.45 + (100 * scaleFactor) },
+        { text: 'Gyatt Langka', x: 60 * scaleFactor, y: cardHeight * 0.45 + (115 * scaleFactor) },
+        { text: 'Zucc Langka', x: cardWidth - (130 * scaleFactor), y: cardHeight * 0.45 + (100 * scaleFactor) },
+        { text: 'Self-Care Langka', x: cardWidth - (130 * scaleFactor), y: cardHeight * 0.45 + (115 * scaleFactor) },
+      ];
+      
+      window.skillTexts = [];
+      skills.forEach(skill => {
+        const skillText = new Konva.Text({
+          x: skill.x,
+          y: skill.y,
+          text: skill.text,
+          fontSize: skillFontSize,
+          fontFamily: 'CardSkillFont',
+          fill: 'white',
+          shadowColor: 'black',
+          shadowBlur: 1 * scaleFactor,
+          shadowOffset: { x: 1 * scaleFactor, y: 1 * scaleFactor },
+        });
+        layer.add(skillText);
+        window.skillTexts.push(skillText);
+      });
+      
+      // Create white boxes for Damage and Crit Rate
+      const boxHeight = 15 * scaleFactor;
+      const boxWidth = (cardWidth - (40 * scaleFactor)) / 2;
+      const boxY = cardHeight - (75 * scaleFactor);
+      
+      // Box for Damage
+      const damageBox = new Konva.Rect({
+        x: 18 * scaleFactor,
+        y: boxY,
+        width: boxWidth,
+        height: boxHeight,
+        fill: 'white',
+        cornerRadius: 4 * scaleFactor,
+        shadowColor: 'black',
+        shadowBlur: 2 * scaleFactor,
+        shadowOffset: { x: 0, y: 3 * scaleFactor },
+        shadowOpacity: 0.8,
+      });
+      
+      const damageText = new Konva.Text({
+        x: 40 * scaleFactor,
+        y: boxY + (2 * scaleFactor),
+        text: 'Damage: 200',
+        fontSize: 12 * scaleFactor,
+        fontFamily: 'CardStatFont',
+        fill: 'blue',
+      });
+      
+      // Box for Crit Rate
+      const critBox = new Konva.Rect({
+        x: cardWidth - (18 * scaleFactor) - boxWidth,
+        y: boxY,
+        width: boxWidth,
+        height: boxHeight,
+        fill: 'white',
+        cornerRadius: 4 * scaleFactor,
+        shadowColor: 'black',
+        shadowBlur: 2 * scaleFactor,
+        shadowOffset: { x: 0, y: 3 * scaleFactor },
+        shadowOpacity: 0.8,
+      });
+      
+      const critText = new Konva.Text({
+        x: cardWidth - (2 * scaleFactor) - boxWidth,
+        y: boxY + (2 * scaleFactor),
+        text: 'Crit Rate: x1.8',
+        fontSize: 12 * scaleFactor,
+        fontFamily: 'CardStatFont',
+        fill: 'red',
+      });
+      
+      layer.add(damageBox);
+      layer.add(damageText);
+      layer.add(critBox);
+      layer.add(critText);
+      window.damageValueText = damageText;
+      window.critRateText = critText;
+      
+      // Description (bottom) - position moved below the stat boxes
+      const description = new Konva.Text({
+        x: 18 * scaleFactor,
+        y: cardHeight - (54 * scaleFactor),
+        text: "Floydilayo, with his spiky Langka hair, is always ready for a stare! He's got the zesty vibe and the Langka pride. Don't let his chill demeanor fool you, he will always make your mood better, or worst if he is not well-fed. But feed him once he will do the Zesty Leono pose for the camera. He'll strike a pose with his Langka nose, he always grows and shows how it goes!",
+        fontSize: 7 * scaleFactor,
+        fontFamily: 'CardDescFont',
+        fill: 'white',
+        width: cardWidth - (30 * scaleFactor),
+        align: 'left',
+        shadowColor: 'black',
+        shadowBlur: 1 * scaleFactor,
+      });
+      layer.add(description);
+      window.descriptionText = description;
+
+      layer.draw();
+      
+      // Apply the initial overlay effect after everything is loaded
+      setOverlayEffect(currentOverlay);
+    };
+
+    // Helper function to draw a rounded rectangle with a given radius
+    function drawRoundedRect(ctx, x, y, w, h, r) {
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.arcTo(x + w, y, x + w, y + r, r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+      ctx.lineTo(x + r, y + h);
+      ctx.arcTo(x, y + h, x, y + h - r, r);
+      ctx.lineTo(x, y + r);
+      ctx.arcTo(x, y, x + r, y, r);
+    }
+
+    // Export as PNG
+    document.getElementById('export').addEventListener('click', () => {
+      const dataURL = stage.toDataURL();
+      const link = document.createElement('a');
+      link.download = 'card.png';
+      link.href = dataURL;
+      link.click();
+    });
+
+    // Handle overlay effect selection
+    document.getElementById('overlay-select').addEventListener('change', (e) => {
+      currentOverlay = e.target.value;
+      setOverlayEffect(currentOverlay);
+    });
+
+    // Handle border color selection
+    document.getElementById('border-color').addEventListener('change', (e) => {
+      const selectedColor = e.target.value;
+      setBorderGradient(selectedColor);
+    });
+
+    // Configure all card properties in one function
+    function configureCard(config) {
+      // Default skill positions - these won't change with configuration
+      const skillPositions = [
+        { x: 100 * scaleFactor, y: cardHeight * 0.45 + (70 * scaleFactor) },
+        { x: 60 * scaleFactor, y: cardHeight * 0.45 + (85 * scaleFactor) },
+        { x: cardWidth - (130 * scaleFactor), y: cardHeight * 0.45 + (85 * scaleFactor) },
+        { x: 60 * scaleFactor, y: cardHeight * 0.45 + (100 * scaleFactor) },
+        { x: cardWidth - (130 * scaleFactor), y: cardHeight * 0.45 + (100 * scaleFactor) },
+        { x: 60 * scaleFactor, y: cardHeight * 0.45 + (115 * scaleFactor) },
+        { x: cardWidth - (130 * scaleFactor), y: cardHeight * 0.45 + (115 * scaleFactor) },
+      ];
+      
+      // Default configuration
+      const defaults = {
+        cardTitle: 'Floydilayo',
+        hpValue: '2000',
+        damageValue: '200',
+        critRateValue: 'x1.8',
+        skillNames: [
+          'Delulu Langka',
+          'Langka Punch',
+          'Langka Bonk',
+          'Langkaquake',
+          'Zucc Langka',
+          'Gyatt Langka',
+          'Self-Care Langka'
+        ],
+        description: "Floydilayo, with his spiky Langka hair, is always ready for a stare! He's got the zesty vibe and the Langka pride. Don't let his chill demeanor fool you, he will always make your mood better, or worst if he is not well-fed. But feed him once he will do the Zesty Leono pose for the camera. He'll strike a pose with his Langka nose, he always grows and shows how it goes!",
+        borderColor: 'GREEN',
+        overlay: 'holographic',
+        imageSrc: 'Image_Floyd.jpeg'
+      };
+      
+      // Merge provided config with defaults - only for properties that exist in defaults
+      const mergedConfig = {};
+      for (const key in defaults) {
+        mergedConfig[key] = config.hasOwnProperty(key) ? config[key] : defaults[key];
+      }
+      
+      // Update card title
+      if (window.titleText) {
+        window.titleText.text(mergedConfig.cardTitle);
+      }
+      
+      // Update HP
+      if (window.hpValueText) {
+        window.hpValueText.text(mergedConfig.hpValue);
+      }
+      
+      // Update damage value
+      if (window.damageValueText) {
+        window.damageValueText.text('Damage: ' + mergedConfig.damageValue);
+      }
+      
+      // Update crit rate
+      if (window.critRateText) {
+        window.critRateText.text('Crit Rate: ' + mergedConfig.critRateValue);
+      }
+      
+      // Update skills - remove old ones first
+      if (window.skillTexts && window.skillTexts.length > 0) {
+        window.skillTexts.forEach(skill => skill.destroy());
+      }
+      window.skillTexts = [];
+      
+      // Add new skills, matching the skill names to the fixed positions
+      const skillToRender = Math.min(mergedConfig.skillNames.length, skillPositions.length);
+      for (let i = 0; i < skillToRender; i++) {
+        const skillName = mergedConfig.skillNames[i];
+        const position = skillPositions[i];
+        
+        const skillText = new Konva.Text({
+          x: position.x,
+          y: position.y,
+          text: skillName,
+          fontSize: 10 * scaleFactor,
+          fontFamily: 'CardSkillFont',
+          fill: 'white',
+          shadowColor: 'black',
+          shadowBlur: 1 * scaleFactor,
+          shadowOffset: { x: 1 * scaleFactor, y: 1 * scaleFactor },
+        });
+        layer.add(skillText);
+        window.skillTexts.push(skillText);
+      }
+      
+      // Update description
+      if (window.descriptionText) {
+        window.descriptionText.text(mergedConfig.description);
+      }
+      
+      // Update border color
+      if (mergedConfig.borderColor) {
+        setBorderGradient(mergedConfig.borderColor);
+        
+        // Update the dropdown to match
+        const borderSelect = document.getElementById('border-color');
+        if (borderSelect) {
+          borderSelect.value = mergedConfig.borderColor;
+        }
+      }
+      
+      // Update overlay
+      if (mergedConfig.overlay) {
+        currentOverlay = mergedConfig.overlay;
+        setOverlayEffect(mergedConfig.overlay);
+        
+        // Update the dropdown to match
+        const overlaySelect = document.getElementById('overlay-select');
+        if (overlaySelect) {
+          overlaySelect.value = mergedConfig.overlay;
+        }
+      }
+      
+      // Update image if provided
+      if (mergedConfig.imageSrc && mergedConfig.imageSrc !== window.currentImageSrc) {
+        const newImage = new Image();
+        newImage.src = mergedConfig.imageSrc;
+        window.currentImageSrc = mergedConfig.imageSrc;
+        
+        newImage.onload = () => {
+          console.log("Loading new image:", mergedConfig.imageSrc);
+          
+          // Find the image within the clip group - first find all groups
+          const groups = layer.find('Group');
+          let clipGroup = null;
+          
+          // Find the clip group that has the clip function - this is our image container
+          for (let i = 0; i < groups.length; i++) {
+            if (groups[i].clipFunc) {
+              clipGroup = groups[i];
+              break;
+            }
+          }
+          
+          if (clipGroup) {
+            // Find the image inside the clip group
+            const images = clipGroup.find('Image');
+            if (images.length > 0) {
+              const existingImage = images[0];
+              
+              // Scale to fit height
+              const scale = window.clipGroupHeight / newImage.height;
+              const drawHeight = window.clipGroupHeight;
+              const drawWidth = newImage.width * scale;
+              const imgX = (window.clipGroupWidth - drawWidth) / 2;
+              
+              existingImage.image(newImage);
+              existingImage.width(drawWidth);
+              existingImage.height(drawHeight);
+              existingImage.x(imgX);
+              
+              layer.draw();
+              console.log("Image updated successfully");
+            } else {
+              console.error("No image found in clip group");
+            }
+          } else {
+            console.error("No clip group found");
+          }
+        };
+      }
+      
+      // Redraw the layer
+      layer.draw();
+    }
+
+    // Example usage of configureCard function - uncomment to test
+    /*
+    // Change to Jieco card
+    configureCard({
+      cardTitle: 'Jieco the Third',
+      hpValue: '1800',
+      damageValue: '150',
+      critRateValue: 'x2.1',
+      skillNames: [
+        'Jieco Jab',
+        'Third Degree',
+        'Banana Split',
+        'Potassium Punch',
+        'Peel Out'
+      ],
+      description: "Jieco the Third is the crowned prince of the Banana Republic. His curved form and slippery tactics make him a formidable opponent. Watch out for his Potassium Punch - it's a real knockout! When he's not fighting, you can find him hanging with his bunch.",
+      borderColor: 'BLUE',
+      overlay: 'glitter',
+      imageSrc: 'Image_Jieco.jpeg'
+    });
+    */
+    
+    // Change to John Michael card
+    configureCard({
+      cardTitle: 'John Michelob',
+      hpValue: '2200',
+      damageValue: '180',
+      critRateValue: 'x1.7',
+      skillNames: [
+        'Delulu Kalabasa',
+        'Kalabasa Punch',
+        'Kalabasa Bonk',
+        'Kalabasaquake',
+        'Self-Care Kalabasa',
+        'Gyatt Kalabasa',
+        'Zucc Kalabasa'
+      ],
+      description: "John Michelob Kalabasa, a veggie with a head full of sass! Don't let his goofy look fool ya, he's got moves like a squas-sa! He's chilling in the mist, with a fist full of grit. John Michelob Kalabasa, ready to attack, with a SpAtk that will push you back! He's got the style, he got the gile!",
+      borderColor: 'RED',
+      overlay: 'foil',
+      imageSrc: 'Image_JohnMichael.jpeg'
+    });
+
+    // Handle card configuration input
+    document.getElementById('apply-config').addEventListener('click', () => {
+      const configText = document.getElementById('card-config').value;
+      try {
+        const config = JSON.parse(configText);
+        
+        // Set this flag for debugging image updates
+        window.updatingFromConfig = true;
+        
+        // Apply the configuration 
+        configureCard(config);
+        
+        // Store the current configuration for future reference
+        window.currentConfiguration = config;
+        
+        // Update the textarea with the applied config (to keep it in sync)
+        document.getElementById('card-config').value = JSON.stringify(config, null, 2);
+        
+        console.log("Configuration applied successfully:", config);
+      } catch (error) {
+        console.error("Error applying configuration:", error);
+        alert('Invalid JSON format. Please check your input.');
+      }
+    });
+  </script>
+</body>
+</html>
