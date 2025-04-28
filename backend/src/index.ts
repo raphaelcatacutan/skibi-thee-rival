@@ -2,22 +2,30 @@ import * as dotenv from 'dotenv';
 import { readFileSync } from 'fs';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import postImage from "./routes/postImage"; 
-import getImage from "./routes/getImage"; 
-const path = require('path');
+import postInput from "./routes/postInput"; 
+import getImagesList from "./routes/getImagesList"; 
+import http from 'http';
+import WebSocket from 'ws';
 
-dotenv.config();
-const API_KEY = process.env.API_KEY;
+dotenv.config()
 const PORT = process.env.PORT;
+
 const app = express();
-
 app.use(cors());
-app.use(express.json()); // for parsing application/json
-app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+const server = http.createServer(app);
 
+const wss = new WebSocket.Server({ server });
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
 
+wss.on('connection', (ws) => {
+    console.log('New WebSocket connection');
+    ws.on('message', (message) => {
+      console.log('Received message:', message);
+    });
+  });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
 app.get('/', (req: Request, res: Response) => {
@@ -26,5 +34,5 @@ app.get('/', (req: Request, res: Response) => {
 
 // Image uploads
 app.use('/uploads', express.static("./uploads"));
-app.use('/', postImage);
-app.use('/', getImage);
+app.use('/', postInput(wss));
+app.use('/', getImagesList);
