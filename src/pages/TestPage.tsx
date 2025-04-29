@@ -100,8 +100,6 @@ const TestPage = () => {
     }
   };
 
-  // startBattle()
-
   return (
     <div>
       <h1>File Upload Status</h1>
