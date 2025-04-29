@@ -40,6 +40,7 @@
   font-size: 5em;
   text-align: center;
   font-family: header;
+  visibility: hidden;
 }
 
 #battle_area {

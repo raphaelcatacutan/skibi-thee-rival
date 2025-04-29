@@ -1,3 +1,13 @@
+@font-face {
+  font-family: header;
+  src: url(../assets/fonts/31_War\ Machine.ttf);
+}
+
+@font-face {
+  font-family: subtitle;
+  src: url(../assets/fonts/10_gremlins.ttf);
+}
+
 #BasicAtkC1 {
   position: absolute;
   top: 120px;
@@ -108,4 +118,50 @@
   left: 950px;
   width: 0;
   height: 0;
+}
+
+#DiceC1 {
+  position: absolute;
+  top: 175px;
+  left: 50px;
+  width: 0;
+  height: 0;
+}
+
+#DiceC2 {
+  position: absolute;
+  top: 175px;
+  left: 1325px;
+  width: 0;
+  height: 0;
+}
+
+#DiceCountC1 {
+  position: absolute;
+  top: 175px;
+  left: 50px;
+  width: 150px;
+  height: 150px;
+  z-index: 1;
+}
+
+#DiceCountC2 {
+  position: absolute;
+  top: 175px;
+  left: 1325px;
+  width: 150px;
+  height: 150px;
+  z-index: 1;
+}
+
+.mid_text {
+  position: absolute;
+  font-family: subtitle;
+  font-size: 2em;
+  color: white;
+  top: 0;
+  left: 0;
+  width: 150px;
+  height: 150px;
+  z-index: 2;
 }

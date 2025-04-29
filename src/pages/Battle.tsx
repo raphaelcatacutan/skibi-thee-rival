@@ -17,6 +17,12 @@ import C1Zucc from '../components/VFX/C1Zucc'
 import C2Zucc from '../components/VFX/C2Zucc'
 import C1Punch from '../components/VFX/C1Punch'
 import C2Punch from '../components/VFX/C2Punch'
+import C1Dice from '../components/VFX/C1Dice'
+import C2Dice from '../components/VFX/C2Dice'
+import C1DiceCount from '../components/VFX/C1DiceCount'
+import C2DiceCount from '../components/VFX/C2DiceCount'
+import MiddleText from '../components/VFX/MiddleText'
+
 import { time } from 'console'
 import { TIMEOUT } from 'dns'
 
@@ -39,14 +45,21 @@ export default function(){
   const [doZuccC2, setZuccC2] = useState(false);
   const [doPunchC1, setPunchC1] = useState(false);
   const [doPunchC2, setPunchC2] = useState(false);
+  const [doDiceC1, setDiceC1] = useState(false);
+  const [doDiceC2, setDiceC2] = useState(false);
+  const [doDiceCountC1, setDiceCountC1] = useState(false);
+  const [doDiceCountC2, setDiceCountC2] = useState(false);
+  const [doMiddleText, setMiddleText] = useState(false);
+  const [showMiddleTextString, setMiddleTextString] = useState("");
+  var [showDiceCountValC1, setDiceCountValC1] = useState("1");
+  var [showDiceCountValC2, setDiceCountValC2] = useState("1");
   
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [doBasicAtkSFX, setBasicAtkSFX] = useState("");
-  const [doCritAtkSFX, setCritAtkSFX] = useState("");
-  let currHealthC1: number = 0,
-      currHealthC2: number = 0;
-  let maxHealthC1: number = 0,
-      maxHealthC2: number = 0;
+
+  let currHealthC1: number = 1,
+      currHealthC2: number = 1;
+  let maxHealthC1: number = 1,
+      maxHealthC2: number = 1;
 
   // const batk_audio_cont: string[] = ["batk_1", "batk_2", "batk_3"];
   // const catk_audio_cont: string[] = ["catk_1", "catk_2", "catk_3"];
@@ -67,6 +80,11 @@ export default function(){
     animation.registerVFXSetter('C2Harden', setHardenC2)
     animation.registerVFXSetter('C1Zucc', setZuccC1)
     animation.registerVFXSetter('C2Zucc', setZuccC2)
+    animation.registerVFXSetter('C1Dice', setDiceC1)
+    animation.registerVFXSetter('C2Dice', setDiceC2)
+    animation.registerVFXSetter('C1DiceCount', setDiceCountC1)
+    animation.registerVFXSetter('C2DiceCount', setDiceCountC2)
+    animation.registerVFXSetter('MiddleText', setMiddleText)
   }, []);
 
   // for bg music
@@ -91,6 +109,23 @@ export default function(){
       currHealthC2 = currHealth;
       maxHealthC2 = maxHealth;
     }
+  }
+
+  function performDiceRoll(C1_dice: number, C2_dice: number, turn: string = "Card 1 First"){
+    const audio = document.getElementById("dice_sfx") as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.pause();
+    animation.triggerVFX('C1Dice', 2000);
+    animation.triggerVFX('C2Dice', 2000);
+    setDiceCountValC1(C1_dice.toString());
+    setDiceCountValC2(C2_dice.toString());
+    audio.play();
+    setTimeout(() => {
+      setMiddleTextString(turn);
+      animation.triggerVFX('C1DiceCount', 1000)
+      animation.triggerVFX('C2DiceCount', 1000);
+    }, 1000)
+    animation.triggerVFX('MiddleText', 1000);
   }
 
   function performBAtk(index: number){
@@ -205,19 +240,10 @@ export default function(){
 
   }
 
-  // test
-  function triggerBoth(){ 
-    // animation.triggerVFX('C1BasicAttack', 500);
-    animation.triggerVFX('C1BasicAttack');
-    setTimeout(() => {
-      animation.triggerVFX('C2BasicAttack')
-    }, 1000);
-  }
-
-
   return (
     <div className={styles.background_img}>
       <audio id="bg_music" src="/assets/sounds/battle_bgmusic.mp3" loop={true}/>
+      <audio id="dice_sfx" src="/assets/sounds/dice.mp3"/>
       <audio id="catk_sfx" src="/assets/sounds/catk_3.mp3"/>
       <audio id="batk_sfx" src="/assets/sounds/batk_4.mp3"/>
       <audio id="punch_sfx" src="/assets/sounds/punch.mp3"/>
@@ -242,9 +268,13 @@ export default function(){
         </div>
       </div>
       
-      <button onClick={() => performPunch(0)}>C1 Attack!</button>
+      <button onClick={() => performDiceRoll(3, 1)}>C1 Attack!</button>
       <button onClick={() => performSelfCare(1)}>C2 Attack!</button>
 
+      <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
+      <C2DiceCount isVisible={doDiceCountC2} dice_no={showDiceCountValC2}/>
+      <C1Dice isVisible={doDiceC1}></C1Dice>
+      <C2Dice isVisible={doDiceC2}></C2Dice>
       <C1BasicAttack isVisible={doBasicAtkC1} />
       <C2BasicAttack isVisible={doBasicAtkC2} />
       <C1CritAttack isVisible={doCritAtkC1}/>
@@ -260,8 +290,8 @@ export default function(){
       <C2Harden isVisible={doHardenC2}/>
       <C1Zucc isVisible={doZuccC1}/>
       <C2Zucc isVisible={doZuccC2}/>
-
-
+      <MiddleText isVisible={true} text={showMiddleTextString}/>
+      
       {/* <BasicAttack isVisible={false}></BasicAttack> */}
       {/* <button onClick={triggerBasicAttack}>Trigger Basic Attack</button>
       {showVFX && (
