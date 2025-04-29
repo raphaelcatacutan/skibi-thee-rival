@@ -19,6 +19,23 @@ function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+let card1Name: string = ""
+let performBAtk = (index: number) => {}
+let performPunch = (index: number) => {}
+let performCAtk = (index: number) => {}
+let performBonk = (index: number) => {}
+let performMaldquake = (index: number) => {}
+let performDeluluStrike = (index: number) => {}
+let performSelfCare = (index: number) => {}
+let performHarden = (index: number) => {}
+let performZucc = (index: number) => {}
+let applyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {}
+
+function getIndex(name: string) {
+    if (card1Name == name) return 0
+    else return 1
+}
+
 class Card {
     public name: string;
     public hp: number;
@@ -42,17 +59,24 @@ class Card {
         if (this.isGyattHarden && damage > 0) {
             damage = Math.round(damage * 0.3);
             console.log(`${this.name} is Gyatt Harden! Damage reduced to ${damage}.`);
+            performHarden(getIndex(this.name))
             this.gyattHarden(false);
         }
 
         const prevHp = this.hp;
         this.hp = Math.max(0, Math.min(this.maxHp, this.hp - damage));
+        applyHealthChange(getIndex(this.name), this.hp, this.maxHp)
         console.log(`${this.name} took ${damage} damage. HP: ${prevHp} → ${this.hp}`);
     }
 
     basicAttack(target: Card, isCritical: boolean): void {
         const multiplier = isCritical ? random(1.6, 2, false) : 1;
         const damage = Math.round(this.attackDamage * multiplier);
+        if (isCritical) { 
+            performCAtk(getIndex(this.name))
+        } else {
+            performBAtk(getIndex(this.name))
+        }
         console.log(`${this.name} attacks ${target.name} for ${damage} damage${isCritical ? " (CRITICAL!)" : ""}`);
         target.damage(damage);
     }
@@ -63,6 +87,7 @@ class Card {
         for (let i = 1; i <= strikes && cardTarget.hp > 0; i++) {
             const damage = Math.round(this.attackDamage * 0.7);
             await sleep(1000);
+            performPunch(getIndex(this.name))
             console.log(`Hit ${i}: ${cardTarget.name} takes ${damage} damage`);
             cardTarget.damage(damage);
         }
@@ -75,6 +100,7 @@ class Card {
         const damage = Math.round(this.attackDamage * multiplier);
         console.log(`${cardTarget.name} is burned and takes ${damage} damage`);
         cardTarget.damage(damage);
+        performBonk(getIndex(this.name))
         console.groupEnd();
     }
 
@@ -86,25 +112,30 @@ class Card {
         this.damage(selfDamage);
         console.log(`${cardTarget.name} takes ${enemyDamage} damage`);
         cardTarget.damage(enemyDamage);
+        performMaldquake(getIndex(this.name))
         console.groupEnd();
     }
 
     setDelulu(state = true): void {
+        performDeluluStrike(getIndex(this.name))
         console.log(`${this.name} is ${state ? "now" : "no longer"} Delulu!`);
         this.isDelulu = state;
     }
 
     gyattHarden(state = true): void {
+        performHarden(getIndex(this.name))
         console.log(`${this.name} is ${state ? "now" : "no longer"} Gyatt Harden!`);
         this.isGyattHarden = state;
     }
 
     setZucc(state = true): void {
+        performZucc(getIndex(this.name))
         console.log(`${this.name} is ${state ? "now zuccing" : "no longer zuccing"}.`);
         this.isZucc = state;
     }
 
     heal(): void {
+        performSelfCare(getIndex(this.name))
         const healAmount = random(300, 500);
         console.log(`${this.name} heals for ${healAmount} HP!`);
         this.damage(-healAmount);
@@ -164,9 +195,34 @@ async function battleSequence(realTurn: Card, realTarget: Card): Promise<void> {
     }
 }
 
-async function startBattle(): Promise<number> {
+async function startBattle(
+    aperformBAtk = (index: number) => {},
+    aperformPunch = (index: number) => {},
+    aperformCAtk = (index: number) => {},
+    aperformBonk = (index: number) => {},
+    aperformMaldquake = (index: number) => {},
+    aperformDeluluStrike = (index: number) => {},
+    aperformSelfCare = (index: number) => {},
+    aperformHarden = (index: number) => {},
+    aperformZucc = (index: number) => {},
+    aapplyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {}
+): Promise<number> {
     const card1 = new Card("Card 1");
     const card2 = new Card("Card 2");
+
+    card1Name = card1.name
+
+    performBAtk = aperformBAtk
+    performPunch = aperformPunch
+    performCAtk = aperformCAtk
+    performBonk = aperformBonk
+    performMaldquake = aperformMaldquake
+    performDeluluStrike = aperformDeluluStrike
+    performSelfCare = aperformSelfCare
+    performHarden = aperformHarden
+    performZucc = aperformZucc
+    applyHealthChange = aapplyHealthChange
+
     console.log("⚔️ Battle Start!");
     console.log(`${card1.name}: ${card1.hp} HP ${card1.attackDamage} Base Attack`);
     console.log(`${card2.name}: ${card2.hp} HP ${card2.attackDamage} Base Attack`);
@@ -193,7 +249,6 @@ async function startBattle(): Promise<number> {
 
     return rounds;
 }
-
 async function runSimulations(times = 10): Promise<void> {
     console.time("Simulation-Time");
     let totalRounds = 0;
@@ -217,6 +272,6 @@ async function runSimulations(times = 10): Promise<void> {
     console.timeEnd("Simulation-Time");
 }
 
-runSimulations(100);
+// runSimulations(100);
 
 export { startBattle };
