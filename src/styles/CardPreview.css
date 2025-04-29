@@ -1,6 +1,4 @@
-body {
-  /* Removed background video styling */
-}
+
 
 .card-container {
   display: block; /* Restore the div for the background video */
