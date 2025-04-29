@@ -218,7 +218,7 @@ async function startBattle(
     aperformZucc = (index: number) => {},
     aapplyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {},
     afinishedBattle = (winnerId: string) => {},
-    aperformDiceRoll = (result1: number, result2: number) => {}
+    aperformDiceRoll = (result1: number, result2: number, message: string) => {}
 ): Promise<number> {
     performBAtk = aperformBAtk
     performPunch = aperformPunch
@@ -241,13 +241,16 @@ async function startBattle(
     while (true) {
         const random1 = random(1, 6)
         const random2 = random(1, 6)
-    
-        aperformDiceRoll(random1, random2)
 
-        await sleep(3000)
-
-        if (random1 == random2) continue
+        if (random1 == random2) {
+            aperformDiceRoll(random1, random2, "Cards tied")
+            await sleep(3000)
+            continue
+        }
         else {
+            const message = random1 > random2 ? "Card 1 will attack first" : "Card 2 will attack first"  
+            aperformDiceRoll(random1, random2, message)
+            await sleep(3000)
             turn1 = random1 > random2 ? card1 : card2
             turn2 = random1 > random2 ? card2 : card1
             break
