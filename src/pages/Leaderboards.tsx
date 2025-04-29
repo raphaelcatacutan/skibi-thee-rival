@@ -11,21 +11,7 @@ const leaderboardData = [
 ]
 
 export default function(){
-
-  /* FETCH LEADERBOARD DATA FROM DB
-  const [leaderboardData, setLeaderboardData] = useState([]);
-
-  useEffect(() => {
-    async function fetchLeaderboard() {
-      const response = await fetch('https://your-api-url.com/leaderboard');
-      const data = await response.json();
-      setLeaderboardData(data);
-    }
-
-    fetchLeaderboard();
-  }, []);
-  */
-
+  // bg
   const [audioPlayed, setAudioPlayed] = useState(false);
   useEffect(() => {
     const handleUserInteraction = () => {
@@ -46,6 +32,7 @@ export default function(){
   return(
     <div className={styling.background_img}>
       <audio id="background-music" src="/assets/sounds/bgmusic.mp3" loop hidden />
+      <div className={styling.userinteraction_mask}></div>
       <div className={styling.rank_cont}>
         <div id={styling.leaderboard_text}>Leaderboards</div>
         <div id={styling.rank_list}>
