@@ -3,6 +3,11 @@
   src: url(../assets/fonts/10_gremlins.ttf);
 }
 
+@font-face {
+  font-family: subtitle;
+  src: url(../assets/fonts/10_gremlins.ttf);
+}
+
 .background_img {
   background-image: url('../assets/images/scenes/bg_arena.jpg');
   background-size: cover;
@@ -15,6 +20,20 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.mask_layer {
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  background-color: rgba(0, 0, 0, 0.8);
+  height: 100vh;
+  width: 100vw;
+  z-index: 1;
+  font-family: subtitle;
+  font-size: 3em;
+  color: white;
 }
 
 #round_text {
