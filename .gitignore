@@ -26,6 +26,8 @@ yarn-error.log*
 package-lock.json
 **/.gitignore
 **/uploads/
-**/data/
 **/tests/
-**/output/
+**/output/**.txt
+**/output/**.jpg
+**/data/**.jpg
+**/data/**.txt

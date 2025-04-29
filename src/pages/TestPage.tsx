@@ -1,36 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { startBattle } from '../utils/battle_sequence';
+import React, { useState, useEffect } from "react";
+import { startBattle } from "../utils/battle_sequence";
 
 type ImageGenerationResponse = {
   success: boolean;
   outputPath: string;
-}
+};
 
 const TestPage = () => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   // Set up WebSocket connection on component mount
   useEffect(() => {
-    const socket = new WebSocket('ws://localhost:5000'); // Connect to WebSocket server
+    const socket = new WebSocket("ws://localhost:5000"); // Connect to WebSocket server
 
     socket.onopen = () => {
-      console.log('WebSocket connection established');
+      console.log("WebSocket connection established");
     };
 
     socket.onmessage = (event) => {
-      console.log('Received from backend:', event.data);
-      setMessage(event.data); 
+      console.log("Received from backend:", event.data);
+      setMessage(event.data);
     };
 
     socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      console.error("WebSocket error:", error);
     };
 
     return () => {
       socket.close();
     };
   }, []);
-
 
   const [imagePath, setImagePath] = useState<string>("");
   const [textContent, setTextContent] = useState<string>("");
@@ -101,14 +100,12 @@ const TestPage = () => {
     }
   };
 
-  startBattle()
-  
   return (
     <div>
       <h1>File Upload Status</h1>
       <p>{message}</p>
 
-      <hr/>
+      <hr />
       <h1>Image Generation</h1>
 
       <div>
@@ -157,8 +154,8 @@ const TestPage = () => {
         </div>
       )}
 
-      <hr/>
-      
+      <hr />
+
       <h1>Update Score</h1>
       <div>
         <label>
