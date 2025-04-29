@@ -9,6 +9,8 @@ import C1CritAttack from '../components/VFX/C1CritAttack'
 import C2CritAttack from '../components/VFX/C2CritAttack'
 import C1SelfCare from '../components/VFX/C1SelfCare'
 import C2SelfCare from '../components/VFX/C2SelfCare'
+import C1DeluluStrike from '../components/VFX/C1DeluluStrike'
+import C2DeluluStrike from '../components/VFX/C2DeluluStrike'
 
 interface RoundCount {
   round_no: number;
@@ -21,14 +23,17 @@ export default function(){
   const [doCritAtkC2, setCritAtkC2] = useState(false);
   const [doSelfCareC1, setSelfCareC1] = useState(false);
   const [doSelfCareC2, setSelfCareC2] = useState(false);
+  const [doDStrikeC1, setDStrikeC1] = useState(false);
+  const [doDStrikeC2, setDStrikeC2] = useState(false);
   
   const [hasInteracted, setHasInteracted] = useState(false);
   const [doBasicAtkSFX, setBasicAtkSFX] = useState("");
   const [doCritAtkSFX, setCritAtkSFX] = useState("");
 
-  const batk_audio_cont: string[] = ["batk_1", "batk_2", "batk_3"];
-  const catk_audio_cont: string[] = ["catk_1", "catk_2", "catk_3"];
+  // const batk_audio_cont: string[] = ["batk_1", "batk_2", "batk_3"];
+  // const catk_audio_cont: string[] = ["catk_1", "catk_2", "catk_3"];
 
+  // register vfx
   useEffect(() => {
     animation.registerVFXSetter('C1BasicAttack', setBasicAtkC1)
     animation.registerVFXSetter('C2BasicAttack', setBasicAtkC2)
@@ -36,8 +41,11 @@ export default function(){
     animation.registerVFXSetter('C2CritAttack', setCritAtkC2)
     animation.registerVFXSetter('C1SelfCare', setSelfCareC1)
     animation.registerVFXSetter('C2SelfCare', setSelfCareC2)
+    animation.registerVFXSetter('C1DeluluStrike', setDStrikeC1)
+    animation.registerVFXSetter('C2DeluluStrike', setDStrikeC2)
   }, []);
 
+  // for bg music
   useEffect(() => {
     const audio = document.getElementById("bg_music") as HTMLAudioElement;
     if (hasInteracted){
@@ -75,9 +83,54 @@ export default function(){
     audio.play();
   }
 
-  function performCrit(){
-    animation.triggerVFX('C1CritAttack')
+  function performSelfCare(index: number){
+    const audio = document.getElementById("selfcare_sfx") as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.pause();
+    if (index == 0){
+      animation.triggerVFX('C1SelfCare');
+    } else {
+      animation.triggerVFX('C2SelfCare');
+    }
+    audio.play();
   }
+
+  function performBonk(index: number){
+    const audio = document.getElementById("bonk_sfx") as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.pause();
+    if (index == 0){
+      // c1 animation
+    } else {
+      // c1 animation
+    }
+    audio.play();
+  }
+
+  function performMaldquake(index: number){
+    const audio = document.getElementById("maldquake_sfx") as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.pause();
+    if (index == 0){
+      // c1 animation
+    } else {
+      // c1 animation
+    }
+    audio.play();
+  }
+
+  function performDeluluStrike(index: number){
+    const audio = document.getElementById("delulustrike_sfx") as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.pause();
+    if (index == 0){
+      animation.triggerVFX('C1DeluluStrike');
+    } else {
+      animation.triggerVFX('C2DeluluStrike');
+    }
+    audio.play();
+  }
+
 
   // test
   function triggerBoth(){ 
@@ -93,6 +146,10 @@ export default function(){
       <audio id="bg_music" src="/assets/sounds/battle_bgmusic.mp3" loop={true}/>
       <audio id="catk_sfx" src="/assets/sounds/catk_3.mp3"/>
       <audio id="batk_sfx" src="/assets/sounds/batk_4.mp3"/>
+      <audio id="bonk_sfx" src="/assets/sounds/bonk.mp3"/>
+      <audio id="maldquake_sfx" src="/assets/sounds/maldquake.mp3"/>
+      <audio id="delulustrike_sfx" src="/assets/sounds/delulustrike.mp3"/>
+      <audio id="selfcare_sfx" src="/assets/sounds/selfcare.mp3"/>
       <div className={styles.mask_layer} onClick={removeMask}>
         Proceed to Battle
       </div>
@@ -108,15 +165,20 @@ export default function(){
         </div>
       </div>
       
-      <button onClick={() => performCAtk(1)}>C1 Attack!</button>
-      <button onClick={() => performBAtk(0)}>C2 Attack!</button>
+      <button onClick={() => performDeluluStrike(1)}>C1 Attack!</button>
+      <button onClick={() => performSelfCare(0)}>C2 Attack!</button>
 
-      <C1BasicAttack isVisible={doBasicAtkC1} /> {/*card 1*/}
-      <C2BasicAttack isVisible={doBasicAtkC2} /> {/*card 2*/}
+      <C1BasicAttack isVisible={doBasicAtkC1} />
+      <C2BasicAttack isVisible={doBasicAtkC2} />
       <C1CritAttack isVisible={doCritAtkC1}/>
       <C2CritAttack isVisible={doCritAtkC2}/>
+      <C1DeluluStrike isVisible={doDStrikeC1}/>
+      <C2DeluluStrike isVisible={doDStrikeC2}/>
+
       <C1SelfCare isVisible={doSelfCareC1}/>
       <C2SelfCare isVisible={doSelfCareC2}/>
+
+
 
       {/* <BasicAttack isVisible={false}></BasicAttack> */}
       {/* <button onClick={triggerBasicAttack}>Trigger Basic Attack</button>

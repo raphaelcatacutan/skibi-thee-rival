@@ -45,3 +45,19 @@
   width: 0;
   height: 0;
 }
+
+#DStrikeC1 {
+  position: absolute;
+  top: 180px;
+  left: 280px;
+  width: 0;
+  height: 0;
+}
+
+#DStrikeC2 {
+  position: absolute;
+  top: 180px;
+  left: 930px;
+  width: 0;
+  height: 0;
+}
