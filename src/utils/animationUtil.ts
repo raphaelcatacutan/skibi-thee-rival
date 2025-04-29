@@ -1,34 +1,44 @@
 import React from 'react'
 
-let setVFXCallback: ((visible: boolean) => void) | null = null;
-let animationSpeed: number = 500;
+const vfxSetters: { [key: string]: (visible: boolean) => void } = {};
+let animationSpeed: number = 300;
 
-export function registerVFXSetter(setter: (visible: boolean) => void) {
-  setVFXCallback = setter;
+export function registerVFXSetter(name: string, setter: (visible: boolean) => void) {
+  vfxSetters[name] = setter;
 }
 
-export function triggerC1BasicAttack() {
-  if (setVFXCallback) {
-    setVFXCallback(true);
-
-    setTimeout(() => {
-      setVFXCallback && setVFXCallback(false);
-    }, animationSpeed);
+export function triggerVFX(name: string, duration = animationSpeed) {
+  const setter = vfxSetters[name];
+  if (setter) {
+    setter(true);
+    setTimeout(() => setter(false), duration);
   }
 }
 
-export function triggerC2BasicAttack() {
-  if (setVFXCallback) {
-    setVFXCallback(true);
 
-    setTimeout(() => {
-      setVFXCallback && setVFXCallback(false);
-    }, animationSpeed); // Duration of your VFX animation
-  }
-}
-// export function triggerVfx(setVfxVisible: React.Dispatch<React.SetStateAction<boolean>>, duration: number = 2000) {
-//   setVfxVisible(true);
-//   setTimeout(() => {
-//     setVfxVisible(false);
-//   }, duration);
+// let setVFXCallback: ((visible: boolean) => void) | null = null;
+
+
+// export function registerVFXSetter(setter: (visible: boolean) => void) {
+//   setVFXCallback = setter;
+// }
+
+// export function triggerC1BasicAttack() {
+//   if (setVFXCallback) {
+//     setVFXCallback(true);
+
+//     setTimeout(() => {
+//       setVFXCallback && setVFXCallback(false);
+//     }, animationSpeed);
+//   }
+// }
+
+// export function triggerC2BasicAttack() {
+//   if (setVFXCallback) {
+//     setVFXCallback(true);
+
+//     setTimeout(() => {
+//       setVFXCallback && setVFXCallback(false);
+//     }, animationSpeed); // Duration of your VFX animation
+//   }
 // }
