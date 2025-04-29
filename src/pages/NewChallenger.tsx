@@ -8,7 +8,7 @@ const CardGallery: React.FC = () => {
 
   const fetchCards = () => {
     setLoading(true);
-    fetch('http://localhost:3000/api/images?isSkibidi=true')
+    fetch('http://localhost:3000/api/images?isSkibidi=false')
       .then(res => res.json())
       .then(data => {
         const parsed = jsonToCards(data);
