@@ -1,9 +1,7 @@
 import React, { use, useEffect, useState } from 'react'
 import styles from '../styles/page-Battle.module.css'
-import vfx from '../styles/vfx-Styling.module.css'
 import Healthbar from '../components/Healthbar' 
 import CardDisplay from '../components/CardDisplay'
-// import BasicAttack from '../components/VFX/BasicAttack'
 import * as animation from '../utils/animationUtil'
 import C1BasicAttack from '../components/VFX/C1BasicAttack'
 import C2BasicAttack from '../components/VFX/C2BasicAttack'
@@ -25,8 +23,11 @@ export default function(){
   const [doSelfCareC2, setSelfCareC2] = useState(false);
   
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [doBasicAtkSFX, setBasicAtkSFX] = useState(false);
-  const [doCritAtkSFX, setCritAtkSFX] = useState(false);
+  const [doBasicAtkSFX, setBasicAtkSFX] = useState("");
+  const [doCritAtkSFX, setCritAtkSFX] = useState("");
+
+  const batk_audio_cont: string[] = ["batk_1", "batk_2", "batk_3"];
+  const catk_audio_cont: string[] = ["catk_1", "catk_2", "catk_3"];
 
   useEffect(() => {
     animation.registerVFXSetter('C1BasicAttack', setBasicAtkC1)
@@ -38,9 +39,10 @@ export default function(){
   }, []);
 
   useEffect(() => {
+    const audio = document.getElementById("bg_music") as HTMLAudioElement;
     if (hasInteracted){
-      const audio = document.getElementById("bg_music") as HTMLAudioElement | null;
-      audio?.play();  
+      audio.volume = 0.5;
+      audio.play();
     }
   }, [hasInteracted])
 
@@ -49,6 +51,35 @@ export default function(){
     setHasInteracted(true);
   }
 
+  function performBAtk(index: number){
+    const audio = document.getElementById("batk_sfx") as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.pause();
+    if (index == 0){
+      animation.triggerVFX('C1BasicAttack');
+    } else {
+      animation.triggerVFX('C2BasicAttack');
+    }
+    audio.play();
+  }
+
+  function performCAtk(index: number){
+    const audio = document.getElementById("catk_sfx") as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.pause();
+    if (index == 0){
+      animation.triggerVFX('C1CritAttack');
+    } else {
+      animation.triggerVFX('C2CritAttack');
+    }
+    audio.play();
+  }
+
+  function performCrit(){
+    animation.triggerVFX('C1CritAttack')
+  }
+
+  // test
   function triggerBoth(){ 
     // animation.triggerVFX('C1BasicAttack', 500);
     animation.triggerVFX('C1BasicAttack');
@@ -59,7 +90,9 @@ export default function(){
 
   return (
     <div className={styles.background_img}>
-      <audio id="bg_music" src="/assets/sounds/battle_bgmusic.mp3"/>
+      <audio id="bg_music" src="/assets/sounds/battle_bgmusic.mp3" loop={true}/>
+      <audio id="catk_sfx" src="/assets/sounds/catk_3.mp3"/>
+      <audio id="batk_sfx" src="/assets/sounds/batk_4.mp3"/>
       <div className={styles.mask_layer} onClick={removeMask}>
         Proceed to Battle
       </div>
@@ -75,8 +108,8 @@ export default function(){
         </div>
       </div>
       
-      <button onClick={() => triggerBoth()}>C1 Attack!</button>
-      <button onClick={() => animation.triggerVFX('C2CritAttack')}>C2 Attack!</button>
+      <button onClick={() => performCAtk(1)}>C1 Attack!</button>
+      <button onClick={() => performBAtk(0)}>C2 Attack!</button>
 
       <C1BasicAttack isVisible={doBasicAtkC1} /> {/*card 1*/}
       <C2BasicAttack isVisible={doBasicAtkC2} /> {/*card 2*/}
