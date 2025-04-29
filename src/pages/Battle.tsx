@@ -13,6 +13,12 @@ import C1DeluluStrike from '../components/VFX/C1DeluluStrike'
 import C2DeluluStrike from '../components/VFX/C2DeluluStrike'
 import C1Harden from '../components/VFX/C1Harden'
 import C2Harden from '../components/VFX/C2Harden'
+import C1Zucc from '../components/VFX/C1Zucc'
+import C2Zucc from '../components/VFX/C2Zucc'
+import C1Punch from '../components/VFX/C1Punch'
+import C2Punch from '../components/VFX/C2Punch'
+import { time } from 'console'
+import { TIMEOUT } from 'dns'
 
 interface RoundCount {
   round_no: number;
@@ -29,6 +35,10 @@ export default function(){
   const [doDStrikeC2, setDStrikeC2] = useState(false);
   const [doHardenC1, setHardenC1] = useState(false);
   const [doHardenC2, setHardenC2] = useState(false);
+  const [doZuccC1, setZuccC1] = useState(false);
+  const [doZuccC2, setZuccC2] = useState(false);
+  const [doPunchC1, setPunchC1] = useState(false);
+  const [doPunchC2, setPunchC2] = useState(false);
   
   const [hasInteracted, setHasInteracted] = useState(false);
   const [doBasicAtkSFX, setBasicAtkSFX] = useState("");
@@ -43,12 +53,16 @@ export default function(){
     animation.registerVFXSetter('C2BasicAttack', setBasicAtkC2)
     animation.registerVFXSetter('C1CritAttack', setCritAtkC1)
     animation.registerVFXSetter('C2CritAttack', setCritAtkC2)
-    animation.registerVFXSetter('C1SelfCare', setSelfCareC1)
-    animation.registerVFXSetter('C2SelfCare', setSelfCareC2)
+    animation.registerVFXSetter('C1Punch', setPunchC1)
+    animation.registerVFXSetter('C2Punch', setPunchC2)
     animation.registerVFXSetter('C1DeluluStrike', setDStrikeC1)
     animation.registerVFXSetter('C2DeluluStrike', setDStrikeC2)
+    animation.registerVFXSetter('C1SelfCare', setSelfCareC1)
+    animation.registerVFXSetter('C2SelfCare', setSelfCareC2)
     animation.registerVFXSetter('C1Harden', setHardenC1)
     animation.registerVFXSetter('C2Harden', setHardenC2)
+    animation.registerVFXSetter('C1Zucc', setZuccC1)
+    animation.registerVFXSetter('C2Zucc', setZuccC2)
   }, []);
 
   // for bg music
@@ -73,6 +87,18 @@ export default function(){
       animation.triggerVFX('C1BasicAttack');
     } else {
       animation.triggerVFX('C2BasicAttack');
+    }
+    audio.play();
+  }
+
+  function performPunch(index: number){ // to be revised
+    const audio = document.getElementById("punch_sfx") as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.pause();
+    if (index == 0){
+      animation.triggerVFX('C1Punch');
+    } else {
+      animation.triggerVFX('C2Punch');
     }
     audio.play();
   }
@@ -149,7 +175,17 @@ export default function(){
     audio.play();
   }
 
-
+  function performZucc(index: number){
+    const audio = document.getElementById("zucc_sfx") as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.pause();
+    if (index == 0){
+      animation.triggerVFX('C2Zucc');
+    } else {
+      animation.triggerVFX('C1Zucc');
+    }
+    audio.play();
+  }
 
   // test
   function triggerBoth(){ 
@@ -165,11 +201,13 @@ export default function(){
       <audio id="bg_music" src="/assets/sounds/battle_bgmusic.mp3" loop={true}/>
       <audio id="catk_sfx" src="/assets/sounds/catk_3.mp3"/>
       <audio id="batk_sfx" src="/assets/sounds/batk_4.mp3"/>
+      <audio id="punch_sfx" src="/assets/sounds/punch.mp3"/>
       <audio id="bonk_sfx" src="/assets/sounds/bonk.mp3"/>
       <audio id="maldquake_sfx" src="/assets/sounds/maldquake.mp3"/>
       <audio id="delulustrike_sfx" src="/assets/sounds/delulustrike.mp3"/>
       <audio id="selfcare_sfx" src="/assets/sounds/selfcare.mp3"/>
       <audio id="harden_sfx" src="/assets/sounds/harden.mp3"/>
+      <audio id="zucc_sfx" src="/assets/sounds/zucc.mp3"/>
       <div className={styles.mask_layer} onClick={removeMask}>
         Proceed to Battle
       </div>
@@ -185,13 +223,15 @@ export default function(){
         </div>
       </div>
       
-      <button onClick={() => performHarden(1)}>C1 Attack!</button>
+      <button onClick={() => performPunch(0)}>C1 Attack!</button>
       <button onClick={() => performSelfCare(1)}>C2 Attack!</button>
 
       <C1BasicAttack isVisible={doBasicAtkC1} />
       <C2BasicAttack isVisible={doBasicAtkC2} />
       <C1CritAttack isVisible={doCritAtkC1}/>
       <C2CritAttack isVisible={doCritAtkC2}/>
+      <C1Punch isVisible={doPunchC1}/>
+      <C2Punch isVisible={doPunchC2}/>
       <C1DeluluStrike isVisible={doDStrikeC1}/>
       <C2DeluluStrike isVisible={doDStrikeC2}/>
 
@@ -199,6 +239,8 @@ export default function(){
       <C2SelfCare isVisible={doSelfCareC2}/>
       <C1Harden isVisible={doHardenC1}/>
       <C2Harden isVisible={doHardenC2}/>
+      <C1Zucc isVisible={doZuccC1}/>
+      <C2Zucc isVisible={doZuccC2}/>
 
 
       {/* <BasicAttack isVisible={false}></BasicAttack> */}
