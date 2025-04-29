@@ -1,0 +1,170 @@
+Based on the given image, classify a prominent feature in the image that resembles either a Filipino Fruit or a Filipino animal [Chosen Animal(choose animals more often)/Fruit], this Chosen Fruit/Animal
+
+Using the Chosen Filipino Fruit/Animal and the given name (this is the input text included with the image prompt), create a rhythmical, rhyming, catchy and funny name by merging/repeating these words as a new name, use the following as references for the possible name structure, choose the structure that is semantically closer to the generated merged given name and Chosen Filipino Fruit/Animal, remember to modify the original given name to make it rhyming with the chosen Filipino Fruit/Animal, you can add or remove syllables from it to make it more fitting the chosen structure avoid ending up with the exact same words based on the references below
+{
+[1] Tralalero Tralala
+[2] Bombardiro Crocodilo
+[3] Brr Brr Patapim
+[4] Ballerina Cappuccina
+[5] Zesty Leono
+[6] Chimpanzini Bananini
+[7] Trippi Troppi (Cat)
+[8] Trulimero Trulicina
+[9] Tung Tung Tung Sahur
+[10] Bombombini Gusini
+[11] Lirili Larila
+[13] Assassino Cappuccino
+[12] Frulli Frulla
+[13] Assassino Cappuccino
+[14] Glorbo Fruttodrillo
+[15] Gangster Footera
+[16] Frigo Cammello
+[17] Abonono Schimpazinono
+[18] Bluberini Octopusini
+[19] Boneca Ambalabu
+[20] Trippi Troppi (Bear)
+}
+
+If the semantics of the names above are not enough to select a particular pattern that the new name will be based on, use the aliases and descriptions below as additional reference, the numbers before each alias matches the given names above (only for selecting the overall vibe name, it still must be catchy and rhythmical)
+
+{
+[1]"shark_with_shoes": "Bright beach daylight, Blue and grey color scheme, Standing pose, Absurd vibe",
+[2]"alligator_plane": "Bright sky daylight, Blue and metallic grey tones, Flying pose, Surreal mechanical vibe",
+[3]"tree_root_creature": "Natural forest lighting, Green and brown earthy tones, Hunched grounded pose, Mythical vibe",
+[4]"ballerina_coffee_cup": "Warm golden lighting, Brown and beige tones, Elegant dancing pose, Whimsical vibe",
+[5]"lion_with_cheeto_hair": "Urban daylight, Brown and bright orange tones, Relaxed portrait pose, Cool stylish vibe",
+[6]"banana_monkey": "Jungle lighting, Green and yellow tones, Seated/emerging pose, Playful quirky vibe",
+[7]"shrimp_cat": "Underwater lighting, Orange and blue tones, Swimming pose, Cute surreal vibe",
+[8]"fish_cat_with_legs": "Bright beach daylight, Brown and blue tones, Striding pose, Bizarre unsettling vibe",
+[9]"wooden_figure": "Dim indoor lighting, Predominantly brown tones, Stiff standing pose, Uncanny creepy vibe",
+[10]"goose_plane": "Cool overcast lighting, White and metallic grey tones, Flying pose, Steampunk vibe",
+[11]"cactus_elephant": "Harsh desert sun, Green and beige tones, Static standing pose, Dreamlike surreal vibe",
+[12]"penguin_in_desert": "Harsh desert sun, Brown and beige tones, Mid-air jumping pose, Cartoonish absurd vibe",
+[13]"ninja_coffee_cup": "Cool nighttime lighting, Black and grey tones, Action-ready pose, Cute warrior vibe",
+[14]"watermelon_alligator": "Misty swamp lighting, Predominantly green tones, Sitting contented pose, Whimsical creature vibe",
+[15]"worm_character_in_desert": "Bright desert sun, Beige and pinkish tones, Sitting pose, Laid-back cool vibe", 
+[16]"camel_fridge": "Bright urban daylight, Beige and white tones, Striding pose, Surreal bizarre vibe"
+[17]"avocado_ape": "Glowing green sci-fi lighting, Green and brown tones, Powerful stance, Alien mythical vibe",
+[18]"blueberry_octopus": "Soft underwater lighting, Pastel blue and pink tones, Sitting cute pose, Adorable soft vibe",
+[19]"frog_on_tire": "Urban daylight, Green and grey tones, Walking/rolling pose, Comical absurd vibe",
+[20]"fish_bear_monster": "Misty swamp lighting, Brown and muted green/blue tones, Standing contemplative pose, Grotesque creature vibe",
+}
+IMPORTANT! for it to be catchy and rhythmical, make sure the last word always has more syllables than the previous word/s 
+Result is called Final Card Name
+
+{
+[1] Tralalero Tralala
+"A hyper-realistic, digitally painted portrait with cool, bright tones and a surreal atmosphere. The subject is a shark wearing running shoes, with a highly detailed and smooth texture. Lighting is bright and diffused, with a general daylight hue. Background is slightly blurred but keeps a beach or ocean setting. Colors are vibrant, watery, and smooth, with soft shadows and crisp detail. The shoes add a whimsical, humorous look. The entire image feels imaginative, playful, and slightly absurd without being frightening."
+
+[2] Bombardiro Crocodilo
+"A surreal, photo-realistic digital artwork with bright, cool tones and an action atmosphere. The subject is a hybrid entity (Alligator head fused with a bomber plane), with metallic and scaly textures. Lighting is bright direct sunlight, creating sharp highlights and contrast. Background is a clear blue sky with clouds. Colors are silver, grey, green, and blue, textured, with sharp shadows and crisp detail. A bomb accessory adds a menacing look. The entire image feels imaginative, aggressive, and slightly absurd without being cartoonish."
+
+[3] Brr Brr Patapim
+"A surreal, fantastical illustration with natural, earthy tones and a forest atmosphere. The subject is a hybrid creature (Proboscis monkey and walking tree), with organic, textured skin (bark, roots, fur). Lighting is diffuse daylight, with natural shading. Background is a blurred forest setting. Colors are greens, browns, and skin tones, textured, with distinct shadows and detailed rendering. N/A for accessories. The entire image feels fantastical, slightly unsettling, and dreamlike without being cartoonish."
+
+[4] Ballerina Cappuccina
+"A stylized, 3D render portrait with warm, rich tones and a stage-like atmosphere. The subject is an anthropomorphic character (ballerina with a coffee cup head), with a smooth, slightly glossy texture. Lighting is dramatic spotlighting, with a distinct warm golden hue. Background is a dark, blurred stage setting with lights. Colors are browns, creams, golds, and pinks, smooth, with soft shadows and polished detail. N/A for accessories. The entire image feels whimsical, elegant, and charmingly surreal without being overly cartoonish."
+
+[5] Zesty Leono
+"A hyper-realistic, cinematic portrait with warm, rich tones and a vintage atmosphere. The subject wears modern or semi-formal clothing (such as a suit or dress shirt and pants), with a slight glossy texture. Lighting is soft but vivid, with a slight orange or golden-hour hue. Background is slightly blurred but keeps a classic European street or neutral urban setting. Colors are warm, earthy, and textured, with deep shadows and slightly grainy, film-like detail. Sunglasses add a stylish, confident look. The entire image feels polished, sophisticated, and slightly whimsical without being cartoonish."
+
+
+[6] Chimpanzini Bananini
+"A surreal, photo-realistic digital artwork with warm, natural tones and a jungle atmosphere. The subject is an enhanced human (monkey emerging from a banana peel), with furry and smooth/waxy textures. Lighting is soft, diffuse daylight, with gentle shading. Background is a blurred jungle setting with foliage. Colors are yellow, green, brown, and red/pink, textured, with soft shadows and realistic detail. N/A for accessories. The entire image feels surreal, whimsical, and naturalistic yet impossible without being cartoonish."
+
+
+
+[7] Trippi Troppi (Cat)
+"A surreal, photo-realistic digital artwork with cool, aquatic tones and an underwater atmosphere. The subject is a hybrid creature (cat-shrimp), with furry and smooth/segmented textures. Lighting is diffuse underwater light, with soft highlights. Background is a blurred deep blue/teal underwater scene. Colors are orange, white, black, blue, and teal, textured, with soft shadows and clear detail. N/A for accessories. The entire image feels surreal, imaginative, and slightly strange without being cartoonish."
+
+[8] Trulimero Trulicina
+"A surreal, photo-realistic collage with bright, sunny tones and a beach atmosphere. The subject is a hybrid creature (cat head, fish body, human legs), with furry, scaly, and skin textures. Lighting is bright direct sunlight, characteristic of a beach day. Background is a slightly blurred beach scene with sand and ocean. Colors are browns, tans, silver, red, skin tones, and blue, textured, with sharp shadows and clear detail. N/A for accessories. The entire image feels surreal, absurd, and jarringly comical without being cartoonish."
+
+[9] Tung Tung Tung Sahur
+"A surreal, 3D render portrait with warm, muted tones and a rustic nighttime atmosphere. The subject is an anthropomorphic character (wooden log figure with limbs), with a distinct wood grain texture. Lighting is warm artificial light, creating defined shadows. Background is a slightly blurred rustic outdoor setting at night. Colors are browns, tans, and warm yellows, textured, with deep shadows and slightly stylized detail. A wooden bat accessory adds a slightly unnerving look. The entire image feels surreal, uncanny, and slightly creepy without being cartoonish."
+
+[10] Bombombini Gusini
+"A steampunk, biomechanical digital artwork with cool, metallic tones and a dynamic atmosphere. The subject is a hybrid entity (goose merged with mechanical parts), with feathered and metallic textures. Lighting is diffuse, slightly overcast, creating metallic sheens and soft shadows. Background is a blurred choppy water surface under a greyish sky. Colors are white, grey, silver, and metallic browns/bronze, textured, with moderate shadows and intricate mechanical detail. N/A for accessories (mechanics are integral). The entire image feels imaginative, steampunk, and slightly imposing without being cartoonish."
+
+[11] Lirili Larila
+"A surreal, dreamlike digital artwork with warm, bright tones and a desert atmosphere. The subject is a hybrid creature (cactus-elephant wearing a giant sandal), with textured skin, spines, and leather/rubber. Lighting is bright, harsh desert sunlight, with defined shadows. Background is a surreal desert landscape with cacti and a floating clock. Colors are greens, browns, tans, and grey, textured, with sharp shadows and fantastical detail. A giant sandal and floating clock add to the bizarre, symbolic look. The entire image feels surreal, whimsical, and dreamlike without being cartoonish."
+
+[12] Frulli Frulla
+"A surreal, cartoonish digital artwork with warm, bright tones and a desert atmosphere. The subject is an anthropomorphic character (penguin leaping over coffee), with smooth, slightly fuzzy textures. Lighting is bright, harsh desert sunlight. Background is a desert landscape with dunes and an antenna. Colors are black, white, orange, brown, and tan, mostly smooth, with sharp shadows and stylized detail. Large sunglasses add a goofy, cool look. The entire image feels surreal, humorous, and energetically whimsical, leaning towards cartoonish."
+
+[13] Assassino Cappuccino
+"A stylized, 3D render portrait with cool, dark tones and a Japanese nighttime atmosphere. The subject is an anthropomorphic character (ninja coffee cup), with smooth paper/plastic and fabric textures. Lighting is dramatic nighttime or moonlight, creating highlights and shadows. Background is a stylized, blurred Japanese setting at night with a moon. Colors are black, white, grey, and brown, mostly smooth, with defined shadows and clean detail. Ninja gear (headband, mask, katanas) adds a cool, playful look. The entire image feels whimsical, cool, and themed cartoonish but polished."
+
+[14] Glorbo Fruttodrillo
+"A surreal, photo-realistic digital artwork with muted, swampy tones and a damp atmosphere. The subject is a hybrid creature (alligator-watermelon), with scaly and rind textures. Lighting is diffuse, overcast swamp light, creating soft reflections. Background is a slightly blurred swamp setting with water and reeds. Colors are greens and dark grey/black, textured, with soft shadows and realistic detail. N/A for accessories. The entire image feels surreal, imaginative, and slightly humorous without being cartoonish."
+
+[15] Gangster Footera
+"A stylized, 3D render portrait with warm, bright tones and a desert hip-hop atmosphere. The subject is an anthropomorphic character (worm/sausage figure in hip-hop gear), with smooth skin and fabric textures. Lighting is bright desert sunlight with lens flare. Background is a blurred desert landscape with cacti. Colors are pink, beige, black, white, and gold, textured, with strong shadows and stylized detail. Sunglasses, cap, tracksuit, sneakers, and chain add a cool, stylishly absurd look. The entire image feels surreal, humorous, and cartoonishly stylish."
+
+[16] Frigo Cammello
+"A surreal, photo-realistic digital artwork with bright, neutral tones and an urban atmosphere. The subject is a hybrid entity (camel-refrigerator wearing boots), with furry, metallic, and leather textures. Lighting is clear daylight, typical of a city scene. Background is a slightly blurred city street. Colors are brown, beige, white, grey, and various urban hues, textured, with clear shadows and realistic detail. Large boots add a bizarre, comical look. The entire image feels surreal, absurd, and out-of-place without being cartoonish."
+
+[17] Abonono Schimpazinono
+"A Sci-fi, fantastical digital artwork with cool, vibrant tones and an otherworldly atmosphere. The subject is a hybrid creature (avocado-ape under a UFO), with furry and fruit textures. Lighting is dramatic, glowing light from the UFO, creating contrast and cool ambient light. Background is a blurred alien landscape/forest at night. Colors are greens, browns, yellows, blues, and teals, textured, with strong shadows and glowing detail. N/A for accessories (UFO is scene element). The entire image feels sci-fi, surreal, and slightly menacing without being cartoonish."
+
+[18] Bluberini Octopusini
+"A cute, stylized 3D render portrait with soft, warm tones and a gentle underwater/beach atmosphere. The subject is a cute creature (fuzzy octopus with a blueberry), with a soft, fuzzy texture. Lighting is soft and diffuse, creating gentle highlights. Background is a blurred underwater scene with warm-toned corals. Colors are blues, purples, pinks, and oranges, soft-textured, with minimal shadows and adorable detail. A blueberry "hat" adds a cute, whimsical look. The entire image feels cute, whimsical, and charmingly soft, leaning towards cartoonish."
+
+[19] Boneca Ambalabu
+"A surreal, photo-realistic collage with natural, gritty tones and an urban atmosphere. The subject is a hybrid creature (frog head on a tire with human legs), with slimy skin, rubber, and skin textures. Lighting is natural outdoor daylight, slightly muted. Background is a blurred urban street scene. Colors are green, brown, black, grey, and skin tones, textured, with realistic shadows and jarring detail. N/A for accessories. The entire image feels surreal, absurd, and humorously unsettling without being cartoonish."
+
+[20] Trippi Troppi (Bear)
+"A surreal, fantastical digital artwork with muted, atmospheric tones and a swampy atmosphere. The subject is a hybrid creature (fish-bear monster), with scaly, furry, and skin textures. Lighting is diffuse, atmospheric light, creating soft shadows. Background is a blurred swamp landscape with water, reeds, and large mosquitos. Colors are greens, browns, blues, and beige, textured, with soft shadows and grotesque detail. N/A for accessories. The entire image feels surreal, grotesque, and atmospheric without being cartoonish."
+}
+(image_prompt) Then based on the chosen reference, output the description of the reference above but replaced any animal/object/specific characteristics mentioned by the specific objects/characteristics of the chosen animal/fruit in the Final Card Name, do not use the input text for replacing, use the chosen filipino animal/fruit for the additional objects but always refer to the subject as the person which must be retained in the image  
+
+After all of these are provided, create a final card description based on the chosen words, based on the final name, and the chosen reference above, make it funny and still continuing to rhyme with the name, make the description repetitive but focused on the basis about the name or a possible story about the Final Card Name, you can use this to explain that stats you will be associating to the Final Card Name
+
+These are the stats to fill up and its range:
+HP: { 1500 - 2500 }    //select between 1500 - 2500
+Atk Dmg: { 150 - 250 } //select between 150 - 250
+Crit Rate: { 1.6-2 } //select between 1.6 and 2   
+SpAtkNames: { "_______ Punch", “________ Bonk”, "_______quake", "Delulu _______", "Gyatt _______", "Zucc _______", "Self-Care _______" }
+For the SpAtkNames, fill the blanks with appropriate funny words that would fit the Final Card Name, these are the general purpose of the given card templates as reference for the word to be used:
+__________ Punch - A consecutive attack move
+__________ Bonk - A strong elemental attack
+__________quake - Consistent strong damage with recoil
+	Delulu _________ - A strong damage returning move
+	Gyatt __________ - Damage reduction
+	Zucc  __________ - Healing and damage reduction stealing
+	Self-Care _______ - Healing
+
+For these values below:
+“borderColor”: { depending on which stat is closer to the max possible value (green for hp, blue for atkdmg, red for citrate) },
+“overlay”: { depending on the card’s overall, create a system that will evaluate the overall stats of the card based on its HP, AtkDmg, and CritRate only, then based on its overall stats, give this Paper, Glitter, Holographic, or Foil, Paper for the lowest overall, and Foil for the highest overall}
+Only Respond with this Text Format
+{
+  "{Final Card Name}": {
+    "log_information": {
+      "chosen_animal/fruit": "...",
+      "reason_for_chosen_animal/fruit": "...",
+      "referenced_name": "...",
+      "reason_for_referenced_name": "..."
+    },
+    "image_prompt": "Modify the image without replacing the person, retain facial features and render it as: <adapted reference description>. Dimensions: 275×385 px (2.5×3.5 in – 110 ppi)",
+    "card_prompt": {
+      "cardTitle": "{Final Card Name}",
+      "hpValue": "{HP}",
+      "damageValue": "{Atk Dmg}",
+      "critRateValue": "x{Crit Rate}",
+      "skillNames": [
+        "____ Punch",
+        "____ Bonk",
+        "____quake",
+        "Delulu ____",
+        "Gyatt ____",
+        "Zucc ____",
+        "Self-Care ____"
+      ],
+      "description": "...(funny, rhyming story in a continuous line no line breaks)…",
+      "borderColor": "GREEN|BLUE|RED",
+      "overlay": "Paper|Glitter|Holographic|Foil",
+      "imageSrc": "Image_{FinalCardNameNoSpaces}.jpeg"
+    }
+  }
+}
