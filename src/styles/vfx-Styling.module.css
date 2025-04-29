@@ -157,10 +157,11 @@
 .mid_text {
   position: absolute;
   font-family: subtitle;
-  font-size: 2em;
+  font-size: 3em;
+  text-align: center;
   color: white;
-  top: 0;
-  left: 0;
+  top: 160px;
+  left: 700px;
   width: 150px;
   height: 150px;
   z-index: 2;

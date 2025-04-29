@@ -26,6 +26,11 @@ import MiddleText from '../components/VFX/MiddleText'
 import { time } from 'console'
 import { TIMEOUT } from 'dns'
 
+interface Cards {
+  card_1: string;
+  card_2: string;
+}
+
 interface RoundCount {
   round_no: number;
 }
@@ -53,7 +58,8 @@ export default function(){
   const [showMiddleTextString, setMiddleTextString] = useState("");
   var [showDiceCountValC1, setDiceCountValC1] = useState("1");
   var [showDiceCountValC2, setDiceCountValC2] = useState("1");
-  
+  var cardC1: string = "/assets/images/winner-image.png"
+
   const [hasInteracted, setHasInteracted] = useState(false);
 
   let currHealthC1: number = 1,
@@ -125,7 +131,9 @@ export default function(){
       animation.triggerVFX('C1DiceCount', 1000)
       animation.triggerVFX('C2DiceCount', 1000);
     }, 1000)
-    animation.triggerVFX('MiddleText', 1000);
+    setTimeout(() => {
+      animation.triggerVFX('MiddleText', 1500);
+    }, 1000)
   }
 
   function performBAtk(index: number){
@@ -259,8 +267,8 @@ export default function(){
       <div id={styles.round_text}>Round 1</div>
       <div id={styles.battle_area}>
         <div id={styles.card_cont}>
-          <CardDisplay></CardDisplay>
-          <CardDisplay></CardDisplay>
+          <CardDisplay path={cardC1}></CardDisplay>
+          <CardDisplay path={cardC1}></CardDisplay>
         </div>
         <div id={styles.heart_cont}>          
           <Healthbar health={currHealthC1} maxHealth={maxHealthC1}></Healthbar>
@@ -268,8 +276,8 @@ export default function(){
         </div>
       </div>
       
-      <button onClick={() => performDiceRoll(3, 1)}>C1 Attack!</button>
-      <button onClick={() => performSelfCare(1)}>C2 Attack!</button>
+      <button onClick={() => performDiceRoll(1, 2)}>C1 Attack!</button>
+      <button onClick={() => performCAtk(0)}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
       <C2DiceCount isVisible={doDiceCountC2} dice_no={showDiceCountValC2}/>
@@ -290,7 +298,7 @@ export default function(){
       <C2Harden isVisible={doHardenC2}/>
       <C1Zucc isVisible={doZuccC1}/>
       <C2Zucc isVisible={doZuccC2}/>
-      <MiddleText isVisible={true} text={showMiddleTextString}/>
+      <MiddleText isVisible={doMiddleText} text={showMiddleTextString}/>
       
       {/* <BasicAttack isVisible={false}></BasicAttack> */}
       {/* <button onClick={triggerBasicAttack}>Trigger Basic Attack</button>
