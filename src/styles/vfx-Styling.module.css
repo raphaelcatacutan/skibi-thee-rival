@@ -30,6 +30,22 @@
   height: 0;
 }
 
+#PunchC1 {
+  position: absolute;
+  top: 290px;
+  left: 950px;
+  width: 0;
+  height: 0;  
+}
+
+#PunchC2 {
+  position: absolute;
+  top: 300px;
+  left: 300px;
+  width: 0;
+  height: 0;  
+}
+
 #SelfCareC1 {
   position: absolute;
   top: 300px;
@@ -42,6 +58,54 @@
   position: absolute;
   top: 300px;
   left: 940px;
+  width: 0;
+  height: 0;
+}
+
+#DStrikeC1 {
+  position: absolute;
+  top: 180px;
+  left: 280px;
+  width: 0;
+  height: 0;
+}
+
+#DStrikeC2 {
+  position: absolute;
+  top: 180px;
+  left: 930px;
+  width: 0;
+  height: 0;
+}
+
+#HardenC1 {
+  position: absolute;
+  top: 260px;
+  left: 290px;
+  width: 0;
+  height: 0;
+}
+
+#HardenC2 {
+  position: absolute;
+  top: 260px;
+  left: 950px;
+  width: 0;
+  height: 0;
+}
+
+#ZuccC1 {
+  position: absolute;
+  top: 260px;
+  left: 290px;
+  width: 0;
+  height: 0;
+}
+
+#ZuccC2 {
+  position: absolute;
+  top: 260px;
+  left: 950px;
   width: 0;
   height: 0;
 }
