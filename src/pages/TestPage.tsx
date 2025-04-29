@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { startBattle } from '../utils/battle_sequence';
 
 type ImageGenerationResponse = {
   success: boolean;
@@ -101,8 +100,6 @@ const TestPage = () => {
     }
   };
 
-  startBattle()
-  
   return (
     <div>
       <h1>File Upload Status</h1>
