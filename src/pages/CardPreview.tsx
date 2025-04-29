@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../styles/CardPreview.css"; // Add a CSS file for animations
+import "../styles/CardPreview.css"; // Add a CSS file
 
 const videos = ["bg2.mp4"];
 
