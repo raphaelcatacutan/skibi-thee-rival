@@ -11,6 +11,8 @@ import C1SelfCare from '../components/VFX/C1SelfCare'
 import C2SelfCare from '../components/VFX/C2SelfCare'
 import C1DeluluStrike from '../components/VFX/C1DeluluStrike'
 import C2DeluluStrike from '../components/VFX/C2DeluluStrike'
+import C1Harden from '../components/VFX/C1Harden'
+import C2Harden from '../components/VFX/C2Harden'
 
 interface RoundCount {
   round_no: number;
@@ -25,6 +27,8 @@ export default function(){
   const [doSelfCareC2, setSelfCareC2] = useState(false);
   const [doDStrikeC1, setDStrikeC1] = useState(false);
   const [doDStrikeC2, setDStrikeC2] = useState(false);
+  const [doHardenC1, setHardenC1] = useState(false);
+  const [doHardenC2, setHardenC2] = useState(false);
   
   const [hasInteracted, setHasInteracted] = useState(false);
   const [doBasicAtkSFX, setBasicAtkSFX] = useState("");
@@ -43,6 +47,8 @@ export default function(){
     animation.registerVFXSetter('C2SelfCare', setSelfCareC2)
     animation.registerVFXSetter('C1DeluluStrike', setDStrikeC1)
     animation.registerVFXSetter('C2DeluluStrike', setDStrikeC2)
+    animation.registerVFXSetter('C1Harden', setHardenC1)
+    animation.registerVFXSetter('C2Harden', setHardenC2)
   }, []);
 
   // for bg music
@@ -83,18 +89,6 @@ export default function(){
     audio.play();
   }
 
-  function performSelfCare(index: number){
-    const audio = document.getElementById("selfcare_sfx") as HTMLAudioElement;
-    audio.currentTime = 0;
-    audio.pause();
-    if (index == 0){
-      animation.triggerVFX('C1SelfCare');
-    } else {
-      animation.triggerVFX('C2SelfCare');
-    }
-    audio.play();
-  }
-
   function performBonk(index: number){
     const audio = document.getElementById("bonk_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
@@ -131,6 +125,31 @@ export default function(){
     audio.play();
   }
 
+  function performSelfCare(index: number){
+    const audio = document.getElementById("selfcare_sfx") as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.pause();
+    if (index == 0){
+      animation.triggerVFX('C1SelfCare');
+    } else {
+      animation.triggerVFX('C2SelfCare');
+    }
+    audio.play();
+  }
+
+  function performHarden(index: number){
+    const audio = document.getElementById("harden_sfx") as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.pause();
+    if (index == 0){
+      animation.triggerVFX('C1Harden');
+    } else {
+      animation.triggerVFX('C2Harden');
+    }
+    audio.play();
+  }
+
+
 
   // test
   function triggerBoth(){ 
@@ -150,6 +169,7 @@ export default function(){
       <audio id="maldquake_sfx" src="/assets/sounds/maldquake.mp3"/>
       <audio id="delulustrike_sfx" src="/assets/sounds/delulustrike.mp3"/>
       <audio id="selfcare_sfx" src="/assets/sounds/selfcare.mp3"/>
+      <audio id="harden_sfx" src="/assets/sounds/harden.mp3"/>
       <div className={styles.mask_layer} onClick={removeMask}>
         Proceed to Battle
       </div>
@@ -165,8 +185,8 @@ export default function(){
         </div>
       </div>
       
-      <button onClick={() => performDeluluStrike(1)}>C1 Attack!</button>
-      <button onClick={() => performSelfCare(0)}>C2 Attack!</button>
+      <button onClick={() => performHarden(1)}>C1 Attack!</button>
+      <button onClick={() => performSelfCare(1)}>C2 Attack!</button>
 
       <C1BasicAttack isVisible={doBasicAtkC1} />
       <C2BasicAttack isVisible={doBasicAtkC2} />
@@ -177,7 +197,8 @@ export default function(){
 
       <C1SelfCare isVisible={doSelfCareC1}/>
       <C2SelfCare isVisible={doSelfCareC2}/>
-
+      <C1Harden isVisible={doHardenC1}/>
+      <C2Harden isVisible={doHardenC2}/>
 
 
       {/* <BasicAttack isVisible={false}></BasicAttack> */}
