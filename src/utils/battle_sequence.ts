@@ -1,3 +1,5 @@
+import { Card, CardPrompt } from "./types";
+
 function random(min: number, max: number, isInt = true): number {
     const value = Math.random() * (max - min) + min;
     return isInt ? Math.floor(value) : value;
@@ -30,27 +32,32 @@ let performSelfCare = (index: number) => {}
 let performHarden = (index: number) => {}
 let performZucc = (index: number) => {}
 let applyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {}
+let finishedBattle = (id: string) => {}
 
 function getIndex(name: string) {
     if (card1Name == name) return 0
     else return 1
 }
 
-class Card {
+class CardMechanics {
+    public id: string;
     public name: string;
     public hp: number;
     public maxHp: number;
     public attackDamage: number;
+    public critAtk: number;
 
     private isDelulu: boolean = false;
     private isGyattHarden: boolean = false;
     private isZucc: boolean = false;
 
-    constructor(name: string) {
-        this.name = name;
-        this.maxHp = random(1500, 2500);
+    constructor(id: string, cardInfo: Card) {
+        this.id = id;
+        this.name = cardInfo.name;
+        this.maxHp = cardInfo.hpValue!;
         this.hp = this.maxHp;
-        this.attackDamage = random(150, 250);
+        this.attackDamage = cardInfo.damageValue!;
+        this.critAtk = cardInfo.critRateValue!
     }
 
     damage(damage: number): void {
@@ -69,8 +76,8 @@ class Card {
         console.log(`${this.name} took ${damage} damage. HP: ${prevHp} → ${this.hp}`);
     }
 
-    basicAttack(target: Card, isCritical: boolean): void {
-        const multiplier = isCritical ? random(1.6, 2, false) : 1;
+    basicAttack(target: CardMechanics, isCritical: boolean): void {
+        const multiplier = isCritical ? this.critAtk : 1;
         const damage = Math.round(this.attackDamage * multiplier);
         if (isCritical) { 
             performCAtk(getIndex(this.name))
@@ -81,7 +88,7 @@ class Card {
         target.damage(damage);
     }
 
-    async consecutiveAttack(cardTarget: Card): Promise<void> {
+    async consecutiveAttack(cardTarget: CardMechanics): Promise<void> {
         const strikes = random(2, 4);
         console.group(`Consecutive Attack: Number of Strikes: ${strikes}`);
         for (let i = 1; i <= strikes && cardTarget.hp > 0; i++) {
@@ -94,7 +101,7 @@ class Card {
         console.groupEnd();
     }
 
-    burnAttack(cardTarget: Card): void {
+    burnAttack(cardTarget: CardMechanics): void {
         console.group("Burn Attack");
         const multiplier = random(1.7, 2.2, true);
         const damage = Math.round(this.attackDamage * multiplier);
@@ -104,7 +111,7 @@ class Card {
         console.groupEnd();
     }
 
-    earthquakeAttack(cardTarget: Card): void {
+    earthquakeAttack(cardTarget: CardMechanics): void {
         console.group("Earthquake Attack");
         const selfDamage = Math.round(this.attackDamage * 0.6);
         const enemyDamage = Math.round(this.attackDamage * 2.4);
@@ -150,7 +157,7 @@ class Card {
     }
 }
 
-async function battleSequence(realTurn: Card, realTarget: Card): Promise<void> {
+async function battleSequence(realTurn: CardMechanics, realTarget: CardMechanics): Promise<void> {
     const attackType = random(1, 10);
 
     const targetDelulu = realTurn.getDelulu() ? realTurn : realTarget;
@@ -196,6 +203,8 @@ async function battleSequence(realTurn: Card, realTarget: Card): Promise<void> {
 }
 
 async function startBattle(
+    card1Info: Card,
+    card2Info: Card,
     aperformBAtk = (index: number) => {},
     aperformPunch = (index: number) => {},
     aperformCAtk = (index: number) => {},
@@ -205,10 +214,11 @@ async function startBattle(
     aperformSelfCare = (index: number) => {},
     aperformHarden = (index: number) => {},
     aperformZucc = (index: number) => {},
-    aapplyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {}
+    aapplyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {},
+    aFinishedBattle = (winnerId: string) => {}
 ): Promise<number> {
-    const card1 = new Card("Card 1");
-    const card2 = new Card("Card 2");
+    const card1 = new CardMechanics("abcd", card1Info);
+    const card2 = new CardMechanics("efgh", card2Info);
 
     card1Name = card1.name
 
@@ -247,30 +257,32 @@ async function startBattle(
     console.log(`${card1.name}: ${card1.hp} HP`);
     console.log(`${card2.name}: ${card2.hp} HP`);
 
+    await sleep(1000)
+    aFinishedBattle((card1.hp > card2.hp) ? card1.id : card2.id)
     return rounds;
 }
-async function runSimulations(times = 10): Promise<void> {
-    console.time("Simulation-Time");
-    let totalRounds = 0;
-    let maxRounds = 0;
-    let minRounds = Infinity;
+// async function runSimulations(times = 10): Promise<void> {
+//     console.time("Simulation-Time");
+//     let totalRounds = 0;
+//     let maxRounds = 0;
+//     let minRounds = Infinity;
 
-    for (let i = 1; i <= times; i++) {
-        console.log("\n\n--------------------------------------------------------");
-        console.log(`🔄 Simulation ${i}`);
-        const rounds = await startBattle();
-        console.log(`✅ Simulation ${i} finished in ${rounds} round(s)`);
-        totalRounds += rounds;
-        maxRounds = Math.max(maxRounds, rounds);
-        minRounds = Math.min(minRounds, rounds);
-    }
+//     for (let i = 1; i <= times; i++) {
+//         console.log("\n\n--------------------------------------------------------");
+//         console.log(`🔄 Simulation ${i}`);
+//         const rounds = await startBattle();
+//         console.log(`✅ Simulation ${i} finished in ${rounds} round(s)`);
+//         totalRounds += rounds;
+//         maxRounds = Math.max(maxRounds, rounds);
+//         minRounds = Math.min(minRounds, rounds);
+//     }
 
-    const average = totalRounds / times;
-    console.log(`\n📊 Average Rounds over ${times} simulations: ${average.toFixed(2)}`);
-    console.log(`📊 Max Rounds: ${maxRounds}`);
-    console.log(`📊 Min Rounds: ${minRounds}`);
-    console.timeEnd("Simulation-Time");
-}
+//     const average = totalRounds / times;
+//     console.log(`\n📊 Average Rounds over ${times} simulations: ${average.toFixed(2)}`);
+//     console.log(`📊 Max Rounds: ${maxRounds}`);
+//     console.log(`📊 Min Rounds: ${minRounds}`);
+//     console.timeEnd("Simulation-Time");
+// }
 
 // runSimulations(100);
 
