@@ -1,0 +1,90 @@
+body {
+  /* Removed background video styling */
+}
+
+.card-container {
+  display: block; /* Restore the div for the background video */
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.card-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-foreground {
+  display: flex; /* Use flexbox for layout */
+  justify-content: space-between; /* Align children to opposite sides */
+  align-items: center; /* Align items vertically */
+  padding: 20px; /* Add padding for spacing */
+}
+
+.card-image-container, .card-text-container {
+  position: absolute; /* Position them on top of the card-container */
+  z-index: 10; /* Ensure they are above the card-container */
+  padding-left: 100px;
+}
+
+.card-image-container {
+  flex: 1; /* Allow the image container to take up one part of the space */
+  text-align: left; /* Align the image to the left */
+  top: 10%; /* Adjust as needed */
+  left: 5%; /* Adjust as needed */
+}
+
+.card-image {
+  max-width: 100%; /* Ensure the image fits within its container */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.card-text-container {
+  flex: 1; /* Allow the text container to take up one part of the space */
+  text-align: right; /* Align the text to the right */
+  top: 10%; /* Adjust as needed */
+  right: 5%; /* Adjust as needed */
+}
+
+  /*sizes might be replaced later*/
+.card-image {
+    width: 375px; /* 750 * 0.5 */
+    height: 525px; /* 1050 * 0.5 */
+    object-fit: contain;
+  }    
+
+  .card-container {
+    position: relative;
+    text-align: left; /* Align text and content to the left */
+    margin-left: 0; /* Ensure it aligns to the left edge */
+    padding-left: 20px; /* Optional: Add some padding for spacing */
+  }
+  
+  .card-txt {
+    font-size: clamp(1.5rem, 5vw, 3rem); /* Adjusts dynamically */
+    font-weight: bold;
+    color: white;
+    margin-bottom: 50px;
+    white-space: nowrap; /* Prevents unexpected wrapping */
+    /* animation: barrelRoll 2s ease forwards; <-- this line */
+  }
+  
+  /* Barrel Roll Animation */
+  @keyframes barrelRoll {
+    0% {
+      transform: rotate(0) scale(0);
+      opacity: 0;
+    }
+    50% {
+      transform: rotate(180deg) scale(1.2);
+      opacity: 1;
+    }
+    100% {
+      transform: rotate(360deg) scale(1);
+    }
+  }
