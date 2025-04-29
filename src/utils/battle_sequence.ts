@@ -32,7 +32,6 @@ let performSelfCare = (index: number) => {}
 let performHarden = (index: number) => {}
 let performZucc = (index: number) => {}
 let applyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {}
-let finishedBattle = (id: string) => {}
 
 function getIndex(name: string) {
     if (card1Name == name) return 0
@@ -203,6 +202,8 @@ async function battleSequence(realTurn: CardMechanics, realTarget: CardMechanics
 }
 
 async function startBattle(
+    card1Key: string,
+    card2Key: string,
     card1Info: Card,
     card2Info: Card,
     aperformBAtk = (index: number) => {},
@@ -215,13 +216,9 @@ async function startBattle(
     aperformHarden = (index: number) => {},
     aperformZucc = (index: number) => {},
     aapplyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {},
-    aFinishedBattle = (winnerId: string) => {}
+    afinishedBattle = (winnerId: string) => {},
+    aperformDiceRoll = (result1: number, result2: number) => {}
 ): Promise<number> {
-    const card1 = new CardMechanics("abcd", card1Info);
-    const card2 = new CardMechanics("efgh", card2Info);
-
-    card1Name = card1.name
-
     performBAtk = aperformBAtk
     performPunch = aperformPunch
     performCAtk = aperformCAtk
@@ -233,32 +230,55 @@ async function startBattle(
     performZucc = aperformZucc
     applyHealthChange = aapplyHealthChange
 
-    console.log("⚔️ Battle Start!");
-    console.log(`${card1.name}: ${card1.hp} HP ${card1.attackDamage} Base Attack`);
-    console.log(`${card2.name}: ${card2.hp} HP ${card2.attackDamage} Base Attack`);
+    const card1 = new CardMechanics(card1Key, card1Info)
+    const card2 = new CardMechanics(card2Key, card2Info)
 
+    let turn1 = card1
+    let turn2 = card2
+
+    while (true) {
+        const random1 = random(1, 6)
+        const random2 = random(1, 6)
+    
+        aperformDiceRoll(random1, random2)
+
+        await sleep(3000)
+
+        if (random1 == random2) continue
+        else {
+            turn1 = random1 > random2 ? card1 : card2
+            turn2 = random1 > random2 ? card2 : card1
+            break
+        }
+    }
+
+    card1Name = turn1.name
+    console.log("⚔️ Battle Start!");
+    console.log(`${turn1.name}: ${turn1.hp} HP ${turn1.attackDamage} Base Attack`);
+    console.log(`${turn2.name}: ${turn2.hp} HP ${turn2.attackDamage} Base Attack`);
     let rounds = 0;
-    while (card1.hp > 0 && card2.hp > 0) {
+
+    while (turn1.hp > 0 && turn2.hp > 0) {
         rounds++;
         console.log(`\n🌀 Round ${rounds}`);
         console.group("🔁 Turn: Card 1");
-        await battleSequence(card1, card2);
+        await battleSequence(turn1, turn2);
         console.groupEnd();
-        if (card2.hp <= 0) break;
+        if (turn2.hp <= 0) break;
         await sleep(1000);
 
         console.group("🔁 Turn: Card 2");
-        await battleSequence(card2, card1);
+        await battleSequence(turn2, turn1);
         console.groupEnd();
         await sleep(1000);
     }
 
     console.log("\n🏁 Battle Over!");
-    console.log(`${card1.name}: ${card1.hp} HP`);
-    console.log(`${card2.name}: ${card2.hp} HP`);
+    console.log(`${turn1.name}: ${turn1.hp} HP`);
+    console.log(`${turn2.name}: ${turn2.hp} HP`);
 
     await sleep(1000)
-    aFinishedBattle((card1.hp > card2.hp) ? card1.id : card2.id)
+    afinishedBattle((turn1.hp > turn2.hp) ? turn1.id : turn2.id)
     return rounds;
 }
 // async function runSimulations(times = 10): Promise<void> {
