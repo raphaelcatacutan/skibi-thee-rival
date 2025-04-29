@@ -201,6 +201,10 @@ export default function(){
     audio.play();
   }
 
+  function endBattle(card_id: string){
+
+  }
+
   // test
   function triggerBoth(){ 
     // animation.triggerVFX('C1BasicAttack', 500);
@@ -209,6 +213,7 @@ export default function(){
       animation.triggerVFX('C2BasicAttack')
     }, 1000);
   }
+
 
   return (
     <div className={styles.background_img}>
