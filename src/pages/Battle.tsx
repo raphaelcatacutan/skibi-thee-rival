@@ -22,6 +22,10 @@ import C2Dice from '../components/VFX/C2Dice'
 import C1DiceCount from '../components/VFX/C1DiceCount'
 import C2DiceCount from '../components/VFX/C2DiceCount'
 import MiddleText from '../components/VFX/MiddleText'
+import C1TopText from '../components/VFX/C1TopText'
+import C2TopText from '../components/VFX/C2TopText'
+import C1SideText from '../components/VFX/C1SideText'
+import C2SideText from '../components/VFX/C2SideText'
 
 import { time } from 'console'
 import { TIMEOUT } from 'dns'
@@ -56,6 +60,17 @@ export default function(){
   const [doDiceCountC2, setDiceCountC2] = useState(false);
   const [doMiddleText, setMiddleText] = useState(false);
   const [showMiddleTextString, setMiddleTextString] = useState("");
+  const [doC1TopText, setC1TopText] = useState(false);
+  const [doC2TopText, setC2TopText] = useState(false);
+  const [showC1TopTextString, setC1TopTextString] = useState("");
+  const [showC2TopTextString, setC2TopTextString] = useState("");
+  const [doC1SideText, setC1SideText] = useState(false);
+  const [doC2SideText, setC2SideText] = useState(false);
+  const [showC1SideTextString, setC1SideTextString] = useState("");
+  const [showC2SideTextString, setC2SideTextString] = useState("");
+  const [showC1SideTextColor, setC1SideTextColor] = useState("");
+  const [showC2SideTextColor, setC2SideTextColor] = useState("");
+  
   var [showDiceCountValC1, setDiceCountValC1] = useState("1");
   var [showDiceCountValC2, setDiceCountValC2] = useState("1");
   var cardC1: string = "/assets/images/winner-image.png"
@@ -91,6 +106,10 @@ export default function(){
     animation.registerVFXSetter('C1DiceCount', setDiceCountC1)
     animation.registerVFXSetter('C2DiceCount', setDiceCountC2)
     animation.registerVFXSetter('MiddleText', setMiddleText)
+    animation.registerVFXSetter('C1TopText', setC1TopText)
+    animation.registerVFXSetter('C2TopText', setC2TopText)
+    animation.registerVFXSetter('C1SideText', setC1SideText)
+    animation.registerVFXSetter('C2SideText', setC2SideText)
   }, []);
 
   // for bg music
@@ -136,74 +155,132 @@ export default function(){
     }, 1000)
   }
 
-  function performBAtk(index: number){
+  function performBAtk(index: number, dmg: number = 500){
     const audio = document.getElementById("batk_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
     audio.pause();
     if (index == 0){
+      setC2SideTextString(dmg.toString());
+      setC2SideTextColor("#ff0000");
       animation.triggerVFX('C1BasicAttack');
+      animation.triggerVFX('C2SideText');
     } else {
+      setC1SideTextString(dmg.toString())
+      setC1SideTextColor("#ff0000")
       animation.triggerVFX('C2BasicAttack');
+      animation.triggerVFX('C1SideText');
+    }
+    audio.play();
+  }
+  
+  function performCAtk(index: number, dmg: number){
+    const audio = document.getElementById("catk_sfx") as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.pause();
+    if (index == 0){
+      setC2TopTextString("Critical!")
+      setC2SideTextString(dmg.toString())
+      setC2SideTextColor("#ff0000")
+      animation.triggerVFX('C2TopText');
+      animation.triggerVFX('C1CritAttack');
+      animation.triggerVFX('C2SideText');
+    } else {
+      setC1TopTextString("Critical!")
+      setC1SideTextString(dmg.toString())
+      setC1SideTextColor("#ff0000")
+      animation.triggerVFX('C1TopText');
+      animation.triggerVFX('C2CritAttack');
+      animation.triggerVFX('C1SideText');
     }
     audio.play();
   }
 
-  function performPunch(index: number){ // to be revised
+  function performPunch(index: number, skillname: string, dmg: number){
     const audio = document.getElementById("punch_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
     audio.pause();
     if (index == 0){
+      setC1TopTextString(skillname)
+      setC2SideTextString(dmg.toString())
+      setC2SideTextColor("#ff0000")
+      animation.triggerVFX('C1TopText')
+      animation.triggerVFX('C2SideText')
       animation.triggerVFX('C1Punch');
     } else {
+      setC2TopTextString(skillname)
+      setC1SideTextString(dmg.toString())
+      setC1SideTextColor("#ff0000")
+      animation.triggerVFX('C2TopText')
+      animation.triggerVFX('C1SideText')
       animation.triggerVFX('C2Punch');
     }
     audio.play();
   }
 
-  function performCAtk(index: number){
-    const audio = document.getElementById("catk_sfx") as HTMLAudioElement;
-    audio.currentTime = 0;
-    audio.pause();
-    if (index == 0){
-      animation.triggerVFX('C1CritAttack');
-    } else {
-      animation.triggerVFX('C2CritAttack');
-    }
-    audio.play();
-  }
-
-  function performBonk(index: number){
+  function performBonk(index: number, skillname: string, dmg: number){
     const audio = document.getElementById("bonk_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
     audio.pause();
     if (index == 0){
+      setC1TopTextString(skillname)
+      setC2SideTextString(dmg.toString())
+      setC2SideTextColor("#ff0000")
+      animation.triggerVFX('C1TopText')
+      animation.triggerVFX('C2Side')
       // c1 animation
     } else {
-      // c1 animation
+      setC2TopTextString(skillname)
+      setC1SideTextString(dmg.toString())
+      setC1SideTextColor("#ff0000")
+      animation.triggerVFX('C2TopText')
+      animation.triggerVFX('C1SideText')
+      // c2 animation
     }
     audio.play();
   }
 
-  function performMaldquake(index: number){
+  function performMaldquake(index: number, skillname: string, dmg: number){
     const audio = document.getElementById("maldquake_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
     audio.pause();
     if (index == 0){
+      setC1TopTextString(skillname)
+      setC2SideTextString(dmg.toString())
+      setC2SideTextColor("#ff0000")
+      animation.triggerVFX('C1TopText')
+      animation.triggerVFX('C2Side')
       // c1 animation
     } else {
+      setC2TopTextString(skillname)
+      setC1SideTextString(dmg.toString())
+      setC1SideTextColor("#ff0000")
+      animation.triggerVFX('C2TopText')
+      animation.triggerVFX('C1SideText')
       // c1 animation
     }
     audio.play();
   }
 
-  function performDeluluStrike(index: number){
+  function performDeluluStrike(index: number, skillname: string, dmg: number, phase: number){
     const audio = document.getElementById("delulustrike_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
     audio.pause();
-    if (index == 0){
+    if (index == 0 && phase == 0){
+      setC1TopTextString(skillname)
+      setC1SideTextString(dmg.toString())
+      animation.triggerVFX('C2SideText')
+      animation.triggerVFX('C1TopText')
       animation.triggerVFX('C1DeluluStrike');
-    } else {
+    } else if (index == 1 && phase == 0) {
+      setC2TopTextString(skillname)
+      setC1SideTextString(dmg.toString())
+      animation.triggerVFX('C1SideText')
+      animation.triggerVFX('C2TopText')
       animation.triggerVFX('C2DeluluStrike');
+    } else if (index == 0 && phase == 1) {
+      
+    } else if (index == 1 && phase == 1) {
+
     }
     audio.play();
   }
@@ -276,8 +353,8 @@ export default function(){
         </div>
       </div>
       
-      <button onClick={() => performDiceRoll(1, 2)}>C1 Attack!</button>
-      <button onClick={() => performCAtk(0)}>C2 Attack!</button>
+      <button onClick={() => performPunch(0, "adwsad", 12)}>C1 Attack!</button>
+      <button onClick={() => performPunch(1 , "adwsad", 12)}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
       <C2DiceCount isVisible={doDiceCountC2} dice_no={showDiceCountValC2}/>
@@ -299,7 +376,10 @@ export default function(){
       <C1Zucc isVisible={doZuccC1}/>
       <C2Zucc isVisible={doZuccC2}/>
       <MiddleText isVisible={doMiddleText} text={showMiddleTextString}/>
-      
+      <C1TopText isVisible={doC1TopText} text={showC1TopTextString}/>
+      <C2TopText isVisible={doC2TopText} text={showC2TopTextString}/>
+      <C1SideText isVisible={doC1SideText} text={showC1SideTextString} color={showC1SideTextColor}/>
+      <C2SideText isVisible={doC2SideText} text={showC2SideTextString} color={showC2SideTextColor}/>
       {/* <BasicAttack isVisible={false}></BasicAttack> */}
       {/* <button onClick={triggerBasicAttack}>Trigger Basic Attack</button>
       {showVFX && (
