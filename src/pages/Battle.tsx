@@ -43,6 +43,10 @@ export default function(){
   const [hasInteracted, setHasInteracted] = useState(false);
   const [doBasicAtkSFX, setBasicAtkSFX] = useState("");
   const [doCritAtkSFX, setCritAtkSFX] = useState("");
+  let currHealthC1: number = 0,
+      currHealthC2: number = 0;
+  let maxHealthC1: number = 0,
+      maxHealthC2: number = 0;
 
   // const batk_audio_cont: string[] = ["batk_1", "batk_2", "batk_3"];
   // const catk_audio_cont: string[] = ["catk_1", "catk_2", "catk_3"];
@@ -77,6 +81,16 @@ export default function(){
   function removeMask(e: React.MouseEvent<HTMLDivElement>){
     e.currentTarget.style.display = 'none';
     setHasInteracted(true);
+  }
+
+  function applyHealthChange(index: number, currHealth: number, maxHealth: number){
+    if(index == 0){
+      currHealthC1 = currHealth;
+      maxHealthC1 = maxHealth;
+    } else {
+      currHealthC2 = currHealth;
+      maxHealthC2 = maxHealth;
+    }
   }
 
   function performBAtk(index: number){
@@ -187,6 +201,10 @@ export default function(){
     audio.play();
   }
 
+  function endBattle(card_id: string){
+
+  }
+
   // test
   function triggerBoth(){ 
     // animation.triggerVFX('C1BasicAttack', 500);
@@ -195,6 +213,7 @@ export default function(){
       animation.triggerVFX('C2BasicAttack')
     }, 1000);
   }
+
 
   return (
     <div className={styles.background_img}>
@@ -218,8 +237,8 @@ export default function(){
           <CardDisplay></CardDisplay>
         </div>
         <div id={styles.heart_cont}>          
-          <Healthbar health={30} maxHealth={100}></Healthbar>
-          <Healthbar health={7} maxHealth={10}></Healthbar>
+          <Healthbar health={currHealthC1} maxHealth={maxHealthC1}></Healthbar>
+          <Healthbar health={currHealthC2} maxHealth={maxHealthC2}></Healthbar>
         </div>
       </div>
       
