@@ -100,6 +100,42 @@ const TestPage = () => {
     }
   };
 
+  const [base64Image, setBase64Image] = useState<string>("");
+  const [imageNameForSave, setImageNameForSave] = useState<string>("");
+  const [saveResponse, setSaveResponse] = useState<string | null>(null);
+  const [saving, setSaving] = useState<boolean>(false);
+
+  const handleSaveImage = async () => {
+    setSaving(true);
+    setSaveResponse(null);
+
+    try {
+      const res = await fetch("http://localhost:3000/api/preview", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          base64Image,
+          imageName: imageNameForSave,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setSaveResponse(`Image saved to: ${data.path}`);
+      } else {
+        setSaveResponse("Failed to save image.");
+      }
+    } catch (error) {
+      console.error("Save error:", error);
+      setSaveResponse("An error occurred while saving the image.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div>
       <h1>File Upload Status</h1>
@@ -175,6 +211,45 @@ const TestPage = () => {
         <div>
           <h2>Score Update:</h2>
           <p>{generateResponse}</p>
+        </div>
+      )}
+      <hr />
+      <h1>Save Base64 Image</h1>
+
+      <div>
+        <label>
+          Base64 Image:
+          <textarea
+            rows={4}
+            cols={80}
+            value={base64Image}
+            onChange={(e) => setBase64Image(e.target.value)}
+            placeholder="data:image/png;base64,..."
+          />
+        </label>
+      </div>
+
+      <div>
+        <label>
+          Image Name:
+          <input
+            type="text"
+            value={imageNameForSave}
+            onChange={(e) => setImageNameForSave(e.target.value)}
+          />
+        </label>
+      </div>
+
+      <div>
+        <button onClick={handleSaveImage} disabled={saving}>
+          {saving ? "Saving..." : "Save Image"}
+        </button>
+      </div>
+
+      {saveResponse && (
+        <div>
+          <h2>Save Response:</h2>
+          <p>{saveResponse}</p>
         </div>
       )}
     </div>

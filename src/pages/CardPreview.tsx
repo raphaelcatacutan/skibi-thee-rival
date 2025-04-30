@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/CardPreview.css"; // Add a CSS file
+import CardGenerator from "../components/CardGenerator";
+import { useSearchParams } from "react-router-dom"
 
 const videos = ["bg2.mp4"];
 
@@ -11,15 +13,16 @@ export default function () {
     setSelectedVideo(randomVideo);
   }, []);
 
+  
+
+  const [searchParams] = useSearchParams();
+  const imagePath = searchParams.get("id");
+
   return (
     <>
       {/* Card Image */}
       <div className="card-image-container">
-        <img
-          src="/assets/images/winner-image.png"
-          alt="Card"
-          className="card-image"
-        />
+       <CardGenerator cardId={imagePath!}/>
       </div>
 
       {/* Card Text */}

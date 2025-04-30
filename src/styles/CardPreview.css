@@ -28,6 +28,8 @@
   position: absolute; /* Position them on top of the card-container */
   z-index: 10; /* Ensure they are above the card-container */
   padding-left: 100px;
+  transform: scale(0.5); /* scale to 80% */
+  transform-origin: top left;
 }
 
 .card-image-container {
