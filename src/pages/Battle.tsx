@@ -29,6 +29,7 @@ import C2SideText from '../components/VFX/C2SideText'
 
 import { time } from 'console'
 import { TIMEOUT } from 'dns'
+import { number } from 'framer-motion'
 
 interface Cards {
   card1_src?: string;
@@ -270,35 +271,35 @@ export default function Battle(props: Cards){
     audio.play();
   }
 
-  function performDeluluStrike(index: number, skillname: string, dmg: number, phase: number){
+  function performDeluluStrike(index: number, skillname: string){
     const audio = document.getElementById("delulustrike_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
     audio.pause();
-    if (index == 0 && phase == 0){
+    if (index == 0){
       setC1TopTextString(skillname)
       animation.triggerVFX('C1TopText')
-      animation.triggerVFX('C1DeluluStrike');
-    } else if (index == 1 && phase == 0) {
-      setC2TopTextString(skillname)
-      setC1SideTextString(dmg.toString())
-      animation.triggerVFX('C1SideText')
-      animation.triggerVFX('C2TopText')
       animation.triggerVFX('C2DeluluStrike');
-    } else if (index == 0 && phase == 1) {
-      
-    } else if (index == 1 && phase == 1) {
-
+    } else {
+      setC2TopTextString(skillname)
+      animation.triggerVFX('C2TopText')
+      animation.triggerVFX('C1DeluluStrike');
     }
     audio.play();
   }
 
-  function performSelfCare(index: number){
+  function performSelfCare(index: number, heal: number){
     const audio = document.getElementById("selfcare_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
     audio.pause();
     if (index == 0){
+      setC1SideTextString(heal.toString())
+      setC1SideTextColor("#00e800")
+      animation.triggerVFX('C1SideText')
       animation.triggerVFX('C1SelfCare');
     } else {
+      setC2SideTextString(heal.toString())
+      setC2SideTextColor("#00e800")
+      animation.triggerVFX('C2SideText')
       animation.triggerVFX('C2SelfCare');
     }
     audio.play();
@@ -360,8 +361,8 @@ export default function Battle(props: Cards){
         </div>
       </div>
       
-      <button onClick={() => {performMaldquake(0, "Power Malquake!", 123, 321)}}>C1 Attack!</button>
-      <button onClick={() => {performMaldquake(1, "asd", 123, 321)}}>C2 Attack!</button>
+      <button onClick={() => {performDeluluStrike(0, "asd")}}>C1 Attack!</button>
+      <button onClick={() => {performDeluluStrike(1, "asd")}}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
       <C2DiceCount isVisible={doDiceCountC2} dice_no={showDiceCountValC2}/>
