@@ -31,9 +31,10 @@ export default function () {
       />
 
       <div className="winner-foreground">
+        {/* fetch winner name*/}
         <h2 className="winner-text">Floydilayo Win</h2>
         <img
-          src="/assets/images/winner-image.png"
+          src="/assets/images/winner-image.png" //fetch winner image
           alt="Winner"
           className="winner-image"
         />
