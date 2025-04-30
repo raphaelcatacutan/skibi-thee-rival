@@ -36,7 +36,7 @@
   transform: scale(1.05); /* <-- Slight scale up to hide blur edges */
 }
 
-.rank_cont {
+.loading_cont {
   position: relative;
   z-index: 1;
   width: 100%;
@@ -46,8 +46,7 @@
   align-items: center;
 }
 
-
-#leaderboard_text {
+#loading_text {
   color: #ffffff;
   font-size: 50px;
   text-align: center;
@@ -55,7 +54,7 @@
   font-family: header;
 }
 
-#rank_list {
+#loading_list {
   display: flex;
   /* background-color: red; */
   width: 700px;
@@ -65,26 +64,14 @@
   overflow: auto;
 }
 
-.rank_slot {
-  padding-top: 10px;
-  display: flex;
-  height: 50px;
-  margin-bottom: 20px;
-  flex-direction: row;
-  background-color: rgb(75, 75, 75);
-  font-size: xx-large;
-  color: white;
-  border-radius: 20px;
-  /* add bg image */
-}
 
-.rank_count {
+.loading_count {
   width: 50px;
   text-align: center;
   font-family: rankname;
 }
 
-.rank_name {
+.loading_text {
   width: 100%;
   text-align: center;
   font-family: rankname;

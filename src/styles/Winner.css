@@ -1,3 +1,8 @@
+@font-face {
+  font-family: buttonFont;
+  src: url(../assets/fonts/10_gremlins.ttf);
+}
+
 .winner-container {
   position: relative;
   width: 100vw;
@@ -56,4 +61,35 @@
   100% {
     transform: rotate(360deg) scale(1);
   }
+}
+
+.proceed-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 15px 30px; /* Increased padding for a larger appearance */
+  font-size: 18px; /* Increased font size */
+  font-family: buttonFont; /* Use the imported font */
+  background-color: #ffcc00; /* Changed to yellow to contrast with blue background */
+  color: #003f7f; /* Dark blue text color for better readability */
+  border: none;
+  border-radius: 8px; /* Slightly larger border radius */
+  cursor: pointer;
+  opacity: 0; /* Initially invisible */
+  transition: opacity 0.5s ease-in-out, transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for a popping effect */
+}
+
+.proceed-button:hover {
+  background-color: #e6b800; /* Slightly darker yellow on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.proceed-button:active {
+  background-color: #cc9900; /* Even darker yellow when clicked */
+  transform: scale(0.95); /* Slightly shrink on click */
+}
+
+.winner-container .proceed-button {
+  opacity: 1; /* Make it visible after 5 seconds */
 }
