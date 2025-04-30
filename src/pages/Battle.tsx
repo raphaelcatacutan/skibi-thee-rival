@@ -267,8 +267,6 @@ export default function(){
     audio.pause();
     if (index == 0 && phase == 0){
       setC1TopTextString(skillname)
-      setC1SideTextString(dmg.toString())
-      animation.triggerVFX('C2SideText')
       animation.triggerVFX('C1TopText')
       animation.triggerVFX('C1DeluluStrike');
     } else if (index == 1 && phase == 0) {
@@ -353,7 +351,7 @@ export default function(){
         </div>
       </div>
       
-      <button onClick={() => performPunch(0, "adwsad", 12)}>C1 Attack!</button>
+      <button onClick={() => performMaldquake(0, "asd", 12)}>C1 Attack!</button>
       <button onClick={() => performPunch(1 , "adwsad", 12)}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
