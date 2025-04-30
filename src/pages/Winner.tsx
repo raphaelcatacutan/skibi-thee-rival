@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from "react";
-import "../styles/Winner.css"; // Add a CSS file for animations
+import { useNavigate } from "react-router-dom";
+import "../styles/Winner.css";
 
 const videos = ["bg1.mp4"];
 
 export default function () {
   const [selectedVideo, setSelectedVideo] = useState("");
+  const [showButton, setShowButton] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const randomVideo = videos[Math.floor(Math.random() * videos.length)];
     setSelectedVideo(randomVideo);
+
+    const timer = setTimeout(() => {
+      setShowButton(true);
+    }, 5000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="winner-container">
-      {/* Background Video */}
       <video
         src={`/assets/videos/bg1.mov`}
         autoPlay
@@ -22,18 +30,23 @@ export default function () {
         className="winner-video"
       />
 
-      {/* Card Image */}
       <div className="winner-foreground">
-        {/* Winner Name */}
         <h2 className="winner-text">Floydilayo Win</h2>
-
-        {/* Winner Image */}
         <img
           src="/assets/images/winner-image.png"
           alt="Winner"
           className="winner-image"
         />
       </div>
+
+      {showButton && (
+        <button
+          className="proceed-button"
+          onClick={() => navigate("/Leaderboards")}
+        >
+          Proceed to Leaderboards
+        </button>
+      )}
     </div>
   );
 }
