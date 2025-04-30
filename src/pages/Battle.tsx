@@ -73,9 +73,12 @@ export default function(){
   
   var [showDiceCountValC1, setDiceCountValC1] = useState("1");
   var [showDiceCountValC2, setDiceCountValC2] = useState("1");
-  var cardC1: string = "/assets/images/winner-image.png"
-
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [C1isAttacked, C1setAttacked] = useState(false);
+  const [C2isAttacked, C2setAttacked] = useState(false);
+  var cardC1: string = "/assets/images/winner-image.png"
+  var cardC2: string = "/assets/images/winner-image.png"
+
 
   let currHealthC1: number = 1,
       currHealthC2: number = 1;
@@ -120,6 +123,16 @@ export default function(){
       audio.play();
     }
   }, [hasInteracted])
+
+  const C1triggerShake = () => {
+    C1setAttacked(true);
+    setTimeout(() => C1setAttacked(false), 600);
+  };
+
+  const C2triggerShake = () => {
+    C2setAttacked(true);
+    setTimeout(() => C2setAttacked(false), 600); // match animation duration
+  };
 
   function removeMask(e: React.MouseEvent<HTMLDivElement>){
     e.currentTarget.style.display = 'none';
@@ -239,25 +252,25 @@ export default function(){
     audio.play();
   }
 
-  function performMaldquake(index: number, skillname: string, dmg: number){
+  function performMaldquake(index: number, skillname: string, dmgtoC1: number, dmgtoC2: number){
     const audio = document.getElementById("maldquake_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
     audio.pause();
     if (index == 0){
       setC1TopTextString(skillname)
-      setC2SideTextString(dmg.toString())
-      setC2SideTextColor("#ff0000")
       animation.triggerVFX('C1TopText')
-      animation.triggerVFX('C2Side')
-      // c1 animation
     } else {
       setC2TopTextString(skillname)
-      setC1SideTextString(dmg.toString())
-      setC1SideTextColor("#ff0000")
       animation.triggerVFX('C2TopText')
-      animation.triggerVFX('C1SideText')
-      // c1 animation
     }
+    setC1SideTextString(dmgtoC1.toString())
+    setC1SideTextColor("#ff0000")
+    setC2SideTextString(dmgtoC2.toString())
+    setC2SideTextColor("#ff0000")
+    animation.triggerVFX('C1SideText')
+    animation.triggerVFX('C2SideText')
+    C1triggerShake()
+    C2triggerShake()
     audio.play();
   }
 
@@ -342,8 +355,8 @@ export default function(){
       <div id={styles.round_text}>Round 1</div>
       <div id={styles.battle_area}>
         <div id={styles.card_cont}>
-          <CardDisplay path={cardC1}></CardDisplay>
-          <CardDisplay path={cardC1}></CardDisplay>
+          <CardDisplay path={cardC1} attackedState={C1isAttacked}></CardDisplay>
+          <CardDisplay path={cardC2} attackedState={C2isAttacked}></CardDisplay>
         </div>
         <div id={styles.heart_cont}>          
           <Healthbar health={currHealthC1} maxHealth={maxHealthC1}></Healthbar>
@@ -351,8 +364,8 @@ export default function(){
         </div>
       </div>
       
-      <button onClick={() => performMaldquake(0, "asd", 12)}>C1 Attack!</button>
-      <button onClick={() => performPunch(1 , "adwsad", 12)}>C2 Attack!</button>
+      <button onClick={() => {performMaldquake(0, "Power Malquake!", 123, 321)}}>C1 Attack!</button>
+      <button onClick={() => {performMaldquake(1, "asd", 123, 321)}}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
       <C2DiceCount isVisible={doDiceCountC2} dice_no={showDiceCountValC2}/>

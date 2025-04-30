@@ -1,14 +1,22 @@
 import React from 'react'
 import styles from '../styles/comp-CardDisplay.module.css'
+import {motion} from 'framer-motion'
+import { shakeAnimation } from '../utils/animationUtil'
 
 interface Props {
-  path: string
+  path: string;
+  attackedState: boolean;
 }
 
 export default function CardDisplay(props: Props) {
 
   return(
-    <div className={styles.card_holder} 
-    style={{ backgroundImage: `url(${props.path})` }}></div>
+    <motion.div 
+      className={styles.card_holder} 
+      style={{ backgroundImage: `url(${props.path})` }} 
+      variants={shakeAnimation}
+      animate={props.attackedState ? "shake" : ""} 
+    
+    ></motion.div>
   )
 }

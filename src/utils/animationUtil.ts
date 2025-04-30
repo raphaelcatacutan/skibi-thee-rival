@@ -1,4 +1,6 @@
 import React from 'react'
+import { motion }from 'framer-motion'
+
 
 const vfxSetters: { [key: string]: (visible: boolean) => void } = {};
 let animationSpeed: number = 300;
@@ -14,3 +16,15 @@ export function triggerVFX(name: string, duration = animationSpeed) {
     setTimeout(() => setter(false), duration);
   }
 }
+
+// card movements
+export const shakeAnimation = {
+  shake: {
+    x: [0, -10, 10, -10, 10, -10, 10, -10, 10, -10, 10, 0],
+    transition: {
+      duration: 1,
+      ease: "easeInOut",
+    },
+  },
+};
+
