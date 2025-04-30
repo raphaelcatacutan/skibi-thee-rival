@@ -6,7 +6,7 @@ import bg3 from "../assets/images/scenes/bg_dojo.jpeg";
 import Lottie from "lottie-react";
 import loadingAnimation from "../assets/animations/loading.json"; // Adjust path if needed
 import { jsonToExtraction } from "../utils/parser";
-import { useSearchParams } from "react-router-dom"
+import { useSearchParams } from "react-router-dom";
 
 const images = [bg1, bg2, bg3];
 
@@ -46,26 +46,28 @@ export default function () {
   useEffect(() => {
     // Simulate API fetch
     if (!imagePath || !name) {
-      console.error("Invalid Image Path and Name")
-      setFetchedText("...")
-      return
+      console.error("Invalid Image Path and Name");
+      setFetchedText("...");
+      return;
     }
-    console.log(imagePath)
-    console.log(name)
-    // return  
-    fetch(`http://localhost:3000/api/extract?imagePath=${imagePath}.jpg&name=${name}`)
-          .then(res => res.json())
-          .then(data => {
-            console.log(data)
-            const parsed = jsonToExtraction(data);
-            const keys = Object.keys(parsed)[0]
-            console.log(Object.values(parsed[keys].logInformation).join("\n"))
-            setFetchedText(Object.values(parsed[keys].logInformation).join("\n"));
-          })
-          .catch(err => {
-            console.error("Error fetching text:", err);
-            setFetchedText("Error loading text");
-          });
+    console.log(imagePath);
+    console.log(name);
+    // return
+    fetch(
+      `http://localhost:3000/api/extract?imagePath=${imagePath}.jpg&name=${name}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        const parsed = jsonToExtraction(data);
+        const keys = Object.keys(parsed)[0];
+        console.log(Object.values(parsed[keys].logInformation).join("\n"));
+        setFetchedText(Object.values(parsed[keys].logInformation).join("\n"));
+      })
+      .catch((err) => {
+        console.error("Error fetching text:", err);
+        setFetchedText("Error loading text");
+      });
   }, []);
 
   return (
@@ -77,9 +79,13 @@ export default function () {
         />
       </div>
 
-      <div className={styling.rank_cont}>
-        <div id={styling.leaderboard_text}>Loading</div>
-        <div id={styling.rank_list}></div>
+      <div className={styling.loading_cont}>
+        <img
+          src="/assets/images/textLogo.png"
+          alt="logo"
+          className="winner-image"
+        />
+        <div id={styling.loading_list}></div>
       </div>
 
       {/* Bottom Left Lottie Animation */}
