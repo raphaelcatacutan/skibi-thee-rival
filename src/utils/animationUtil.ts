@@ -26,5 +26,19 @@ export const shakeAnimation = {
       ease: "easeInOut",
     },
   },
+  C1BonkAttack: {
+    rotate: [0, , -20, 30],
+    transition: {
+      duration:0.3,
+      ease: "backIn"
+    }
+  },
+  C2BonkAttack: {
+    rotate: [0, 20, -30],
+    transition: {
+      duration:0.3,
+      ease: "backIn"
+    }
+  }
 };
 

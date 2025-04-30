@@ -26,6 +26,8 @@ import C1TopText from '../components/VFX/C1TopText'
 import C2TopText from '../components/VFX/C2TopText'
 import C1SideText from '../components/VFX/C1SideText'
 import C2SideText from '../components/VFX/C2SideText'
+import C1BonkAttack from '../components/VFX/C1BonkAttack'
+import C2BonkAttack from '../components/VFX/C2BonkAttack'
 
 import { time } from 'console'
 import { TIMEOUT } from 'dns'
@@ -51,6 +53,8 @@ export default function Battle(props: Cards){
   const [doZuccC2, setZuccC2] = useState(false);
   const [doPunchC1, setPunchC1] = useState(false);
   const [doPunchC2, setPunchC2] = useState(false);
+  const [doBonkC1, setBonkC1] = useState(false);
+  const [doBonkC2, setBonkC2] = useState(false);
   const [doDiceC1, setDiceC1] = useState(false);
   const [doDiceC2, setDiceC2] = useState(false);
   const [doDiceCountC1, setDiceCountC1] = useState(false);
@@ -67,7 +71,7 @@ export default function Battle(props: Cards){
   const [showC2SideTextString, setC2SideTextString] = useState("");
   const [showC1SideTextColor, setC1SideTextColor] = useState("");
   const [showC2SideTextColor, setC2SideTextColor] = useState("");
-  
+
   var [showDiceCountValC1, setDiceCountValC1] = useState("1");
   var [showDiceCountValC2, setDiceCountValC2] = useState("1");
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -110,6 +114,8 @@ export default function Battle(props: Cards){
     animation.registerVFXSetter('C2TopText', setC2TopText)
     animation.registerVFXSetter('C1SideText', setC1SideText)
     animation.registerVFXSetter('C2SideText', setC2SideText)
+    animation.registerVFXSetter('C1BonkAttack', setBonkC1)
+    animation.registerVFXSetter('C2BonkAttack', setBonkC2)
   }, []);
 
   // for bg music
@@ -235,18 +241,20 @@ export default function Battle(props: Cards){
       setC1TopTextString(skillname)
       setC2SideTextString(dmg.toString())
       setC2SideTextColor("#ff0000")
-      animation.triggerVFX('C1TopText')
-      animation.triggerVFX('C2Side')
-      // c1 animation
+      animation.triggerVFX('C1TopText', 500)
+      animation.triggerVFX('C1BonkAttack', 500)
+      setTimeout(() => animation.triggerVFX('C2SideText'), 300)
     } else {
       setC2TopTextString(skillname)
       setC1SideTextString(dmg.toString())
       setC1SideTextColor("#ff0000")
-      animation.triggerVFX('C2TopText')
-      animation.triggerVFX('C1SideText')
-      // c2 animation
+      animation.triggerVFX('C2TopText', 500)
+      animation.triggerVFX('C2BonkAttack', 500)
+      setTimeout(() => animation.triggerVFX('C1SideText'), 300)
     }
-    audio.play();
+    setTimeout(() => 
+      audio.play(), 90
+    )
   }
 
   function performMaldquake(index: number, skillname: string, dmgtoC1: number, dmgtoC2: number){
@@ -340,7 +348,7 @@ export default function Battle(props: Cards){
       <audio id="catk_sfx" src="/assets/sounds/catk_3.mp3"/>
       <audio id="batk_sfx" src="/assets/sounds/batk_4.mp3"/>
       <audio id="punch_sfx" src="/assets/sounds/punch.mp3"/>
-      <audio id="bonk_sfx" src="/assets/sounds/bonk.mp3"/>
+      <audio id="bonk_sfx" src="/assets/sounds/bonk1.mp3"/>
       <audio id="maldquake_sfx" src="/assets/sounds/maldquake.mp3"/>
       <audio id="delulustrike_sfx" src="/assets/sounds/delulustrike.mp3"/>
       <audio id="selfcare_sfx" src="/assets/sounds/selfcare.mp3"/>
@@ -361,8 +369,8 @@ export default function Battle(props: Cards){
         </div>
       </div>
       
-      <button onClick={() => {performDeluluStrike(0, "asd")}}>C1 Attack!</button>
-      <button onClick={() => {performDeluluStrike(1, "asd")}}>C2 Attack!</button>
+      <button onClick={() => {performBonk(0, "asd", 123)}}>C1 Attack!</button>
+      <button onClick={() => {performBonk(1, "asd", 123)}}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
       <C2DiceCount isVisible={doDiceCountC2} dice_no={showDiceCountValC2}/>
@@ -374,6 +382,8 @@ export default function Battle(props: Cards){
       <C2CritAttack isVisible={doCritAtkC2}/>
       <C1Punch isVisible={doPunchC1}/>
       <C2Punch isVisible={doPunchC2}/>
+      <C1BonkAttack isVisible={doBonkC1}/>
+      <C2BonkAttack isVisible={doBonkC2}/>
       <C1DeluluStrike isVisible={doDStrikeC1}/>
       <C2DeluluStrike isVisible={doDStrikeC2}/>
 
