@@ -31,15 +31,11 @@ import { time } from 'console'
 import { TIMEOUT } from 'dns'
 
 interface Cards {
-  card_1: string;
-  card_2: string;
+  card1_src?: string;
+  card2_src?: string;
 }
 
-interface RoundCount {
-  round_no: number;
-}
-
-export default function(){
+export default function Battle(props: Cards){
   const [doBasicAtkC1, setBasicAtkC1] = useState(false);
   const [doBasicAtkC2, setBasicAtkC2] = useState(false);
   const [doCritAtkC1, setCritAtkC1] = useState(false);
@@ -355,8 +351,8 @@ export default function(){
       <div id={styles.round_text}>Round 1</div>
       <div id={styles.battle_area}>
         <div id={styles.card_cont}>
-          <CardDisplay path={cardC1} attackedState={C1isAttacked}></CardDisplay>
-          <CardDisplay path={cardC2} attackedState={C2isAttacked}></CardDisplay>
+          <CardDisplay path={props.card1_src} attackedState={C1isAttacked}></CardDisplay>
+          <CardDisplay path={props.card1_src} attackedState={C2isAttacked}></CardDisplay>
         </div>
         <div id={styles.heart_cont}>          
           <Healthbar health={currHealthC1} maxHealth={maxHealthC1}></Healthbar>

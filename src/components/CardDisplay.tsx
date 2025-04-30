@@ -4,7 +4,7 @@ import {motion} from 'framer-motion'
 import { shakeAnimation } from '../utils/animationUtil'
 
 interface Props {
-  path: string;
+  path?: string;
   attackedState: boolean;
 }
 
