@@ -94,10 +94,11 @@ export default function Battle(){
   var cardC2: string = `http://localhost:5000/output/${card2}-preview.png`
   console.log(cardC1)
 
-  let currHealthC1: number = 1, // default
-      currHealthC2: number = 1;
-  let maxHealthC1: number = 1,
-      maxHealthC2: number = 1;
+      
+  const [currHealthC1, setCurrHealthC1] = useState(1);
+  const [currHealthC2, setCurrHealthC2] = useState(1);
+  const [maxHealthC1, setMaxHealthC1] = useState(1);
+  const [maxHealthC2, setMaxHealthC2] = useState(1);
   let speedControl: number = 500;
   const navigate = useNavigate()
   const bg_scenes: string[] = [];
@@ -212,11 +213,11 @@ export default function Battle(){
 
   function applyHealthChange(index: number, currHealth: number, maxHealth: number){
     if(index == 0){
-      currHealthC1 = currHealth;
-      maxHealthC1 = maxHealth;
+      setCurrHealthC1(currHealth)
+      setMaxHealthC1(maxHealth)
     } else {
-      currHealthC2 = currHealth;
-      maxHealthC2 = maxHealth;
+      setCurrHealthC2(currHealth)
+      setMaxHealthC2(maxHealth)
     }
   }
 

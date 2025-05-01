@@ -83,6 +83,7 @@ class CardMechanics {
 
         const prevHp = this.hp;
         this.hp = Math.max(0, Math.min(this.maxHp, this.hp - damage));
+        console.debug("Health should change")
         fApplyHealthChange(getIndex(this.id), this.hp, this.maxHp)
         console.log(`${this.name} took ${damage} damage. HP: ${prevHp} → ${this.hp}`);
     }
@@ -249,6 +250,8 @@ async function startBattle(
 
     let turn1 = card1
     let turn2 = card2
+    card1.reset()
+    card2.reset()
     while (true) {
         const random1 = random(1, 6)
         const random2 = random(1, 6)
@@ -274,6 +277,8 @@ async function startBattle(
     while (true) {
         let rounds = 0;
 
+        card1.reset()
+        card2.reset()
         while (turn1.hp > 0 && turn2.hp > 0) {
             rounds++;
             console.log(`\n🌀 Round ${rounds}`);
@@ -302,8 +307,6 @@ async function startBattle(
             return rounds;
         } else {
             endBattle(undefined, true)
-            card1.reset()
-            card2.reset()
             await sleep(3000)
             continue
         }
