@@ -359,8 +359,7 @@ export default function Battle(props: Cards){
   }
 
   function endBattle(card_id: string, isDraw: boolean){
-    // sfx?
-    if (isDraw){ 
+    if (isDraw){ // if may draw
       setisDraw(true)
       setHasInteracted(false)
       setTimeout(() => setisDraw(false), 3000)
@@ -372,17 +371,11 @@ export default function Battle(props: Cards){
         navigate(`/Winner?id=${card_id}`)
       }, 3000)
     }
-    // not sure if mawawala bg music pagka navigate
   }
 
   return (
     <div className={styles.background_cont}>
-      {/* <motion.div 
-        className={styles.background_img} 
-        variants={animation.shakeAnimation} 
-        animate={doScreenShake ? "screenshake" : ""}></motion.div> */}
       <Scene quake={doScreenShake} playMusic={hasInteracted}></Scene>
-      {/* <audio id="bg_music" src="/assets/sounds/battle_bgmusic.mp3" loop={true}/> // to be changed */}
       <audio id="dice_sfx" src="/assets/sounds/dice.mp3"/>
       <audio id="catk_sfx" src="/assets/sounds/catk_3.mp3"/>
       <audio id="batk_sfx" src="/assets/sounds/batk_4.mp3"/>
@@ -393,20 +386,15 @@ export default function Battle(props: Cards){
       <audio id="selfcare_sfx" src="/assets/sounds/selfcare.mp3"/>
       <audio id="harden_sfx" src="/assets/sounds/harden.mp3"/>
       <audio id="zucc_sfx" src="/assets/sounds/zucc.mp3"/>
-      {/* <div className={styles.mask_layear_x} onClick={removeMask}>
-        Proceed to Battle
-      </div> */}
       {showScreenMask && (
       <div className={styles.mask_layer} onClick={removeMask}>
         <TextMask isVisible={isReady} message={"READY"} font="ready"/>
         <TextMask isVisible={isStart} message={"FIGHT"} font="fight"/>
       </div>)}
-
       {isDraw && (
       <div className={styles.mask_layer} >
         <TextMask isVisible={isDraw} message={"DRAW"} font="ready"/>
       </div>)}
-
       {isFinished && (
       <div className={styles.mask_layer} >
         <TextMask isVisible={isFinished} message={"FINISHED"} font="ready"/>
@@ -424,7 +412,7 @@ export default function Battle(props: Cards){
         </div>
       </div>
       
-      <button onClick={() => {endBattle("123", false)}}>C1 Attack!</button>
+      <button onClick={() => {performBAtk(1, 123)}}>C1 Attack!</button>
       <button onClick={() => {endBattle("123", true)}}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
