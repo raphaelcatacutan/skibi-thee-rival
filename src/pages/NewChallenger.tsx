@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "../utils/types";
 import { jsonToCards } from "../utils/parser";
+import styling from "../styles/page-newchallenger.module.css";
+import bg1 from "../assets/images/scenes/bg_arena.jpg";
+import bg2 from "../assets/images/scenes/bg_disco.jpg";
+import bg3 from "../assets/images/scenes/bg_dojo.jpeg";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+const images = [bg1, bg2, bg3];
 
 const CardGallery: React.FC = () => {
+  const [selectedImage, setSelectedImage] = useState("");
   const [cards, setCards] = useState<Record<string, Card>>({});
   const [loading, setLoading] = useState(true);
 
@@ -20,6 +28,12 @@ const CardGallery: React.FC = () => {
         setLoading(false);
       });
   };
+
+  useEffect(() => {
+    const randomImage = images[Math.floor(Math.random() * images.length)];
+    setSelectedImage(randomImage);
+    fetchCards();
+  }, []);
 
   useEffect(() => {
     fetchCards();
@@ -47,46 +61,58 @@ const CardGallery: React.FC = () => {
   if (loading) return <div className="p-4 text-lg">Loading cards...</div>;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "16px",
-        padding: "16px",
-      }}
-    >
-      {Object.entries(cards).map(([key, card]) => (
+    <div className={styling.page_wrapper}>
+      <div className={styling.background_wrapper}>
         <div
-          key={key}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            background: "green",
-            padding: "10px",
-          }}
-        >
+          className={styling.background_img}
+          style={{ backgroundImage: `url(${selectedImage})` }}
+        />
+      </div>
+
+      <div className={styling.content_area}>
+        <div className={styling.loading_cont}>
           <img
-            src={`http://localhost:5000/data/${key}.jpg`}
-            alt={card.name}
-            style={{
-              width: "100px",
-              height: "300px",
-              objectFit: "cover",
-            }}
+            src="/assets/images/textLogo.png"
+            alt="logo"
+            className="winner-image"
           />
-          <div
-            style={{
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              textAlign: "center",
-              marginTop: "4px",
-            }}
-          >
-            {card.name}
-          </div>
         </div>
-      ))}
+
+        <div className={styling.card_grid}>
+          {Object.entries(cards).map(([key, card]) => (
+            <div
+              key={key}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                background: "green",
+                padding: "10px",
+              }}
+            >
+              <img
+                src={`http://localhost:5000/data/${key}.jpg`}
+                alt={card.name}
+                style={{
+                  width: "100px",
+                  height: "300px",
+                  objectFit: "cover",
+                }}
+              />
+              <div
+                style={{
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  textAlign: "center",
+                  marginTop: "4px",
+                }}
+              >
+                {card.name}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

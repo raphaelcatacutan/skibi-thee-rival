@@ -13,7 +13,7 @@ export default function BasicAttack(props: Props){
   }
 
   return(
-    <div id={styles.CritAtkC2} >
+    <div id={styles.CritAtkC2} style={{transform: 'scaleX(-1)'}} >
       <Lottie
         animationData={CritAttackAnimation}
         loop={false}

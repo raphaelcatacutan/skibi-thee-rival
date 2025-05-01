@@ -49,6 +49,61 @@ export const shakeAnimation = {
   },
   dmgtext: {  
 
-  }
+  },
+  initial: {
+    y: 0,
+    opacity: 0,
+    scale: 0.8,
+  },
+  animate: {
+    y: 40,          
+    opacity: 1,
+    scale: 1.2,
+    transition: {
+      duration: 0.2,
+      ease: "easeOut",
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: 60,
+    scale: 1,
+    transition: {
+      duration: 0.4,
+      ease: "easeIn",
+    },
+  } 
+};
+
+export const C1Damage = {
+  initial: { x: 0, opacity: 0, scale: 0.8 },
+  animate: {
+    x: -30,
+    opacity: 1,
+    scale: 1.2,
+    transition: { duration: 0.3, ease: "easeOut" },
+  },
+  exit: {
+    x: -50,
+    opacity: 0,
+    scale: 1,
+    transition: { duration: 0.4, ease: "easeIn" },
+  },
+};
+
+export const C2Damage = {
+  initial: { x: 0, opacity: 0, scale: 0.8 },
+  animate: {
+    x: 30,
+    opacity: 1,
+    scale: 1.2,
+    transition: { duration: 0.3, ease: "easeOut" },
+  },
+  exit: {
+    x: 50,
+    opacity: 0,
+    scale: 1,
+    transition: { duration: 0.4, ease: "easeIn" },
+  },
 };
 
