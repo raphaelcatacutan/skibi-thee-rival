@@ -1,0 +1,247 @@
+/* add font */
+@font-face {
+  font-family: header;
+  src: url(../assets/fonts/31_War\ Machine.ttf);
+}
+
+@font-face {
+  font-family: rankname;
+  src: url(../assets/fonts/10_gremlins.ttf);
+}
+
+.page_wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.background_wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* <-- IMPORTANT: clip the blurred background */
+  z-index: 1;
+}
+
+.background_img {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(8px);
+  transform: scale(1.05); /* <-- Slight scale up to hide blur edges */
+}
+
+.loading_cont {
+  position: absolute;
+  z-index: 3;
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 20px;
+  margin-bottom: 2rem;
+}
+
+#loading_text {
+  color: #ffffff;
+  font-size: 50px;
+  text-align: center;
+  padding: 20px;
+  font-family: header;
+}
+
+#loading_list {
+  display: flex;
+  /* background-color: red; */
+  width: 700px;
+  height: auto;
+  justify-self: center;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.loading_count {
+  width: 50px;
+  text-align: center;
+  font-family: rankname;
+}
+
+.loading_text {
+  width: 100%;
+  text-align: center;
+  font-family: rankname;
+}
+
+.bottom_left {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 150px;
+  height: 150px;
+  z-index: 2;
+}
+
+.bottom_right {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 2;
+}
+
+.animated_text {
+  font-family: rankname;
+  color: white;
+  font-size: 48px;
+}
+
+.content_area {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+}
+
+.card_grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  margin-top: 200px;
+}
+
+.card_item {
+  cursor: pointer;
+  transition: transform 0.2s;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card_item:hover {
+  transform: scale(1.05);
+}
+
+.card_image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.card_name {
+  margin-top: 10px;
+  color: #ffffff;
+  font-size: 16px;
+  text-align: center;
+}
+
+.loading {
+  color: #ffffff;
+  font-size: 24px;
+  text-align: center;
+  padding: 40px;
+}
+
+/* Popup Styles */
+.popup_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup_content {
+  background-color: #2a2a2a;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  color: #ffffff;
+  max-width: 400px;
+  width: 90%;
+}
+
+.popup_content p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.popup_buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.confirm_button, .cancel_button {
+  padding: 10px 30px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.confirm_button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.cancel_button {
+  background-color: #f44336;
+  color: white;
+}
+
+.confirm_button:hover, .cancel_button:hover {
+  transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .card_grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .card_grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .card_grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .card_grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+:global(.winner-image) {
+  width: 375px;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 2rem;
+}
