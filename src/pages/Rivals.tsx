@@ -99,6 +99,8 @@ export default function () {
           />
         </div>
 
+        <div className={styling.loading_text}>Choose Your Rival!</div>
+
         <div className={styling.card_grid}>
           {Object.entries(cards).map(([key, card]) => {
             console.log(key);
