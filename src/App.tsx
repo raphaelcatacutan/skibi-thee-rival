@@ -11,6 +11,7 @@ import Winner from "./pages/Winner";
 import TestPage from "./pages/TestPage";
 import TestAnimation from "./pages/TestAnimation";
 import CardPreview from "./pages/CardPreview";
+import Rivals from "./pages/Rivals";
 
 const App: React.FC = () => {
   return (
@@ -30,6 +31,7 @@ const App: React.FC = () => {
           <Route path="/testAnimation" element={<TestAnimation />} />
           <Route path="/CardPreview" element={<CardPreview />} />
           <Route path="/Winner" element={<Winner />} />
+          <Route path="/Rivals" element={<Rivals />} />
         </Routes>
       </BrowserRouter>
     </div>
