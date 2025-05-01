@@ -149,14 +149,31 @@ export default function Battle(props: Cards){
     setTimeout(() => C2setAttacked(false), 600); // match animation duration
   };
 
+  function introCards(card1: string, card2: string) {
+    setTimeout(() => {
+      speak({text: "."})
+    }, 200);
+    setTimeout(() => speak({ text: card1, pitch: 1.3, rate: 1.1 })); // Higher pitch for name emphasis
+    setTimeout(() => {
+      speak({ text: "versus", pitch: 0.8, rate: 0.9 }); // Lower pitch for contrast
+    }, 300);
+    setTimeout(() => {
+      speak({ text: card2, pitch: 1.3, rate: 1.1 });
+    }, 600);
+    setTimeout(() => {
+      speak({ text: "FIGHT!", pitch: 1.5, rate: 1.2 });
+    }, 900);
+  }
+
   function removeMask(e: React.MouseEvent<HTMLDivElement>){
     setisReady(false);
     setisStart(true);
+    introCards("Robante Balante", "Saging Bading")
     setTimeout(() => {
       setisStart(false);
       setHasInteracted(true)
       setScreenMask(false)
-    }, 1000)
+    }, 7000)
   }
 
   function applyHealthChange(index: number, currHealth: number, maxHealth: number){
@@ -250,7 +267,6 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C1SideText', speedControl)
       animation.triggerVFX('C2Punch');
     }
-    speak({text: skillname})
     audio.play();
   }
 
@@ -273,7 +289,6 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C2BonkAttack')
       setTimeout(() => animation.triggerVFX('C1SideText', speedControl), 300)
     }
-    speak({text: skillname})
     setTimeout(() => 
       audio.play(), 90
     )
@@ -299,7 +314,6 @@ export default function Battle(props: Cards){
     C1triggerShake()
     C2triggerShake()
     triggerScreenShake()
-    speak({text: skillname})
     audio.play();
   }
 
@@ -316,7 +330,6 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C2TopText', speedControl)
       animation.triggerVFX('C1DeluluStrike');
     }
-    speak({text: skillname})
     audio.play();
   }
 
@@ -335,7 +348,6 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C2SideText', speedControl)
       animation.triggerVFX('C2SelfCare');
     }
-    speak({text: skillname})
     audio.play();
   }
 
@@ -352,7 +364,6 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C2TopText', speedControl)
       animation.triggerVFX('C2Harden', speedControl);
     }
-    speak({text: skillname})
     audio.play();
   }
 
@@ -369,7 +380,6 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C2TopText', speedControl)
       animation.triggerVFX('C1Zucc', speedControl);
     }
-    speak({text: skillname})
     audio.play();
   }
 
@@ -427,8 +437,8 @@ export default function Battle(props: Cards){
         </div>
       </div>
       
-      <button style={{backgroundColor: 'transparent'}} onClick={() => {performPunch(0, "SUPER PUNCH", 312)}}>C1 Attack!</button>
-      <button style={{backgroundColor: 'transparent'}} onClick={() => {performZucc(1, "ZUCC")}}>C2 Attack!</button>
+      <button style={{backgroundColor: 'transparent'}} onClick={() => {performZucc(1, "SELF-CARE BONK")}}>C1 Attack!</button>
+      <button style={{backgroundColor: 'transparent'}} onClick={() => {performZucc(1, "LANGKAQUAKE")}}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
       <C2DiceCount isVisible={doDiceCountC2} dice_no={showDiceCountValC2}/>

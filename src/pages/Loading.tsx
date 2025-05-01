@@ -104,7 +104,7 @@ export default function () {
           onClick={() => navigate("/CardPreview")}
           style={{ zIndex: 10 }}
         >
-          Proceed to Preview
+          Proceed to Card Preview
         </button>
       )}
 

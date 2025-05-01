@@ -1,3 +1,8 @@
+@font-face {
+  font-family: card;
+  src: url(../assets/fonts/435_arial\ black.ttf);
+}
+
 .winner-container {
   position: relative;
   width: 100vw;
@@ -36,7 +41,7 @@
   position: absolute; /* Position them on top of the card-container */
   z-index: 10; /* Ensure they are above the card-container */
   padding:2%;
-  transform: scale(0.6); /* scale to 80% */
+  transform: scale(0.65); /* scale to 80% */
   transform-origin: top left;
   margin-left: 45%; /* Use percentage for margin */
   margin-right: 5%; /* Use percentage for margin */
@@ -46,6 +51,7 @@
   box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.3); /* Add a subtle shadow */
   text-align: left; /* Align text to the left */
   SCALE: 1.4; /* scale to 80% */
+  font-family: card; /* Use the custom font */
 }
 
 .card-image {
