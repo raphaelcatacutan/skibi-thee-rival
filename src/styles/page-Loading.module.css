@@ -66,7 +66,6 @@
   overflow: auto;
 }
 
-
 .loading_count {
   width: 50px;
   text-align: center;
@@ -99,4 +98,38 @@
   font-family: rankname;
   color: white;
   font-size: 48px;
+}
+
+.proceedButton {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-family: buttonFont;
+  background-color: #ffcc00;
+  color: #003f7f;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out, transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+.proceedButton:hover {
+  background-color: #e6b800;
+  transform: scale(1.05);
+}
+
+.proceedButton:active {
+  background-color: #cc9900;
+  transform: scale(0.95);
+}
+
+.show {
+  opacity: 1;
+  pointer-events: auto !important;
 }
