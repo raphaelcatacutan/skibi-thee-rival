@@ -9,22 +9,20 @@ import {
 } from "../utils/CardTypes";
 import "../styles/CardGenerator.css";
 type CardGeneratorProps = {
-	cardId: string;
+	cardConfig: CardConfig,
+	cardId: string
 };
 
 const isBrowser = typeof window !== "undefined";
 
-const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
+const CardGenerator: React.FC<CardGeneratorProps> = ({ cardConfig, cardId }) => {
+	console.log(cardConfig.skillNames)
 	// Constants from original implementation
 	const cardWidth = 750;
 	const cardHeight = 1050;
 	const scaleFactor = 300 / 110;
 
 	// State for card configuration
-	const [cardConfig, setCardConfig] = useState<CardConfig>(defaultCardConfig);
-	const [configText, setConfigText] = useState<string>(
-		JSON.stringify(defaultCardConfig, null, 2)
-	);
 	const [currentOverlay, setCurrentOverlay] =
 		useState<OverlayType>("holographic");
 	const [currentBorderColor, setCurrentBorderColor] =
@@ -110,41 +108,33 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 	// Fetch real data on page load
 	useEffect(() => {
 		if (!cardElementsLoaded) return;
-		fetch(`http://localhost:3000/api/images?filter=${cardId}`)
-			.then((res) => res.json())
-			.then(async (data) => {
-				setConfigText(JSON.stringify(data[cardId]));
-				applyConfiguration(data[cardId]).then(async (applied) => {
-					if (!applied) return;
-					const base64Image = stageRef.current.toDataURL().toString();
-					if (!base64Image) return;
-					try {
-						const res = await fetch(
-							"http://localhost:3000/api/preview",
-							{
-								method: "POST",
-								headers: {
-									"Content-Type": "application/json",
-								},
+		applyConfiguration(cardConfig).then(async (applied) => {
+			if (!applied) return;
+			const base64Image = stageRef.current.toDataURL().toString();
+			if (!base64Image) return console.log("Image not rendered");
+			try {
+				const res = await fetch(
+					"http://localhost:3000/api/preview",
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
 
-								body: JSON.stringify({
-									base64Image,
-									imageName: cardId,
-								}),
-							}
-						);
-
-						const data = await res.json();
-
-						console.log("Image Saving:", data.message);
-					} catch (error) {
-						console.error("Save error:", error);
+						body: JSON.stringify({
+							base64Image,
+							imageName: cardId,
+						}),
 					}
-				});
-			})
-			.catch((err) => {
-				console.error("Failed to fetch card data:", err);
-			});
+				);
+
+				const data = await res.json();
+
+				console.log("Image Saving:", data.message);
+			} catch (error) {
+				console.error("Save error:", error);
+			}
+		});
 	}, [cardElementsLoaded]);
 	// Add styles to document head for font loading
 	useEffect(() => {
@@ -267,8 +257,6 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 		// In React we'll recreate the skills array in the render function
 
 		// Save the updated config
-		setCardConfig(mergedConfig);
-		setConfigText(JSON.stringify(mergedConfig, null, 2));
 
 		return new Promise((resolve, reject) => {
 			newImage.onload = () => {
@@ -303,7 +291,6 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 	const applyConfiguration = (config: any): Promise<boolean> => {
 		return new Promise((resolve, reject) => {
 			try {
-				setCardConfig(config);
 
 				if (!cardElementsLoaded) {
 					console.log(

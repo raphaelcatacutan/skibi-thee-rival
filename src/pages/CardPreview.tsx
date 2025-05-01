@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import "../styles/CardPreview.css"; // Add a CSS file
+import "../styles/CardPreview.css";
 import CardGenerator from "../components/CardGenerator";
-import { useSearchParams } from "react-router-dom"
+import { useSearchParams } from "react-router-dom";
+import { CardConfig, defaultCardConfig } from "../utils/CardTypes";
 
 const videos = ["bg2.mp4"];
 
-export default function () {
+export default function CardPreviewPage() {
+  const [searchParams] = useSearchParams();
+  const imagePath = searchParams.get("id") || ""; // no need for useState here if it doesn't change
+  const [cardConfig, setCardConfig] = useState<CardConfig>(defaultCardConfig);
   const [selectedVideo, setSelectedVideo] = useState("");
 
   useEffect(() => {
@@ -13,29 +17,38 @@ export default function () {
     setSelectedVideo(randomVideo);
   }, []);
 
-  
+  useEffect(() => {
+    if (!imagePath) return;
 
-  const [searchParams] = useSearchParams();
-  const imagePath = searchParams.get("id");
+    fetch(`http://localhost:3000/api/images?filter=${imagePath}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(imagePath, data[imagePath]);
+        setCardConfig(data[imagePath]);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch image config", err);
+      });
+  }, [imagePath]);
 
   return (
     <>
       {/* Card Image */}
       <div className="card-image-container">
-       <CardGenerator cardId={imagePath!}/>
+        <CardGenerator cardConfig={cardConfig} cardId={imagePath} />
       </div>
 
       {/* Card Text */}
       <div className="card-text-container">
-        <h2 className="card-txt">Floydilayo</h2>
-        <h4 className="card-subtxt">HP: </h4>
-        <h4 className="card-subtxt">Atk: </h4>
+        <h2 className="card-txt">{cardConfig.cardTitle}</h2>
+        <h4 className="card-subtxt">HP: {cardConfig.hpValue}</h4>
+        <h4 className="card-subtxt">Atk: {cardConfig.damageValue}</h4>
       </div>
 
+      {/* Background Video */}
       <div className="card-container">
-        {/* Background Video */}
         <video
-          src={`/assets/videos/bg2.mp4`}
+          src={`/assets/videos/${selectedVideo}`}
           autoPlay
           loop
           muted
