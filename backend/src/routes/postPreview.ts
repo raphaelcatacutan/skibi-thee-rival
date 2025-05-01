@@ -15,7 +15,7 @@ router.post("/preview", async (req: Request, res: Response): Promise<void> => {
     const base64Data = base64Image.replace("data:image/png;base64,", "");
     const buffer = Buffer.from(base64Data, "base64");
 
-    const imagePath = `./output/${Date.now()}-preview.png`;
+    const imagePath = `./output/${imageName}-preview.png`;
 
     fs.writeFileSync(imagePath, buffer);
 
