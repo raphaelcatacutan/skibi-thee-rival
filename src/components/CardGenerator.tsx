@@ -13,7 +13,6 @@ type CardGeneratorProps = {
 	cardId: string;
 };
 
-// Check if running in browser environment to avoid Konva initialization issues
 const isBrowser = typeof window !== "undefined";
 
 const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
@@ -21,46 +20,6 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 	const cardWidth = 750;
 	const cardHeight = 1050;
 	const scaleFactor = 300 / 110;
-
-	useEffect(() => {
-		console.log(`http://localhost:3000/api/images?filter=${cardId}`);
-		fetch(`http://localhost:3000/api/images?filter=${cardId}`)
-			.then((res) => res.json())
-			.then(async (data) => {
-        console.log("hell")
-				setConfigText(JSON.stringify(data[cardId]));
-        console.log(JSON.stringify(data[cardId]))
-				applyConfiguration();
-
-        const base64Image = stageRef.current.toDataURL().toString();
-        try {
-          const res = await fetch("http://localhost:3000/api/preview", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-  
-            body: JSON.stringify({
-              base64Image,
-              imageName: cardId,
-            }),
-          });
-  
-          const data = await res.json();
-  
-          if (data.success) {
-            console.log("success");
-          } else {
-            console.log("failed");
-          }
-        } catch (error) {
-          console.error("Save error:", error);
-        }
-			})
-			.catch((err) => {
-				console.error("Failed to fetch card data:", err);
-			});
-	}, []);
 
 	// State for card configuration
 	const [cardConfig, setCardConfig] = useState<CardConfig>(defaultCardConfig);
@@ -73,7 +32,6 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 		useState<BorderColor>("GREEN");
 	const [cardElementsLoaded, setCardElementsLoaded] =
 		useState<boolean>(false);
-	const [cardFetched, setCardFetched] = useState<boolean>(false);
 
 	// Refs for animation and elements
 	const overlayAnimationRef = useRef<any>(null);
@@ -150,243 +108,308 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 		number | string
 	> | null>(null);
 
-	// Set border thickness function
-	const setBorderThickness = (thickness: number) => {
-		setDimensions({
-			borderThickness: thickness,
-			outerRectX: 0,
-			outerRectY: 0,
-			outerRectWidth: cardWidth,
-			outerRectHeight: cardHeight,
-			innerRectX: thickness,
-			innerRectY: thickness,
-			innerRectWidth: cardWidth - thickness * 2,
-			innerRectHeight: cardHeight - thickness * 2,
-			clipGroupX: thickness,
-			clipGroupY: thickness,
-			clipGroupWidth: cardWidth - thickness * 2,
-			clipGroupHeight: cardHeight - thickness * 2,
-		});
-		return thickness;
-	};
+	useEffect(() => {
+		console.log(`http://localhost:3000/api/images?filter=${cardId}`);
+		fetch(`http://localhost:3000/api/images?filter=${cardId}`)
+			.then((res) => res.json())
+			.then(async (data) => {
+				console.log("hell");
+				setConfigText(JSON.stringify(data[cardId]));
+				console.log(JSON.stringify(data[cardId]));
+				applyConfiguration();
 
-	// Handle border color change
-	const handleBorderColorChange = (
-		e: React.ChangeEvent<HTMLSelectElement>
-	) => {
-		const selectedColor = e.target.value as BorderColor;
-		setBorderGradient(selectedColor);
-	};
+				const base64Image = stageRef.current.toDataURL().toString();
+				try {
+					const res = await fetch(
+						"http://localhost:3000/api/preview",
+						{
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
 
-	// Handle overlay effect change
-	const handleOverlayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const effectType = e.target.value as OverlayType;
-		setCurrentOverlay(effectType);
-		setOverlayEffect(effectType);
-	};
-
-	// Function to set border gradient
-	const setBorderGradient = (gradientType: BorderColor) => {
-		// Store the current gradient before changing
-		if (gradientType === "GOLD" && currentBorderColor !== "GOLD") {
-			setPreviousBorderGradient(borderGradients[currentBorderColor]);
-		} else if (gradientType !== "GOLD") {
-			setPreviousBorderGradient(null);
-		}
-
-		setCurrentBorderColor(gradientType);
-	};
-
-	// Different overlay effect implementations
-	const applyHoloEffect = () => {
-		if (!overlayGroupRef.current) return;
-
-		const layer = overlayGroupRef.current.getLayer();
-
-		// Holographic rainbow gradient overlay
-		const holoGradient = new window.Konva.Rect({
-			x: 0,
-			y: 0,
-			width: cardWidth,
-			height: cardHeight,
-			fillLinearGradientStartPoint: { x: 0, y: 0 },
-			fillLinearGradientEndPoint: { x: cardWidth, y: cardHeight },
-			fillLinearGradientColorStops: [
-				0,
-				"rgba(255, 0, 255, 0.4)",
-				0.2,
-				"rgba(0, 255, 255, 0.4)",
-				0.4,
-				"rgba(255, 255, 0, 0.4)",
-				0.6,
-				"rgba(0, 255, 0, 0.4)",
-				0.8,
-				"rgba(0, 0, 255, 0.4)",
-				1,
-				"rgba(255, 0, 255, 0.4)",
-			],
-		});
-		overlayGroupRef.current.add(holoGradient);
-
-		// Add subtle movement effect
-		let angle = 0;
-		if (overlayAnimationRef.current) {
-			overlayAnimationRef.current.stop();
-		}
-
-		overlayAnimationRef.current = new window.Konva.Animation(
-			(frame: any) => {
-				angle += 0.01;
-				holoGradient.fillLinearGradientStartPoint({
-					x: cardWidth * 0.5 + Math.sin(angle) * cardWidth * 0.5,
-					y: cardHeight * 0.5 + Math.cos(angle) * cardHeight * 0.5,
-				});
-				holoGradient.fillLinearGradientEndPoint({
-					x:
-						cardWidth * 0.5 +
-						Math.sin(angle + Math.PI) * cardWidth * 0.5,
-					y:
-						cardHeight * 0.5 +
-						Math.cos(angle + Math.PI) * cardHeight * 0.5,
-				});
-			},
-			layer
-		);
-		overlayAnimationRef.current.start();
-	};
-
-	const applyGlitterEffect = () => {
-		if (!overlayGroupRef.current) return;
-
-		const layer = overlayGroupRef.current.getLayer();
-
-		// Create semi-transparent background
-		const glitterBg = new window.Konva.Rect({
-			x: 0,
-			y: 0,
-			width: cardWidth,
-			height: cardHeight,
-			fill: "rgba(255, 255, 255, 0.05)",
-		});
-		overlayGroupRef.current.add(glitterBg);
-
-		// Add glitter particles
-		const glitterCount = 300;
-		const glitterParticles: any[] = [];
-
-		// Generate random glitter particles
-		for (let i = 0; i < glitterCount; i++) {
-			const x = Math.random() * cardWidth;
-			const y = Math.random() * cardHeight;
-			const size = (Math.random() * 2 + 1) * scaleFactor;
-			const opacity = Math.random() * 0.6 + 0.2;
-
-			// Choose random glitter color (silver, gold, white)
-			const colors = ["white", "#FFD700", "#C0C0C0"];
-			const color = colors[Math.floor(Math.random() * colors.length)];
-
-			const glitter = new window.Konva.Circle({
-				x: x,
-				y: y,
-				radius: size,
-				fill: color,
-				opacity: opacity,
-			});
-
-			overlayGroupRef.current.add(glitter);
-			glitterParticles.push(glitter);
-		}
-
-		// Add shimmer animation
-		let frameCount = 0;
-		if (overlayAnimationRef.current) {
-			overlayAnimationRef.current.stop();
-		}
-
-		overlayAnimationRef.current = new window.Konva.Animation(
-			(frame: any) => {
-				frameCount++;
-				// Only update a subset of particles each frame for performance
-				if (frameCount % 5 === 0) {
-					// Randomly change opacity of some particles to create shimmer effect
-					for (let i = 0; i < 20; i++) {
-						const randomIndex = Math.floor(
-							Math.random() * glitterParticles.length
-						);
-						const particle = glitterParticles[randomIndex];
-
-						if (Math.random() > 0.7) {
-							particle.opacity(Math.random() * 0.6 + 0.2);
+							body: JSON.stringify({
+								base64Image,
+								imageName: cardId,
+							}),
 						}
+					);
+
+					const data = await res.json();
+
+					if (data.success) {
+						console.log("success");
+					} else {
+						console.log("failed");
 					}
+				} catch (error) {
+					console.error("Save error:", error);
 				}
-			},
-			layer
+			})
+			.catch((err) => {
+				console.error("Failed to fetch card data:", err);
+			});
+	}, []);
+	// Add styles to document head for font loading
+	useEffect(() => {
+		// Add the font face styles to head
+		const style = document.createElement("style");
+		document.head.appendChild(style);
+
+		// Initialize with default border thickness
+		setBorderThickness(12 * scaleFactor);
+
+		return () => {
+			document.head.removeChild(style);
+			if (overlayAnimationRef.current) {
+				overlayAnimationRef.current.stop();
+			}
+		};
+	}, [scaleFactor]);
+	// Load initial image when component mounts
+	useEffect(() => {
+		if (isBrowser) {
+			const imageObj = new window.Image();
+			imageObj.src = cardConfig.imageSrc;
+
+			imageObj.onload = async () => {
+				if (imageRef.current) {
+					// Scale to fit height, just like in the original version
+					const scale = dimensions.clipGroupHeight / imageObj.height;
+					const drawHeight = dimensions.clipGroupHeight;
+					const drawWidth = imageObj.width * scale;
+					const imgX = (dimensions.clipGroupWidth - drawWidth) / 2;
+
+					imageRef.current.image(imageObj);
+					imageRef.current.width(drawWidth);
+					imageRef.current.height(drawHeight);
+					imageRef.current.x(imgX);
+					imageRef.current.y(0); // Position at the top of the clipping area
+
+					const layer = imageRef.current.getLayer();
+					if (layer) layer.draw();
+				}
+				setCardElementsLoaded(true);
+			};
+
+			imageObj.onerror = () => {
+				console.error("Failed to load image:", cardConfig.imageSrc);
+				// alert(`Failed to load image: ${cardConfig.imageSrc}. Make sure the file exists.`);
+			};
+		}
+	}, [
+		cardConfig.imageSrc,
+		dimensions.clipGroupHeight,
+		dimensions.clipGroupWidth,
+	]);
+	// Apply overlay effect when currentOverlay changes
+	useEffect(() => {
+		if (cardElementsLoaded && overlayGroupRef.current) {
+			setOverlayEffect(currentOverlay);
+		}
+	}, [currentOverlay, cardElementsLoaded]);
+
+	const clipFunc = (ctx: any) => {
+		const cornerRadius = 16 * scaleFactor;
+		ctx.beginPath();
+		ctx.moveTo(cornerRadius, 0);
+		ctx.lineTo(dimensions.clipGroupWidth - cornerRadius, 0);
+		ctx.quadraticCurveTo(
+			dimensions.clipGroupWidth,
+			0,
+			dimensions.clipGroupWidth,
+			cornerRadius
 		);
-
-		overlayAnimationRef.current.start();
+		ctx.lineTo(
+			dimensions.clipGroupWidth,
+			dimensions.clipGroupHeight - cornerRadius
+		);
+		ctx.quadraticCurveTo(
+			dimensions.clipGroupWidth,
+			dimensions.clipGroupHeight,
+			dimensions.clipGroupWidth - cornerRadius,
+			dimensions.clipGroupHeight
+		);
+		ctx.lineTo(cornerRadius, dimensions.clipGroupHeight);
+		ctx.quadraticCurveTo(
+			0,
+			dimensions.clipGroupHeight,
+			0,
+			dimensions.clipGroupHeight - cornerRadius
+		);
+		ctx.lineTo(0, cornerRadius);
+		ctx.quadraticCurveTo(0, 0, cornerRadius, 0);
+		ctx.closePath();
 	};
-
-	const applyPaperEffect = () => {
-		if (!overlayGroupRef.current) return;
-
-		// Create noise pattern for paper texture
-		const gridSize = 5 * scaleFactor;
-		const noiseOpacity = 0.07;
-
-		// Create a pattern of small shapes for paper texture
-		for (let x = 0; x < cardWidth; x += gridSize) {
-			for (let y = 0; y < cardHeight; y += gridSize) {
-				// Random brightness variation
-				const brightness = 220 + Math.floor(Math.random() * 35);
-				const opacity = noiseOpacity * (0.5 + Math.random() * 0.5);
-
-				// Paper grain rectangle
-				const grain = new window.Konva.Rect({
-					x: x,
-					y: y,
-					width: gridSize,
-					height: gridSize,
-					fill: `rgb(${brightness}, ${brightness}, ${brightness})`,
-					opacity: opacity,
-				});
-				overlayGroupRef.current.add(grain);
+	const configureCard = (config: Partial<CardConfig>) => {
+		// Merge provided config with defaults - only for properties that exist in defaults
+		const mergedConfig: CardConfig = { ...defaultCardConfig };
+		for (const key in config) {
+			if (
+				key in mergedConfig &&
+				config[key as keyof CardConfig] !== undefined
+			) {
+				(mergedConfig as any)[key] = config[key as keyof CardConfig];
 			}
 		}
 
-		// Add subtle fiber lines
-		for (let i = 0; i < 20; i++) {
-			const y = Math.random() * cardHeight;
-			const lineLength = 20 + Math.random() * 100;
-			const startX = Math.random() * (cardWidth - lineLength);
-
-			const fiber = new window.Konva.Line({
-				points: [startX, y, startX + lineLength, y],
-				stroke: "rgba(255, 255, 255, 0.3)",
-				strokeWidth: 1,
-				opacity: 0.1 + Math.random() * 0.1,
-			});
-			overlayGroupRef.current.add(fiber);
+		// Update card title
+		if (titleRef.current) {
+			titleRef.current.text(mergedConfig.cardTitle);
 		}
 
-		// Add paper overlay
-		const paperOverlay = new window.Konva.Rect({
-			x: 0,
-			y: 0,
-			width: cardWidth,
-			height: cardHeight,
-			fillLinearGradientStartPoint: { x: 0, y: 0 },
-			fillLinearGradientEndPoint: { x: cardWidth, y: cardHeight },
-			fillLinearGradientColorStops: [
-				0,
-				"rgba(250, 250, 250, 0.05)",
-				0.5,
-				"rgba(230, 230, 230, 0.05)",
-				1,
-				"rgba(250, 250, 250, 0.05)",
-			],
-		});
-		overlayGroupRef.current.add(paperOverlay);
+		// Update HP
+		if (hpValueRef.current) {
+			hpValueRef.current.text(mergedConfig.hpValue);
+		}
+
+		// Update damage value
+		if (damageValueRef.current) {
+			damageValueRef.current.text("Damage: " + mergedConfig.damageValue);
+		}
+
+		// Update crit rate
+		if (critRateRef.current) {
+			critRateRef.current.text(
+				"Crit Rate: " + mergedConfig.critRateValue
+			);
+		}
+
+		// Update description
+		if (descriptionRef.current) {
+			descriptionRef.current.text(mergedConfig.description);
+		}
+
+		// Update border color
+		if (mergedConfig.borderColor) {
+			setBorderGradient(mergedConfig.borderColor);
+		}
+
+		// Update overlay
+		if (mergedConfig.overlay) {
+			setCurrentOverlay(mergedConfig.overlay);
+			setOverlayEffect(mergedConfig.overlay);
+		}
+
+		// Update image if provided and different
+		// if (mergedConfig.imageSrc && mergedConfig.imageSrc !== cardConfig.imageSrc) {
+		const newImage = new window.Image();
+		newImage.src = mergedConfig.imageSrc;
+		newImage.onload = () => {
+			if (imageRef.current) {
+				// Scale to fit height
+
+				const scale = dimensions.clipGroupHeight / newImage.height;
+				const drawHeight = dimensions.clipGroupHeight;
+				const drawWidth = newImage.width * scale;
+				const imgX = (dimensions.clipGroupWidth - drawWidth) / 2;
+
+				imageRef.current.image(newImage);
+				imageRef.current.width(drawWidth);
+				imageRef.current.height(drawHeight);
+				imageRef.current.x(imgX);
+
+				const layer = imageRef.current.getLayer();
+				if (layer) layer.draw();
+			}
+			// };
+
+			newImage.onerror = () => {
+				console.error("Failed to load image:", mergedConfig.imageSrc);
+				// alert(`Failed to load image: ${mergedConfig.imageSrc}. Make sure the file exists.`);
+			};
+		};
+
+		// Update skills
+		// In React we'll recreate the skills array in the render function
+
+		// Save the updated config
+		setCardConfig(mergedConfig);
+		setConfigText(JSON.stringify(mergedConfig, null, 2));
+	};
+	const applyConfiguration = async () => {
+		try {
+			const config = JSON.parse(configText);
+			// Update card elements with new configuration
+			configureCard(config);
+
+			// Store the current configuration for future reference
+			setCardConfig(config);
+
+			if (!cardElementsLoaded) {
+				console.log(
+					"Card elements not yet loaded, saving configuration for later application"
+				);
+				return;
+			}
+
+			// Also update the overlay and border settings from the parsed config
+			if (config.overlay) {
+				const overlayType = config.overlay.toLowerCase() as OverlayType;
+				setCurrentOverlay(overlayType);
+				setOverlayEffect(overlayType);
+			}
+
+			if (config.borderColor) {
+				setBorderGradient(config.borderColor as BorderColor);
+			}
+
+			console.log("Configuration applied successfully:", config);
+		} catch (error) {
+			console.error("Error applying configuration:", error);
+			alert("Invalid JSON format. Please check your input.");
+		}
+	};
+	const setOverlayEffect = (effectType: OverlayType) => {
+		// If current overlay is foil and we're changing to something else, restore border color
+		if (currentOverlay === "foil" && effectType !== "foil") {
+			// If we previously stored a border gradient, restore it
+			if (previousBorderGradient) {
+				// Find the border color dropdown value that matches our stored gradient
+				for (const option in borderGradients) {
+					if (
+						JSON.stringify(borderGradients[option]) ===
+						JSON.stringify(previousBorderGradient)
+					) {
+						setCurrentBorderColor(option as BorderColor);
+						break;
+					}
+				}
+
+				setPreviousBorderGradient(null);
+			}
+		}
+
+		// Remove existing overlay if any
+		if (overlayGroupRef.current) {
+			overlayGroupRef.current.destroyChildren();
+			if (overlayAnimationRef.current) {
+				overlayAnimationRef.current.stop();
+				overlayAnimationRef.current = null;
+			}
+		}
+
+		// If no effect is chosen, just return
+		if (effectType === "none") {
+			const layer = overlayGroupRef.current?.getLayer();
+			if (layer) layer.draw();
+			return;
+		}
+
+		// Apply the selected effect
+		if (effectType === "holographic") {
+			applyHoloEffect();
+		} else if (effectType === "glitter") {
+			applyGlitterEffect();
+		} else if (effectType === "paper") {
+			applyPaperEffect();
+		} else if (effectType === "foil") {
+			applyFoilEffect();
+		}
+
+		// Draw the layer
+		const layer = overlayGroupRef.current?.getLayer();
+		if (layer) layer.draw();
 	};
 
 	const applyFoilEffect = () => {
@@ -496,298 +519,223 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 
 		overlayAnimationRef.current.start();
 	};
+	const setBorderThickness = (thickness: number) => {
+		setDimensions({
+			borderThickness: thickness,
+			outerRectX: 0,
+			outerRectY: 0,
+			outerRectWidth: cardWidth,
+			outerRectHeight: cardHeight,
+			innerRectX: thickness,
+			innerRectY: thickness,
+			innerRectWidth: cardWidth - thickness * 2,
+			innerRectHeight: cardHeight - thickness * 2,
+			clipGroupX: thickness,
+			clipGroupY: thickness,
+			clipGroupWidth: cardWidth - thickness * 2,
+			clipGroupHeight: cardHeight - thickness * 2,
+		});
+		return thickness;
+	};
+	const setBorderGradient = (gradientType: BorderColor) => {
+		// Store the current gradient before changing
+		if (gradientType === "GOLD" && currentBorderColor !== "GOLD") {
+			setPreviousBorderGradient(borderGradients[currentBorderColor]);
+		} else if (gradientType !== "GOLD") {
+			setPreviousBorderGradient(null);
+		}
 
-	// Function to set overlay effect
-	const setOverlayEffect = (effectType: OverlayType) => {
-		// If current overlay is foil and we're changing to something else, restore border color
-		if (currentOverlay === "foil" && effectType !== "foil") {
-			// If we previously stored a border gradient, restore it
-			if (previousBorderGradient) {
-				// Find the border color dropdown value that matches our stored gradient
-				for (const option in borderGradients) {
-					if (
-						JSON.stringify(borderGradients[option]) ===
-						JSON.stringify(previousBorderGradient)
-					) {
-						setCurrentBorderColor(option as BorderColor);
-						break;
+		setCurrentBorderColor(gradientType);
+	};
+	const applyHoloEffect = () => {
+		if (!overlayGroupRef.current) return;
+
+		const layer = overlayGroupRef.current.getLayer();
+
+		// Holographic rainbow gradient overlay
+		const holoGradient = new window.Konva.Rect({
+			x: 0,
+			y: 0,
+			width: cardWidth,
+			height: cardHeight,
+			fillLinearGradientStartPoint: { x: 0, y: 0 },
+			fillLinearGradientEndPoint: { x: cardWidth, y: cardHeight },
+			fillLinearGradientColorStops: [
+				0,
+				"rgba(255, 0, 255, 0.4)",
+				0.2,
+				"rgba(0, 255, 255, 0.4)",
+				0.4,
+				"rgba(255, 255, 0, 0.4)",
+				0.6,
+				"rgba(0, 255, 0, 0.4)",
+				0.8,
+				"rgba(0, 0, 255, 0.4)",
+				1,
+				"rgba(255, 0, 255, 0.4)",
+			],
+		});
+		overlayGroupRef.current.add(holoGradient);
+
+		// Add subtle movement effect
+		let angle = 0;
+		if (overlayAnimationRef.current) {
+			overlayAnimationRef.current.stop();
+		}
+
+		overlayAnimationRef.current = new window.Konva.Animation(
+			(frame: any) => {
+				angle += 0.01;
+				holoGradient.fillLinearGradientStartPoint({
+					x: cardWidth * 0.5 + Math.sin(angle) * cardWidth * 0.5,
+					y: cardHeight * 0.5 + Math.cos(angle) * cardHeight * 0.5,
+				});
+				holoGradient.fillLinearGradientEndPoint({
+					x:
+						cardWidth * 0.5 +
+						Math.sin(angle + Math.PI) * cardWidth * 0.5,
+					y:
+						cardHeight * 0.5 +
+						Math.cos(angle + Math.PI) * cardHeight * 0.5,
+				});
+			},
+			layer
+		);
+		overlayAnimationRef.current.start();
+	};
+	const applyGlitterEffect = () => {
+		if (!overlayGroupRef.current) return;
+
+		const layer = overlayGroupRef.current.getLayer();
+
+		// Create semi-transparent background
+		const glitterBg = new window.Konva.Rect({
+			x: 0,
+			y: 0,
+			width: cardWidth,
+			height: cardHeight,
+			fill: "rgba(255, 255, 255, 0.05)",
+		});
+		overlayGroupRef.current.add(glitterBg);
+
+		// Add glitter particles
+		const glitterCount = 300;
+		const glitterParticles: any[] = [];
+
+		// Generate random glitter particles
+		for (let i = 0; i < glitterCount; i++) {
+			const x = Math.random() * cardWidth;
+			const y = Math.random() * cardHeight;
+			const size = (Math.random() * 2 + 1) * scaleFactor;
+			const opacity = Math.random() * 0.6 + 0.2;
+
+			// Choose random glitter color (silver, gold, white)
+			const colors = ["white", "#FFD700", "#C0C0C0"];
+			const color = colors[Math.floor(Math.random() * colors.length)];
+
+			const glitter = new window.Konva.Circle({
+				x: x,
+				y: y,
+				radius: size,
+				fill: color,
+				opacity: opacity,
+			});
+
+			overlayGroupRef.current.add(glitter);
+			glitterParticles.push(glitter);
+		}
+
+		// Add shimmer animation
+		let frameCount = 0;
+		if (overlayAnimationRef.current) {
+			overlayAnimationRef.current.stop();
+		}
+
+		overlayAnimationRef.current = new window.Konva.Animation(
+			(frame: any) => {
+				frameCount++;
+				// Only update a subset of particles each frame for performance
+				if (frameCount % 5 === 0) {
+					// Randomly change opacity of some particles to create shimmer effect
+					for (let i = 0; i < 20; i++) {
+						const randomIndex = Math.floor(
+							Math.random() * glitterParticles.length
+						);
+						const particle = glitterParticles[randomIndex];
+
+						if (Math.random() > 0.7) {
+							particle.opacity(Math.random() * 0.6 + 0.2);
+						}
 					}
 				}
-
-				setPreviousBorderGradient(null);
-			}
-		}
-
-		// Remove existing overlay if any
-		if (overlayGroupRef.current) {
-			overlayGroupRef.current.destroyChildren();
-			if (overlayAnimationRef.current) {
-				overlayAnimationRef.current.stop();
-				overlayAnimationRef.current = null;
-			}
-		}
-
-		// If no effect is chosen, just return
-		if (effectType === "none") {
-			const layer = overlayGroupRef.current?.getLayer();
-			if (layer) layer.draw();
-			return;
-		}
-
-		// Apply the selected effect
-		if (effectType === "holographic") {
-			applyHoloEffect();
-		} else if (effectType === "glitter") {
-			applyGlitterEffect();
-		} else if (effectType === "paper") {
-			applyPaperEffect();
-		} else if (effectType === "foil") {
-			applyFoilEffect();
-		}
-
-		// Draw the layer
-		const layer = overlayGroupRef.current?.getLayer();
-		if (layer) layer.draw();
-	};
-
-	// Handle JSON configuration input changes
-	const handleConfigChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setConfigText(e.target.value);
-	};
-
-	// Apply configuration
-	const applyConfiguration = async () => {
-		try {
-			const config = JSON.parse(configText);
-			// Update card elements with new configuration
-			configureCard(config);
-
-			// Store the current configuration for future reference
-			setCardConfig(config);
-
-			if (!cardElementsLoaded) {
-			  console.log("Card elements not yet loaded, saving configuration for later application");
-			  return;
-			}
-
-			// Also update the overlay and border settings from the parsed config
-			if (config.overlay) {
-				const overlayType = config.overlay.toLowerCase() as OverlayType;
-				setCurrentOverlay(overlayType);
-				setOverlayEffect(overlayType);
-			}
-
-			if (config.borderColor) {
-				setBorderGradient(config.borderColor as BorderColor);
-			}
-
-			console.log("Configuration applied successfully:", config);
-		} catch (error) {
-			console.error("Error applying configuration:", error);
-			alert("Invalid JSON format. Please check your input.");
-		}
-	};
-
-	// Configure all card properties
-	const configureCard = (config: Partial<CardConfig>) => {
-		// Merge provided config with defaults - only for properties that exist in defaults
-		const mergedConfig: CardConfig = { ...defaultCardConfig };
-		for (const key in config) {
-			if (
-				key in mergedConfig &&
-				config[key as keyof CardConfig] !== undefined
-			) {
-				(mergedConfig as any)[key] = config[key as keyof CardConfig];
-			}
-		}
-
-		// Update card title
-		if (titleRef.current) {
-			titleRef.current.text(mergedConfig.cardTitle);
-		}
-
-		// Update HP
-		if (hpValueRef.current) {
-			hpValueRef.current.text(mergedConfig.hpValue);
-		}
-
-		// Update damage value
-		if (damageValueRef.current) {
-			damageValueRef.current.text("Damage: " + mergedConfig.damageValue);
-		}
-
-		// Update crit rate
-		if (critRateRef.current) {
-			critRateRef.current.text(
-				"Crit Rate: " + mergedConfig.critRateValue
-			);
-		}
-
-		// Update description
-		if (descriptionRef.current) {
-			descriptionRef.current.text(mergedConfig.description);
-		}
-
-		// Update border color
-		if (mergedConfig.borderColor) {
-			setBorderGradient(mergedConfig.borderColor);
-		}
-
-		// Update overlay
-		if (mergedConfig.overlay) {
-			setCurrentOverlay(mergedConfig.overlay);
-			setOverlayEffect(mergedConfig.overlay);
-		}
-
-		// Update image if provided and different
-		// if (mergedConfig.imageSrc && mergedConfig.imageSrc !== cardConfig.imageSrc) {
-		const newImage = new window.Image();
-		newImage.src = mergedConfig.imageSrc;
-		newImage.onload = () => {
-			if (imageRef.current) {
-				// Scale to fit height
-
-				const scale = dimensions.clipGroupHeight / newImage.height;
-				const drawHeight = dimensions.clipGroupHeight;
-				const drawWidth = newImage.width * scale;
-				const imgX = (dimensions.clipGroupWidth - drawWidth) / 2;
-
-				imageRef.current.image(newImage);
-				imageRef.current.width(drawWidth);
-				imageRef.current.height(drawHeight);
-				imageRef.current.x(imgX);
-
-				const layer = imageRef.current.getLayer();
-				if (layer) layer.draw();
-			}
-			// };
-
-			newImage.onerror = () => {
-				console.error("Failed to load image:", mergedConfig.imageSrc);
-				// alert(`Failed to load image: ${mergedConfig.imageSrc}. Make sure the file exists.`);
-			};
-		};
-
-		// Update skills
-		// In React we'll recreate the skills array in the render function
-
-		// Save the updated config
-		setCardConfig(mergedConfig);
-		setConfigText(JSON.stringify(mergedConfig, null, 2));
-	};
-
-	// Export the card as PNG
-	const exportAsPng = () => {
-		if (stageRef.current) {
-			const dataURL = stageRef.current.toDataURL();
-			const link = document.createElement("a");
-			link.download = `card_${cardConfig.cardTitle
-				.replace(/\s+/g, "_")
-				.toLowerCase()}.png`;
-			link.href = dataURL;
-			link.click();
-		}
-	};
-
-	// Add styles to document head for font loading
-	useEffect(() => {
-		// Add the font face styles to head
-		const style = document.createElement("style");
-		document.head.appendChild(style);
-
-		// Initialize with default border thickness
-		setBorderThickness(12 * scaleFactor);
-
-		return () => {
-			document.head.removeChild(style);
-			if (overlayAnimationRef.current) {
-				overlayAnimationRef.current.stop();
-			}
-		};
-	}, [scaleFactor]);
-
-	// Load initial image when component mounts
-	useEffect(() => {
-		if (isBrowser) {
-			const imageObj = new window.Image();
-			imageObj.src = cardConfig.imageSrc;
-
-			imageObj.onload = async () => {
-				if (imageRef.current) {
-					// Scale to fit height, just like in the original version
-					const scale = dimensions.clipGroupHeight / imageObj.height;
-					const drawHeight = dimensions.clipGroupHeight;
-					const drawWidth = imageObj.width * scale;
-					const imgX = (dimensions.clipGroupWidth - drawWidth) / 2;
-
-					imageRef.current.image(imageObj);
-					imageRef.current.width(drawWidth);
-					imageRef.current.height(drawHeight);
-					imageRef.current.x(imgX);
-					imageRef.current.y(0); // Position at the top of the clipping area
-
-					const layer = imageRef.current.getLayer();
-					if (layer) layer.draw();
-				}
-				setCardElementsLoaded(true);
-			};
-
-			imageObj.onerror = () => {
-				console.error("Failed to load image:", cardConfig.imageSrc);
-				// alert(`Failed to load image: ${cardConfig.imageSrc}. Make sure the file exists.`);
-			};
-		}
-	}, [
-		cardConfig.imageSrc,
-		dimensions.clipGroupHeight,
-		dimensions.clipGroupWidth,
-	]);
-
-	// Apply overlay effect when currentOverlay changes
-	useEffect(() => {
-		if (cardElementsLoaded && overlayGroupRef.current) {
-			setOverlayEffect(currentOverlay);
-		}
-	}, [currentOverlay, cardElementsLoaded]);
-
-	// Helper function for the image clip function
-	const clipFunc = (ctx: any) => {
-		const cornerRadius = 16 * scaleFactor;
-		ctx.beginPath();
-		ctx.moveTo(cornerRadius, 0);
-		ctx.lineTo(dimensions.clipGroupWidth - cornerRadius, 0);
-		ctx.quadraticCurveTo(
-			dimensions.clipGroupWidth,
-			0,
-			dimensions.clipGroupWidth,
-			cornerRadius
+			},
+			layer
 		);
-		ctx.lineTo(
-			dimensions.clipGroupWidth,
-			dimensions.clipGroupHeight - cornerRadius
-		);
-		ctx.quadraticCurveTo(
-			dimensions.clipGroupWidth,
-			dimensions.clipGroupHeight,
-			dimensions.clipGroupWidth - cornerRadius,
-			dimensions.clipGroupHeight
-		);
-		ctx.lineTo(cornerRadius, dimensions.clipGroupHeight);
-		ctx.quadraticCurveTo(
-			0,
-			dimensions.clipGroupHeight,
-			0,
-			dimensions.clipGroupHeight - cornerRadius
-		);
-		ctx.lineTo(0, cornerRadius);
-		ctx.quadraticCurveTo(0, 0, cornerRadius, 0);
-		ctx.closePath();
+
+		overlayAnimationRef.current.start();
+	};
+	const applyPaperEffect = () => {
+		if (!overlayGroupRef.current) return;
+
+		// Create noise pattern for paper texture
+		const gridSize = 5 * scaleFactor;
+		const noiseOpacity = 0.07;
+
+		// Create a pattern of small shapes for paper texture
+		for (let x = 0; x < cardWidth; x += gridSize) {
+			for (let y = 0; y < cardHeight; y += gridSize) {
+				// Random brightness variation
+				const brightness = 220 + Math.floor(Math.random() * 35);
+				const opacity = noiseOpacity * (0.5 + Math.random() * 0.5);
+
+				// Paper grain rectangle
+				const grain = new window.Konva.Rect({
+					x: x,
+					y: y,
+					width: gridSize,
+					height: gridSize,
+					fill: `rgb(${brightness}, ${brightness}, ${brightness})`,
+					opacity: opacity,
+				});
+				overlayGroupRef.current.add(grain);
+			}
+		}
+
+		// Add subtle fiber lines
+		for (let i = 0; i < 20; i++) {
+			const y = Math.random() * cardHeight;
+			const lineLength = 20 + Math.random() * 100;
+			const startX = Math.random() * (cardWidth - lineLength);
+
+			const fiber = new window.Konva.Line({
+				points: [startX, y, startX + lineLength, y],
+				stroke: "rgba(255, 255, 255, 0.3)",
+				strokeWidth: 1,
+				opacity: 0.1 + Math.random() * 0.1,
+			});
+			overlayGroupRef.current.add(fiber);
+		}
+
+		// Add paper overlay
+		const paperOverlay = new window.Konva.Rect({
+			x: 0,
+			y: 0,
+			width: cardWidth,
+			height: cardHeight,
+			fillLinearGradientStartPoint: { x: 0, y: 0 },
+			fillLinearGradientEndPoint: { x: cardWidth, y: cardHeight },
+			fillLinearGradientColorStops: [
+				0,
+				"rgba(250, 250, 250, 0.05)",
+				0.5,
+				"rgba(230, 230, 230, 0.05)",
+				1,
+				"rgba(250, 250, 250, 0.05)",
+			],
+		});
+		overlayGroupRef.current.add(paperOverlay);
 	};
 
-	// setTimeout(() => {
-	//   applyConfiguration()
-	// }, 1000)
-	// applyConfiguration()
 	return (
 		<div className="card-generator">
 			<div id="canvas-container">
@@ -1005,60 +953,6 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 					</Layer>
 				</Stage>
 			</div>
-
-			{/* <div className="controls">
-				<div className="control-row">
-					<label htmlFor="overlay-select">Overlay Effect: </label>
-					<select
-						id="overlay-select"
-						value={currentOverlay}
-						onChange={handleOverlayChange}
-					>
-						<option value="none">None</option>
-						<option value="holographic">Holographic</option>
-						<option value="glitter">Glitter</option>
-						<option value="paper">Paper</option>
-						<option value="foil">Foil</option>
-					</select>
-
-					<label
-						htmlFor="border-color"
-						style={{ marginLeft: "15px" }}
-					>
-						Border Color:{" "}
-					</label>
-					<select
-						id="border-color"
-						value={currentBorderColor}
-						onChange={handleBorderColorChange}
-					>
-						<option value="RED">Red</option>
-						<option value="GREEN">Green</option>
-						<option value="BLUE">Blue</option>
-					</select>
-				</div>
-
-				<div className="config-section">
-					<label>Card Configuration (JSON format):</label>
-					<br />
-					<textarea
-						id="card-config"
-						rows={10}
-						cols={80}
-						value={configText}
-						onChange={handleConfigChange}
-						style={{ margin: "5px 0" }}
-					/>
-					<br />
-					<button onClick={applyConfiguration}>
-						Apply Configuration
-					</button>
-				</div>
-
-				<button className="export-button" onClick={exportAsPng}>
-					Export as PNG
-				</button>
-			</div> */}
 		</div>
 	);
 };
