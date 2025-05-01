@@ -225,8 +225,8 @@ async function startBattle(
     aPerformMaldquake = (_index: number, _skillname: string, _dmgtoC1: number, _dmgtoC2: number) => {},
     aPerformDeluluStrike = (_index: number, _skillname: string) => {},
     aPerformSelfCare = (_index: number, _skillName: string, _heal: number) => {},
-    aPerformHarden = (_index: number) => {},
-    aPerformZucc = (_index: number) => {},
+    aPerformHarden = (_index: number, _skillName: string) => {},
+    aPerformZucc = (_index: number, _skillName: string) => {},
     aApplyHealthChange = (_index: number, _currentHealth: number, _maxHealth: number) => {},
     endBattle = (_winnerId: string|undefined, _isDraw: boolean) => {},
     aPerformDiceRoll = (_result1: number, _result2: number, _message: string) => {}

@@ -31,15 +31,12 @@ import C1SideText from '../components/VFX/C1SideText'
 import C2SideText from '../components/VFX/C2SideText'
 import C1BonkAttack from '../components/VFX/C1BonkAttack'
 import C2BonkAttack from '../components/VFX/C2BonkAttack'
-import { Navigate, useNavigate, useNavigation } from 'react-router-dom'
+import { Navigate, useNavigate, useNavigation, useSearchParams } from 'react-router-dom'
 import {speak} from '../utils/ttsUtil'
+import { jsonToCards } from '../utils/parser'
+import { startBattle } from '../utils/battle_sequence'
 
-interface Cards {
-  card1_src?: string;
-  card2_src?: string;
-}
-
-export default function Battle(props: Cards){
+export default function Battle(){
   const [getScene, setScene] = useState("");
 
   const [doDiceCountC1, setDiceCountC1] = useState(false);
@@ -88,11 +85,14 @@ export default function Battle(props: Cards){
   const [isFinished, setisFinished] = useState(false);
 
   // const [showMessage, setMessage] = useState("READY");
+	const [searchParams] = useSearchParams();
+	const card1 = searchParams.get("card1") || "";
+	const card2 = searchParams.get("card2") || "";
   const [C1isAttacked, C1setAttacked] = useState(false);
   const [C2isAttacked, C2setAttacked] = useState(false);
-  var cardC1: string = "/assets/images/winner-image.png"
-  var cardC2: string = "/assets/images/winner-image.png"
-
+  var cardC1: string = `http://localhost:5000/output/${card1}-preview.png`
+  var cardC2: string = `http://localhost:5000/output/${card2}-preview.png`
+  console.log(cardC1)
 
   let currHealthC1: number = 1, // default
       currHealthC2: number = 1;
@@ -174,6 +174,40 @@ export default function Battle(props: Cards){
       setHasInteracted(true)
       setScreenMask(false)
     }, 7000)
+
+    e.currentTarget.style.display = 'none';
+    setHasInteracted(true);
+    
+    fetch(`http://localhost:3000/api/images?filter=${card1}&filter=${card2}`)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data)
+      const cards = jsonToCards(data)
+      const card1Info = cards[card1]
+      const card2Info = cards[card2]
+  
+      startBattle(
+        card1,
+        card2,
+        card1Info,
+        card2Info,
+        performBAtk,
+        performPunch,
+        performCAtk,
+        performBonk,
+        performMaldquake,
+        performDeluluStrike,
+        performSelfCare,
+        performHarden,
+        performZucc,
+        applyHealthChange,
+        endBattle,
+        performDiceRoll
+      )
+    })
+    .catch((err) => {
+      console.error("Failed to fetch image config", err);
+    });
   }
 
   function applyHealthChange(index: number, currHealth: number, maxHealth: number){
@@ -383,7 +417,7 @@ export default function Battle(props: Cards){
     audio.play();
   }
 
-  function endBattle(card_id: string, isDraw: boolean){
+  function endBattle(card_id: string|undefined, isDraw: boolean){
     if (isDraw){ // if may draw
       setisDraw(true)
       setHasInteracted(false)
@@ -428,8 +462,8 @@ export default function Battle(props: Cards){
       <div id={styles.round_text}>Round 1</div>
       <div id={styles.battle_area}>
         <div id={styles.card_cont}>
-          <CardDisplay path={props.card1_src} attackedState={C1isAttacked}></CardDisplay>
-          <CardDisplay path={props.card2_src} attackedState={C2isAttacked}></CardDisplay>
+          <CardDisplay path={cardC1} attackedState={C1isAttacked}></CardDisplay>
+          <CardDisplay path={cardC2} attackedState={C2isAttacked}></CardDisplay>
         </div>
         <div id={styles.heart_cont}>          
           <Healthbar health={currHealthC1} maxHealth={maxHealthC1}></Healthbar>
@@ -437,8 +471,8 @@ export default function Battle(props: Cards){
         </div>
       </div>
       
-      <button style={{backgroundColor: 'transparent'}} onClick={() => {performZucc(1, "SELF-CARE BONK")}}>C1 Attack!</button>
-      <button style={{backgroundColor: 'transparent'}} onClick={() => {performZucc(1, "LANGKAQUAKE")}}>C2 Attack!</button>
+      {/* <button style={{backgroundColor: 'transparent'}} onClick={() => {performZucc(1, "SELF-CARE BONK")}}>C1 Attack!</button>
+      <button style={{backgroundColor: 'transparent'}} onClick={() => {performZucc(1, "LANGKAQUAKE")}}>C2 Attack!</button> */}
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
       <C2DiceCount isVisible={doDiceCountC2} dice_no={showDiceCountValC2}/>
