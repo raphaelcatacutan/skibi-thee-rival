@@ -31,14 +31,7 @@ export default function CardPreviewPage() {
         console.error("Failed to fetch image config", err);
       });
   }, [imagePath]);
-
-  return (
-    <>
-      {/* Card Image */}
-      <div className="card-image-container">
-        {/* <CardGenerator cardConfig={cardConfig} cardId={imagePath} /> */}
-      </div>
-
+  
   return (
     <p>
       <div className="button-header">
