@@ -242,7 +242,6 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C1TopText', speedControl)
       animation.triggerVFX('C2SideText', speedControl)
       animation.triggerVFX('C1Punch');
-      speak({text: skillname})
     } else {
       setC2TopTextString(skillname)
       setC1SideTextString(dmg.toString())
@@ -251,6 +250,7 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C1SideText', speedControl)
       animation.triggerVFX('C2Punch');
     }
+    speak({text: skillname})
     audio.play();
   }
 
@@ -273,6 +273,7 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C2BonkAttack')
       setTimeout(() => animation.triggerVFX('C1SideText', speedControl), 300)
     }
+    speak({text: skillname})
     setTimeout(() => 
       audio.play(), 90
     )
@@ -298,6 +299,7 @@ export default function Battle(props: Cards){
     C1triggerShake()
     C2triggerShake()
     triggerScreenShake()
+    speak({text: skillname})
     audio.play();
   }
 
@@ -314,10 +316,11 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C2TopText', speedControl)
       animation.triggerVFX('C1DeluluStrike');
     }
+    speak({text: skillname})
     audio.play();
   }
 
-  function performSelfCare(index: number, heal: number){
+  function performSelfCare(index: number, skillname: string, heal: number){
     const audio = document.getElementById("selfcare_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
     audio.pause();
@@ -332,6 +335,7 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C2SideText', speedControl)
       animation.triggerVFX('C2SelfCare');
     }
+    speak({text: skillname})
     audio.play();
   }
 
@@ -348,6 +352,7 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C2TopText', speedControl)
       animation.triggerVFX('C2Harden', speedControl);
     }
+    speak({text: skillname})
     audio.play();
   }
 
@@ -364,6 +369,7 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C2TopText', speedControl)
       animation.triggerVFX('C1Zucc', speedControl);
     }
+    speak({text: skillname})
     audio.play();
   }
 
@@ -421,7 +427,7 @@ export default function Battle(props: Cards){
         </div>
       </div>
       
-      <button style={{backgroundColor: 'transparent'}} onClick={() => {performDeluluStrike(1, "PEPPER QUAKE")}}>C1 Attack!</button>
+      <button style={{backgroundColor: 'transparent'}} onClick={() => {performPunch(0, "SUPER PUNCH", 312)}}>C1 Attack!</button>
       <button style={{backgroundColor: 'transparent'}} onClick={() => {performZucc(1, "ZUCC")}}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
