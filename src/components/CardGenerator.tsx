@@ -107,39 +107,41 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 		number | string
 	> | null>(null);
 
-  // Fetch real data on page load
+	// Fetch real data on page load
 	useEffect(() => {
-    console.log("Fetching")
+		if (!cardElementsLoaded) return;
 		fetch(`http://localhost:3000/api/images?filter=${cardId}`)
 			.then((res) => res.json())
 			.then(async (data) => {
 				setConfigText(JSON.stringify(data[cardId]));
-				const applied = applyConfiguration();
+				applyConfiguration(data[cardId]).then(async (applied) => {
+          if (!applied) return
+          const base64Image = stageRef.current.toDataURL().toString();
+          if (!base64Image) return
+          try {
+            const res = await fetch(
+              "http://localhost:3000/api/preview",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
 
-        if (!applied) return
-				const base64Image = stageRef.current.toDataURL().toString();
-				try {
-					const res = await fetch(
-						"http://localhost:3000/api/preview",
-						{
-							method: "POST",
-							headers: {
-								"Content-Type": "application/json",
-							},
+                body: JSON.stringify({
+                  base64Image,
+                  imageName: cardId,
+                }),
+              }
+            );
 
-							body: JSON.stringify({
-								base64Image,
-								imageName: cardId,
-							}),
-						}
-					);
+            const data = await res.json();
 
-					const data = await res.json();
-
-					console.log("Image Saving:", data.message)
-				} catch (error) {
-					console.error("Save error:", error);
-				}
+            console.log("Image Saving:", data.message);
+          } catch (error) {
+            console.error("Save error:", error);
+          }
+        });
+				
 			})
 			.catch((err) => {
 				console.error("Failed to fetch card data:", err);
@@ -161,10 +163,11 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 			}
 		};
 	}, [scaleFactor]);
-	// Load initial image when component mounts
+	// Load image when component mounts
 	useEffect(() => {
 		if (isBrowser) {
 			const imageObj = new window.Image();
+      imageObj.crossOrigin = "Anonymous";
 			imageObj.src = cardConfig.imageSrc;
 
 			imageObj.onload = () => {
@@ -189,7 +192,7 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 
 			imageObj.onerror = () => {
 				console.error("Failed to load image:", cardConfig.imageSrc);
-				// alert(`Failed to load image: ${cardConfig.imageSrc}. Make sure the file exists.`);
+				setCardElementsLoaded(true);
 			};
 		}
 	}, [
@@ -204,39 +207,9 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 		}
 	}, [currentOverlay, cardElementsLoaded]);
 
-	const clipFunc = (ctx: any) => {
-		const cornerRadius = 16 * scaleFactor;
-		ctx.beginPath();
-		ctx.moveTo(cornerRadius, 0);
-		ctx.lineTo(dimensions.clipGroupWidth - cornerRadius, 0);
-		ctx.quadraticCurveTo(
-			dimensions.clipGroupWidth,
-			0,
-			dimensions.clipGroupWidth,
-			cornerRadius
-		);
-		ctx.lineTo(
-			dimensions.clipGroupWidth,
-			dimensions.clipGroupHeight - cornerRadius
-		);
-		ctx.quadraticCurveTo(
-			dimensions.clipGroupWidth,
-			dimensions.clipGroupHeight,
-			dimensions.clipGroupWidth - cornerRadius,
-			dimensions.clipGroupHeight
-		);
-		ctx.lineTo(cornerRadius, dimensions.clipGroupHeight);
-		ctx.quadraticCurveTo(
-			0,
-			dimensions.clipGroupHeight,
-			0,
-			dimensions.clipGroupHeight - cornerRadius
-		);
-		ctx.lineTo(0, cornerRadius);
-		ctx.quadraticCurveTo(0, 0, cornerRadius, 0);
-		ctx.closePath();
-	};
-	const configureCard = (config: Partial<CardConfig>) => {
+	const configureCard = (
+		config: Partial<CardConfig>
+	): Promise<HTMLImageElement> => {
 		// Merge provided config with defaults - only for properties that exist in defaults
 		const mergedConfig: CardConfig = { ...defaultCardConfig };
 		for (const key in config) {
@@ -289,31 +262,8 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 		// Update image if provided and different
 		// if (mergedConfig.imageSrc && mergedConfig.imageSrc !== cardConfig.imageSrc) {
 		const newImage = new window.Image();
+    newImage.crossOrigin = "Anonymous";
 		newImage.src = mergedConfig.imageSrc;
-		newImage.onload = () => {
-			if (imageRef.current) {
-				// Scale to fit height
-
-				const scale = dimensions.clipGroupHeight / newImage.height;
-				const drawHeight = dimensions.clipGroupHeight;
-				const drawWidth = newImage.width * scale;
-				const imgX = (dimensions.clipGroupWidth - drawWidth) / 2;
-
-				imageRef.current.image(newImage);
-				imageRef.current.width(drawWidth);
-				imageRef.current.height(drawHeight);
-				imageRef.current.x(imgX);
-
-				const layer = imageRef.current.getLayer();
-				if (layer) layer.draw();
-			}
-			// };
-
-			newImage.onerror = () => {
-				console.error("Failed to load image:", mergedConfig.imageSrc);
-				// alert(`Failed to load image: ${mergedConfig.imageSrc}. Make sure the file exists.`);
-			};
-		};
 
 		// Update skills
 		// In React we'll recreate the skills array in the render function
@@ -321,40 +271,72 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 		// Save the updated config
 		setCardConfig(mergedConfig);
 		setConfigText(JSON.stringify(mergedConfig, null, 2));
+
+		return new Promise((resolve, reject) => {
+			newImage.onload = () => {
+				if (imageRef.current) {
+					// Scale to fit height
+					const scale = dimensions.clipGroupHeight / newImage.height;
+					const drawHeight = dimensions.clipGroupHeight;
+					const drawWidth = newImage.width * scale;
+					const imgX = (dimensions.clipGroupWidth - drawWidth) / 2;
+
+					imageRef.current.image(newImage);
+					imageRef.current.width(drawWidth);
+					imageRef.current.height(drawHeight);
+					imageRef.current.x(imgX);
+
+					const layer = imageRef.current.getLayer();
+					if (layer) layer.draw();
+          resolve(newImage);
+				}
+				// };
+
+				newImage.onerror = () => {
+					console.error(
+						"Failed to load image:",
+						mergedConfig.imageSrc
+					);
+          resolve(newImage);
+				};
+			};
+		});
 	};
-	const applyConfiguration = () => {
-		try {
-			const config = JSON.parse(configText);
-			// Update card elements with new configuration
-			configureCard(config);
+	const applyConfiguration = (config: any): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      try {
+        setCardConfig(config);
 
-			// Store the current configuration for future reference
-			setCardConfig(config);
+        if (!cardElementsLoaded) {
+          console.log(
+            "Card elements not yet loaded, saving configuration for later application"
+          );
+          resolve(false);
+          return
+        }
 
-			if (!cardElementsLoaded) {
-				console.log(
-					"Card elements not yet loaded, saving configuration for later application"
-				);
-				return;
-			}
-
-			// Also update the overlay and border settings from the parsed config
-			if (config.overlay) {
-				const overlayType = config.overlay.toLowerCase() as OverlayType;
-				setCurrentOverlay(overlayType);
-				setOverlayEffect(overlayType);
-			}
-
-			if (config.borderColor) {
-				setBorderGradient(config.borderColor as BorderColor);
-			}
-
-			console.log("Configuration applied successfully:", config);
-      return true
-		} catch (error) {
-			console.error("Error applying configuration:", error);
-			alert("Invalid JSON format. Please check your input.");
-		}
+        // Update card elements with new configuration
+        configureCard(config).then(() => {
+          // Also update the overlay and border settings from the parsed config
+          if (config.overlay) {
+            const overlayType = config.overlay.toLowerCase() as OverlayType;
+            setCurrentOverlay(overlayType);
+            setOverlayEffect(overlayType);
+          }
+    
+          if (config.borderColor) {
+            setBorderGradient(config.borderColor as BorderColor);
+          }
+    
+          console.log("Configuration applied successfully:", config);
+          resolve(true)
+        });
+        
+      } catch (error) {
+        console.error("Error applying configuration:", error);
+        resolve(false)
+      }
+    })
 	};
 	const setOverlayEffect = (effectType: OverlayType) => {
 		// If current overlay is foil and we're changing to something else, restore border color
@@ -729,6 +711,38 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 			],
 		});
 		overlayGroupRef.current.add(paperOverlay);
+	};
+	const clipFunc = (ctx: any) => {
+		const cornerRadius = 16 * scaleFactor;
+		ctx.beginPath();
+		ctx.moveTo(cornerRadius, 0);
+		ctx.lineTo(dimensions.clipGroupWidth - cornerRadius, 0);
+		ctx.quadraticCurveTo(
+			dimensions.clipGroupWidth,
+			0,
+			dimensions.clipGroupWidth,
+			cornerRadius
+		);
+		ctx.lineTo(
+			dimensions.clipGroupWidth,
+			dimensions.clipGroupHeight - cornerRadius
+		);
+		ctx.quadraticCurveTo(
+			dimensions.clipGroupWidth,
+			dimensions.clipGroupHeight,
+			dimensions.clipGroupWidth - cornerRadius,
+			dimensions.clipGroupHeight
+		);
+		ctx.lineTo(cornerRadius, dimensions.clipGroupHeight);
+		ctx.quadraticCurveTo(
+			0,
+			dimensions.clipGroupHeight,
+			0,
+			dimensions.clipGroupHeight - cornerRadius
+		);
+		ctx.lineTo(0, cornerRadius);
+		ctx.quadraticCurveTo(0, 0, cornerRadius, 0);
+		ctx.closePath();
 	};
 
 	return (

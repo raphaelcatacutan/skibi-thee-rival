@@ -27,7 +27,7 @@ export interface CardConfig {
     description: "Gabriel Dilis, oh what a dish, full of salty delight, he grants you a wish, with stats so high he makes the competition nigh, oh what a sight, his HP's like a mountain, attack damage is like a fountain, crit rate so insane it's almost profane!",
     borderColor: 'GREEN',
     overlay: 'holographic',
-    imageSrc: 'http://localhost:5000/output/abc.jpg'
+    imageSrc: 'http://localhost:5000/output/d.jpg'
   };
   
   export type OverlayType = 'none' | 'holographic' | 'glitter' | 'paper' | 'foil';
