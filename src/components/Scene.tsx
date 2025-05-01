@@ -37,7 +37,7 @@ export default function Scene(props: Props){
 
   if (props.playMusic){
     const audio = document.getElementById("bg_music") as HTMLAudioElement;
-    audio.volume = 0.2;
+    audio.volume = 0.5;
     audio.play();
   }
 
