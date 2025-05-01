@@ -8,7 +8,7 @@ const videos = ["bg2.mp4"];
 
 export default function CardPreviewPage() {
   const [searchParams] = useSearchParams();
-  const imagePath = searchParams.get("id") || ""; // no need for useState here if it doesn't change
+  const imagePath = searchParams.get("id") || "";
   const [cardConfig, setCardConfig] = useState<CardConfig>(defaultCardConfig);
   const [selectedVideo, setSelectedVideo] = useState("");
 

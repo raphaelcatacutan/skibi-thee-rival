@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "../styles/Winner.css";
+import { jsonToCards } from "../utils/parser";
 
 const videos = ["bg1.mp4"];
 
 export default function () {
   const [selectedVideo, setSelectedVideo] = useState("");
+  const [winnerName, setWinnerName] = useState("");
   const [showButton, setShowButton] = useState(false);
   const navigate = useNavigate();
 
+  const [searchParams] = useSearchParams();
+  const imagePath = searchParams.get("id") || "";
+  
   useEffect(() => {
     const randomVideo = videos[Math.floor(Math.random() * videos.length)];
     setSelectedVideo(randomVideo);
@@ -19,6 +24,20 @@ export default function () {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+      if (!imagePath) return;
+  
+      fetch(`http://localhost:3000/api/images?filter=${imagePath}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const name = jsonToCards(data)[imagePath].cardTitle ?? imagePath.split("-")[0]
+          setWinnerName(name);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch image config", err);
+        });
+    }, [imagePath]);
 
   return (
     <div className="winner-container">
@@ -32,9 +51,9 @@ export default function () {
 
       <div className="winner-foreground">
         {/* fetch winner name*/}
-        <h2 className="winner-text">Floydilayo Win</h2>
+        <h2 className="winner-text">{winnerName} Win</h2>
         <img
-          src="/assets/images/winner-image.png" //fetch winner image
+          src={`http://localhost:5000/output/${imagePath}-preview.png`} //fetch winner image
           alt="Winner"
           className="winner-image"
         />
