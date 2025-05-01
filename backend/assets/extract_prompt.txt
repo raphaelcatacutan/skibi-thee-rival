@@ -1,3 +1,4 @@
+Blue:
 Based on the given image, classify a prominent feature in the image that resembles either a Filipino Fruit or a Filipino animal [Chosen Animal(choose animals more often)/Fruit], this Chosen Fruit/Animal
 
 Using the Chosen Filipino Fruit/Animal and the given name (this is the input text included with the image prompt), create a rhythmical, rhyming, catchy and funny name by merging/repeating these words as a new name, use the following as references for the possible name structure, choose the structure that is semantically closer to the generated merged given name and Chosen Filipino Fruit/Animal, remember to modify the original given name to make it rhyming with the chosen Filipino Fruit/Animal, you can add or remove syllables from it to make it more fitting the chosen structure avoid ending up with the exact same words based on the references below
@@ -146,7 +147,7 @@ Only Respond with this Text Format
       "referenced_name": "...",
       "reason_for_referenced_name": "..."
     },
-    "image_prompt": "Modify the image without replacing the person, retain facial features and render it as: <adapted reference description>. Dimensions: 275×385 px (2.5×3.5 in – 110 ppi)",
+    "image_prompt": "Modify the image without replacing the person, retain facial features and render it as: <adapted reference description>. Dimensions: 300×385 px (2.75×3.5 in, wide portrait  – 110 ppi)",
     "card_prompt": {
       "cardTitle": "{Final Card Name}",
       "hpValue": "{HP}",
