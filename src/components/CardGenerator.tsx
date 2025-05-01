@@ -8,7 +8,6 @@ import {
 	defaultCardConfig,
 } from "../utils/CardTypes";
 import "../styles/CardGenerator.css";
-import { jsonToCards } from "../utils/parser";
 type CardGeneratorProps = {
 	cardId: string;
 };
@@ -108,16 +107,16 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 		number | string
 	> | null>(null);
 
+  // Fetch real data on page load
 	useEffect(() => {
-		console.log(`http://localhost:3000/api/images?filter=${cardId}`);
+    console.log("Fetching")
 		fetch(`http://localhost:3000/api/images?filter=${cardId}`)
 			.then((res) => res.json())
 			.then(async (data) => {
-				console.log("hell");
 				setConfigText(JSON.stringify(data[cardId]));
-				console.log(JSON.stringify(data[cardId]));
-				applyConfiguration();
+				const applied = applyConfiguration();
 
+        if (!applied) return
 				const base64Image = stageRef.current.toDataURL().toString();
 				try {
 					const res = await fetch(
@@ -137,11 +136,7 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 
 					const data = await res.json();
 
-					if (data.success) {
-						console.log("success");
-					} else {
-						console.log("failed");
-					}
+					console.log("Image Saving:", data.message)
 				} catch (error) {
 					console.error("Save error:", error);
 				}
@@ -149,7 +144,7 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 			.catch((err) => {
 				console.error("Failed to fetch card data:", err);
 			});
-	}, []);
+	}, [cardElementsLoaded]);
 	// Add styles to document head for font loading
 	useEffect(() => {
 		// Add the font face styles to head
@@ -172,7 +167,7 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 			const imageObj = new window.Image();
 			imageObj.src = cardConfig.imageSrc;
 
-			imageObj.onload = async () => {
+			imageObj.onload = () => {
 				if (imageRef.current) {
 					// Scale to fit height, just like in the original version
 					const scale = dimensions.clipGroupHeight / imageObj.height;
@@ -327,7 +322,7 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 		setCardConfig(mergedConfig);
 		setConfigText(JSON.stringify(mergedConfig, null, 2));
 	};
-	const applyConfiguration = async () => {
+	const applyConfiguration = () => {
 		try {
 			const config = JSON.parse(configText);
 			// Update card elements with new configuration
@@ -355,6 +350,7 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 			}
 
 			console.log("Configuration applied successfully:", config);
+      return true
 		} catch (error) {
 			console.error("Error applying configuration:", error);
 			alert("Invalid JSON format. Please check your input.");
@@ -411,7 +407,6 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 		const layer = overlayGroupRef.current?.getLayer();
 		if (layer) layer.draw();
 	};
-
 	const applyFoilEffect = () => {
 		if (!overlayGroupRef.current) return;
 
