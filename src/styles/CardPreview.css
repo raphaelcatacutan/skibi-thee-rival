@@ -1,7 +1,4 @@
-
-
-.card-container {
-  display: block; /* Restore the div for the background video */
+.winner-container {
   position: relative;
   width: 100vw;
   height: 100vh;
@@ -15,76 +12,168 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  z-index: 1;
 }
 
 .card-foreground {
   display: flex; /* Use flexbox for layout */
   justify-content: space-between; /* Align children to opposite sides */
   align-items: center; /* Align items vertically */
-  padding: 20px; /* Add padding for spacing */
-}
-
-.card-image-container, .card-text-container {
-  position: absolute; /* Position them on top of the card-container */
-  z-index: 10; /* Ensure they are above the card-container */
-  padding-left: 100px;
-  transform: scale(0.5); /* scale to 80% */
-  transform-origin: top left;
+  padding: 2%; /* Use percentage for padding */
 }
 
 .card-image-container {
-  flex: 1; /* Allow the image container to take up one part of the space */
-  text-align: left; /* Align the image to the left */
-  top: 10%; /* Adjust as needed */
-  left: 5%; /* Adjust as needed */
-}
-
-.card-image {
-  max-width: 100%; /* Ensure the image fits within its container */
-  height: auto; /* Maintain aspect ratio */
+  position: absolute; /* Position them on top of the card-container */
+  z-index: 10; /* Ensure they are above the card-container */
+  padding-left: 5%; /* Use percentage for padding */
+  transform: scale(0.5); /* scale to 80% */
+  transform-origin: top left;
+  top: 10%; /* Adjust dynamically */
+  left: 5%; /* Adjust dynamically */
 }
 
 .card-text-container {
-  flex: 1; /* Allow the text container to take up one part of the space */
-  text-align: right; /* Align the text to the right */
-  top: 10%; /* Adjust as needed */
-  right: 5%; /* Adjust as needed */
+  position: absolute; /* Position them on top of the card-container */
+  z-index: 10; /* Ensure they are above the card-container */
+  padding:2%;
+  transform: scale(0.6); /* scale to 80% */
+  transform-origin: top left;
+  margin-left: 45%; /* Use percentage for margin */
+  margin-right: 5%; /* Use percentage for margin */
+  background-color: rgba(0, 0, 0, 0.7); /* Add a semi-transparent background */
+  border-radius: 1rem; /* Use rem for border radius */
+  color: #ffffff; /* White text for better contrast */
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.3); /* Add a subtle shadow */
+  text-align: left; /* Align text to the left */
+  SCALE: 1.4; /* scale to 80% */
 }
 
-  /*sizes might be replaced later*/
 .card-image {
-    width: 375px; /* 750 * 0.5 */
-    height: 525px; /* 1050 * 0.5 */
-    object-fit: contain;
-  }    
+  width: 50%; /* Use percentage for width */
+  height: auto; /* Maintain aspect ratio */
+  object-fit: contain;
+}    
 
+.card-container {
+  position: relative;
+  text-align: left; /* Align text and content to the left */
+  margin-left: 0; /* Ensure it aligns to the left edge */
+  padding-left: 20px; /* Optional: Add some padding for spacing */
+  display: flex;
+  align-items: stretch; /* Makes children match each other's height */
+  flex-direction: row; /* side-by-side by default */
+  gap: 1rem; /* Use rem for spacing */
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.card-txt {
+  font-size: 2rem; /* Use rem for font size */
+  font-weight: bold; /* Make the title bold */
+  margin-bottom: 1rem; /* Use rem for spacing */
+  text-transform: uppercase; /* Make the title uppercase */
+  color: #ffcc00; /* Highlight the title with a yellow color */
+}
+
+.card-pair {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.5rem; /* Use rem for spacing */
+}
+
+.card-subtxt {
+  flex: 1;
+  text-align: left;
+  font-size: 1rem; /* Use rem for font size */
+  color: #e0e0e0;
+  margin: 0;
+}
+
+.card-info {
+  flex: 1;
+  text-align: right;
+  font-size: 1rem; /* Use rem for font size */
+  color: #ffffff;
+  margin: 0;
+}  
+
+.description {
+  align-content: left;
+  text-align: left; /* Align text to the left */
+  font-size: 1.25rem; /* Use rem for font size */
+  margin-bottom: 0.5rem; /* Use rem for spacing */
+  line-height: 1.8; /* Improve readability with line height */
+  color: #e0e0e0; /* Light gray for subtitles */
+}
+
+.card-image-container,
+.card-text-container {
+  flex: 1;
+}
+
+/* Responsive: stack vertically on small screens */
+@media (max-width: 768px) {
   .card-container {
-    position: relative;
-    text-align: left; /* Align text and content to the left */
-    margin-left: 0; /* Ensure it aligns to the left edge */
-    padding-left: 20px; /* Optional: Add some padding for spacing */
+    flex-direction: column;
   }
-  
+
+  .card-image-container, .card-text-container {
+    padding-left: 2%; /* Adjust padding for smaller screens */
+    margin-left: 0; /* Reset margin for smaller screens */
+    margin-right: 0; /* Reset margin for smaller screens */
+  }
+
   .card-txt {
-    font-size: clamp(1.5rem, 5vw, 3rem); /* Adjusts dynamically */
-    font-weight: bold;
-    color: white;
-    margin-bottom: 50px;
-    white-space: nowrap; /* Prevents unexpected wrapping */
-    /* animation: barrelRoll 2s ease forwards; <-- this line */
+    font-size: 1.5rem; /* Adjust font size for smaller screens */
   }
-  
-  /* Barrel Roll Animation */
-  @keyframes barrelRoll {
-    0% {
-      transform: rotate(0) scale(0);
-      opacity: 0;
-    }
-    50% {
-      transform: rotate(180deg) scale(1.2);
-      opacity: 1;
-    }
-    100% {
-      transform: rotate(360deg) scale(1);
-    }
+
+  .description {
+    font-size: 1rem; /* Adjust font size for smaller screens */
   }
+}
+
+/* Added styles for button-header */
+.button-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 40px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.proceed-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #ffcc00;
+  color: #003f7f;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  opacity: 1;
+  pointer-events: auto;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.proceed-button:first-child {
+  margin-right: 300px; /* Push first button to the left */
+}
+
+
+.proceed-button:hover {
+  background-color: #e6b800;
+  transform: scale(1.05);
+}
+
+.proceed-button:active {
+  background-color: #cc9900; /* Even darker yellow when clicked */
+  transform: scale(0.95); /* Slightly shrink on click */
+}
