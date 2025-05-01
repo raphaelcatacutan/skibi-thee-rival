@@ -98,6 +98,7 @@ export default function () {
             className="winner-image"
           />
         </div>
+
         <div className={styling.card_grid}>
           {Object.entries(cards).map(([key, card]) => {
             console.log(key);
