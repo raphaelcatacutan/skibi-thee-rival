@@ -9,11 +9,14 @@ import getCards from "./routes/getCards";
 import getExtraction from "./routes/getExtraction"; 
 import postGeneration from "./routes/postGeneration"; 
 import postScore from "./routes/postScore"; 
+import postPreview from "./routes/postPreview"; 
 
 dotenv.config()
 const PORT = process.env.PORT;
 
 const app = express();
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cors());
 const server = http.createServer(app);
 
@@ -37,9 +40,11 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/data', express.static("./data"));
 app.use('/output', express.static("./output"));
+app.use('/assets', express.static("./assets"));
 
 app.use('/api', postInput(wss));
 app.use('/api', getCards);
 app.use('/api', getExtraction);
 app.use('/api', postGeneration)
 app.use('/api', postScore)
+app.use('/api', postPreview)

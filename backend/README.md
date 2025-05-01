@@ -283,3 +283,44 @@ const handleGenerateScore = async () => {
 	}
 };
 ```
+
+## Post Preview Image
+Takes a base64Image and imageName as argument. This post request will convert base64 string to an image and save it to `./output/{imageName}-preview.jpg`.
+
+Post Route: `api/preview`
+
+### Return
+- Status 500: Internal Server Error
+- Status 400: Missing required fields: base64Image and imageName
+- Status 200: Image saved successfully.
+	```json
+	{"success":true,"message":"Image saved successfully.","path":"./output/abcd-preview.png"}
+	```
+_Sample Web Front-end usage_
+```tsx
+try {
+	const res = await fetch("http://localhost:3000/api/preview", {
+	method: "POST",
+	headers: {
+		"Content-Type": "application/json",
+	},
+	body: JSON.stringify({
+		base64Image,
+		imageName: imageNameForSave,
+	}),
+	});
+
+	const data = await res.json();
+
+	if (data.success) {
+	setSaveResponse(`Image saved to: ${data.path}`);
+	} else {
+	setSaveResponse("Failed to save image.");
+	}
+} catch (error) {
+	console.error("Save error:", error);
+	setSaveResponse("An error occurred while saving the image.");
+} finally {
+	setSaving(false);
+}
+```
