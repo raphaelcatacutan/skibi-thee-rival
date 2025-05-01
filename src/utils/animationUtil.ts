@@ -1,5 +1,5 @@
 import React from 'react'
-import { motion }from 'framer-motion'
+import { motion, scale }from 'framer-motion'
 
 
 const vfxSetters: { [key: string]: (visible: boolean) => void } = {};
@@ -48,7 +48,7 @@ export const shakeAnimation = {
     }
   },
   dmgtext: {
-    
+
   }
 };
 

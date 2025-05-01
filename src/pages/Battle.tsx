@@ -1,5 +1,7 @@
 import React, { use, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import Scene from '../components/Scene'
+import TextMask from '../components/TextMask'
 import styles from '../styles/page-Battle.module.css'
 import Healthbar from '../components/Healthbar' 
 import CardDisplay from '../components/CardDisplay'
@@ -29,6 +31,7 @@ import C1SideText from '../components/VFX/C1SideText'
 import C2SideText from '../components/VFX/C2SideText'
 import C1BonkAttack from '../components/VFX/C1BonkAttack'
 import C2BonkAttack from '../components/VFX/C2BonkAttack'
+import { Navigate, useNavigate, useNavigation } from 'react-router-dom'
 
 interface Cards {
   card1_src?: string;
@@ -65,6 +68,8 @@ export default function Battle(props: Cards){
   const [doC2TopText, setC2TopText] = useState(false);
   const [showC1TopTextString, setC1TopTextString] = useState("");
   const [showC2TopTextString, setC2TopTextString] = useState("");
+  const [showC1TopTextColor, setC1TopTextColor] = useState("");
+  const [showC2TopTextColor, setC2TopTextColor] = useState("");
   const [doC1SideText, setC1SideText] = useState(false);
   const [doC2SideText, setC2SideText] = useState(false);
   const [showC1SideTextString, setC1SideTextString] = useState("");
@@ -75,6 +80,13 @@ export default function Battle(props: Cards){
   var [showDiceCountValC1, setDiceCountValC1] = useState("1");
   var [showDiceCountValC2, setDiceCountValC2] = useState("1");
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [showScreenMask, setScreenMask] = useState(true);
+  const [isReady, setisReady] = useState(true);
+  const [isStart, setisStart] = useState(false)
+  const [isDraw, setisDraw] = useState(false);
+  const [isFinished, setisFinished] = useState(false);
+
+  // const [showMessage, setMessage] = useState("READY");
   const [C1isAttacked, C1setAttacked] = useState(false);
   const [C2isAttacked, C2setAttacked] = useState(false);
   var cardC1: string = "/assets/images/winner-image.png"
@@ -85,7 +97,7 @@ export default function Battle(props: Cards){
       currHealthC2: number = 1;
   let maxHealthC1: number = 1,
       maxHealthC2: number = 1;
-
+  const navigate = useNavigate()
   const bg_scenes: string[] = [];
 
   // const batk_audio_cont: string[] = ["batk_1", "batk_2", "batk_3"];
@@ -120,15 +132,6 @@ export default function Battle(props: Cards){
     animation.registerVFXSetter('C2BonkAttack', setBonkC2)
   }, []);
 
-  // for bg music
-  useEffect(() => {
-    const audio = document.getElementById("bg_music") as HTMLAudioElement;
-    if (hasInteracted){
-      audio.volume = 0.5;
-      audio.play();
-    }
-  }, [hasInteracted])
-
   const triggerScreenShake = () => {
     setScreenShake(true);
     setTimeout(() => setScreenShake(false), 600);
@@ -145,8 +148,13 @@ export default function Battle(props: Cards){
   };
 
   function removeMask(e: React.MouseEvent<HTMLDivElement>){
-    e.currentTarget.style.display = 'none';
-    setHasInteracted(true);
+    setisReady(false);
+    setisStart(true);
+    setTimeout(() => {
+      setisStart(false);
+      setHasInteracted(true)
+      setScreenMask(false)
+    }, 1000)
   }
 
   function applyHealthChange(index: number, currHealth: number, maxHealth: number){
@@ -312,23 +320,25 @@ export default function Battle(props: Cards){
     audio.pause();
     if (index == 0){
       setC1SideTextString(heal.toString())
-      setC1SideTextColor("#00e800")
+      setC1SideTextColor("#FF98FB98")
       animation.triggerVFX('C1SideText')
       animation.triggerVFX('C1SelfCare');
     } else {
       setC2SideTextString(heal.toString())
-      setC2SideTextColor("#00e800")
+      setC2SideTextColor("#FF98FB98")
       animation.triggerVFX('C2SideText')
       animation.triggerVFX('C2SelfCare');
     }
     audio.play();
   }
 
-  function performHarden(index: number){
+  function performHarden(index: number, skillname: string){
     const audio = document.getElementById("harden_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
     audio.pause();
     if (index == 0){
+      setC1TopTextString(skillname)
+      animation.triggerVFX('C1TopText')
       animation.triggerVFX('C1Harden');
     } else {
       animation.triggerVFX('C2Harden');
@@ -348,17 +358,24 @@ export default function Battle(props: Cards){
     audio.play();
   }
 
-  function endBattle(card_id: string){
-
+  function endBattle(card_id: string, isDraw: boolean){
+    if (isDraw){ // if may draw
+      setisDraw(true)
+      setHasInteracted(false)
+      setTimeout(() => setisDraw(false), 3000)
+    } else { // if walang draw
+      setisFinished(true)
+      setHasInteracted(false)
+      setTimeout(() => {
+        setisFinished(false)
+        navigate(`/Winner?id=${card_id}`)
+      }, 3000)
+    }
   }
 
   return (
     <div className={styles.background_cont}>
-      <motion.div 
-        className={styles.background_img} 
-        variants={animation.shakeAnimation} 
-        animate={doScreenShake ? "screenshake" : ""}></motion.div>
-      <audio id="bg_music" src="/assets/sounds/battle_bgmusic.mp3" loop={true}/>
+      <Scene quake={doScreenShake} playMusic={hasInteracted}></Scene>
       <audio id="dice_sfx" src="/assets/sounds/dice.mp3"/>
       <audio id="catk_sfx" src="/assets/sounds/catk_3.mp3"/>
       <audio id="batk_sfx" src="/assets/sounds/batk_4.mp3"/>
@@ -369,9 +386,20 @@ export default function Battle(props: Cards){
       <audio id="selfcare_sfx" src="/assets/sounds/selfcare.mp3"/>
       <audio id="harden_sfx" src="/assets/sounds/harden.mp3"/>
       <audio id="zucc_sfx" src="/assets/sounds/zucc.mp3"/>
+      {showScreenMask && (
       <div className={styles.mask_layer} onClick={removeMask}>
-        Proceed to Battle
-      </div>
+        <TextMask isVisible={isReady} message={"READY"} font="ready"/>
+        <TextMask isVisible={isStart} message={"FIGHT"} font="fight"/>
+      </div>)}
+      {isDraw && (
+      <div className={styles.mask_layer} >
+        <TextMask isVisible={isDraw} message={"DRAW"} font="ready"/>
+      </div>)}
+      {isFinished && (
+      <div className={styles.mask_layer} >
+        <TextMask isVisible={isFinished} message={"FINISHED"} font="ready"/>
+      </div>)}
+
       <div id={styles.round_text}>Round 1</div>
       <div id={styles.battle_area}>
         <div id={styles.card_cont}>
@@ -384,8 +412,8 @@ export default function Battle(props: Cards){
         </div>
       </div>
       
-      <button onClick={() => {performBAtk(0, 123)}}>C1 Attack!</button>
-      <button onClick={() => {performCAtk(0, 123)}}>C2 Attack!</button>
+      <button onClick={() => {performBAtk(1, 123)}}>C1 Attack!</button>
+      <button onClick={() => {endBattle("123", true)}}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
       <C2DiceCount isVisible={doDiceCountC2} dice_no={showDiceCountValC2}/>
