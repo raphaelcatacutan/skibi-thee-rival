@@ -73,9 +73,15 @@
 }
 
 .loading_text {
+  position: absolute;
+  z-index: 3;
   width: 100%;
   text-align: center;
-  font-family: rankname;
+  color: #ffffff;
+  font-size: 50px;
+  padding: 45px;
+  font-family: header;
+  top: 150px;
 }
 
 .bottom_left {
