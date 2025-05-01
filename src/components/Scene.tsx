@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import {motion} from 'framer-motion'
-import { url } from 'inspector'
 import bg1 from "../assets/images/scenes/bg_arena.jpg";
 import bg2 from "../assets/images/scenes/bg_castle.jpeg";
 import bg3 from "../assets/images/scenes/bg_dojo.jpeg";
@@ -10,12 +9,11 @@ import bg6 from "../assets/images/scenes/bg_jungle.jpeg";
 import bg7 from "../assets/images/scenes/bg_snow.jpeg";
 import style from '../styles/page-Battle.module.css'
 import { shakeAnimation } from '../utils/animationUtil';
-import { get } from 'http';
 
 const images = [bg1, bg2, bg3, bg4, bg5, bg6, bg7];
 const audios = [
   "bgm_arena", "bgm_castle", "bgm_dojo",
-  "bgm_tokyo", "bgm_rockymountains1", "bgm_jungle",
+  "bgm_tokyo", "bgm_rockymountains", "bgm_jungle",
   "bgm_snow"  
 ];
 

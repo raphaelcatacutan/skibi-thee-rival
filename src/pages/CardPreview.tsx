@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/CardPreview.css";
-import CardGenerator from "../components/CardGenerator";
+// import CardGenerator from "../components/CardGenerator";
 import { useSearchParams } from "react-router-dom";
 import { CardConfig, defaultCardConfig } from "../utils/CardTypes";
 
@@ -34,7 +34,7 @@ export default function CardPreviewPage() {
     <>
       {/* Card Image */}
       <div className="card-image-container">
-        <CardGenerator cardConfig={cardConfig} cardId={imagePath} />
+        {/* <CardGenerator cardConfig={cardConfig} cardId={imagePath} /> */}
       </div>
 
       {/* Card Text */}

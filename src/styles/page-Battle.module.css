@@ -8,6 +8,16 @@
   src: url(../assets/fonts/10_gremlins.ttf);
 }
 
+@font-face {
+  font-family: ready;
+  src: url(../assets/fonts/ready.ttf);
+}
+
+@font-face {
+  font-family: fight;
+  src: url(../assets/fonts/fight.ttf);
+}
+
 :root {
   overflow-x: hidden;
 }
@@ -34,7 +44,7 @@
   
 }
 
-.mask_layer {
+.mask_layer_x {
   position: absolute;
   justify-content: center;
   align-items: center;
@@ -47,6 +57,29 @@
   font-size: 3em;
   color: white;
 }
+
+.mask_layer {
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  z-index: 1;
+}
+
+.mask_text_cont {
+  width: 100vw;
+  height: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+  /* position: relative; */
+  
+  font-family: ready;
+  font-size: 4em;
+  color: white;
+  text-align: center;
+}
+
 
 #round_text {
   font-size: 5em;
