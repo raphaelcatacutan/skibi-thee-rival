@@ -47,7 +47,7 @@ export const shakeAnimation = {
       ease: "backIn"
     }
   },
-  dmgtext: {
+  dmgtext: {  
 
   }
 };
