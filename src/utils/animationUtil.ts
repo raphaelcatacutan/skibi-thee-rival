@@ -1,5 +1,5 @@
 import React from 'react'
-import { motion }from 'framer-motion'
+import { motion, scale }from 'framer-motion'
 
 
 const vfxSetters: { [key: string]: (visible: boolean) => void } = {};
@@ -48,7 +48,29 @@ export const shakeAnimation = {
     }
   },
   dmgtext: {
-    
+
+  },
+  ready_init: {
+    x: "100%",
+    opacity: 0,
+  },
+  ready_start: {
+    x: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeIn"
+    }
+  },
+  ready_end: {
+    x: "-100%",  // Move to the left
+    transition: { duration: 0.6, ease: "easeInOut" }
+  },
+  fight: {
+    scale: 1.5,
+    transition: {
+      duration: 0.5,
+      ease: "easeInOut",
+    }
   }
 };
 

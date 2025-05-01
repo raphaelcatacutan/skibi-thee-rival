@@ -32,10 +32,12 @@ export default function CardPreviewPage() {
       });
   }, [imagePath]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setShowButtons(true), 5000);
-    return () => clearTimeout(timer);
-  }, []);
+  return (
+    <>
+      {/* Card Image */}
+      <div className="card-image-container">
+        {/* <CardGenerator cardConfig={cardConfig} cardId={imagePath} /> */}
+      </div>
 
   return (
     <p>
