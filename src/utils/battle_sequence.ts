@@ -28,9 +28,9 @@ let fPerformCAtk = (_index: number, _damage: number) => {}
 let fPerformBonk = (_index: number, _skillName: string, _damage: number) => {}
 let fPerformMaldquake = (_index: number, _skillname: string, _dmgtoC1: number, _dmgtoC2: number) => {}
 let fPerformDeluluStrike = (_index: number, _skillname: string) => {}
-let fPerformSelfCare = (_index: number, _heal: number) => {}
-let fPerformHarden = (_index: number) => {}
-let fPerformZucc = (_index: number) => {}
+let fPerformSelfCare = (_index: number, _skillName: string, _heal: number) => {}
+let fPerformHarden = (_index: number, _skillName: string) => {}
+let fPerformZucc = (_index: number, _skillName: string) => {}
 let fApplyHealthChange = (_index: number, _currentHealth: number, _maxHealth: number) => {}
 
 function getIndex(id: string) {
@@ -77,7 +77,7 @@ class CardMechanics {
         if (this.gyattHardness > 0 && damage > 0) {
             damage = Math.round(damage * this.gyattHardness);
             console.log(`${this.name} is Gyatt Harden! Damage reduced to ${damage}.`);
-            fPerformHarden(getIndex(this.id))
+            fPerformHarden(getIndex(this.id), this.cardInfo.skillNames![4])
             this.gyattHarden(false);
         }
 
@@ -141,20 +141,20 @@ class CardMechanics {
     }
 
     gyattHarden(state = true): void {
-        fPerformHarden(getIndex(this.id))
+        fPerformHarden(getIndex(this.id), this.cardInfo.skillNames![4])
         console.log(`${this.name} Gyatt Hardness is now ${state ? "increased" : "decreased"} to ${this.gyattHardness + (state ? 0.3 : -0.3)}!`);
         this.gyattHardness += state ? 0.3 : -0.3;
     }
 
     setZucc(state = true): void {
-        fPerformZucc(getIndex(this.id))
+        fPerformZucc(getIndex(this.id), this.cardInfo.skillNames![5])
         console.log(`${this.name} is ${state ? "now zuccing" : "no longer zuccing"}.`);
         this.isZucc = state;
     }
 
     heal(): void {
         const healAmount = random(300, 500);
-        fPerformSelfCare(getIndex(this.id), healAmount)
+        fPerformSelfCare(getIndex(this.id), this.cardInfo.skillNames![6],  healAmount)
         console.log(`${this.name} heals for ${healAmount} HP!`);
         this.damage(-healAmount);
     }
@@ -224,13 +224,12 @@ async function startBattle(
     aPerformBonk = (_index: number, _skillName: string, _damage: number) => {},
     aPerformMaldquake = (_index: number, _skillname: string, _dmgtoC1: number, _dmgtoC2: number) => {},
     aPerformDeluluStrike = (_index: number, _skillname: string) => {},
-    aPerformSelfCare = (_index: number, _heal: number) => {},
+    aPerformSelfCare = (_index: number, _skillName: string, _heal: number) => {},
     aPerformHarden = (_index: number) => {},
     aPerformZucc = (_index: number) => {},
     aApplyHealthChange = (_index: number, _currentHealth: number, _maxHealth: number) => {},
-    endBattle = (_winnerId: string) => {},
-    aPerformDiceRoll = (_result1: number, _result2: number, _message: string) => {},
-    isDraw = () => {}
+    endBattle = (_winnerId: string|undefined, _isDraw: boolean) => {},
+    aPerformDiceRoll = (_result1: number, _result2: number, _message: string) => {}
 ): Promise<number> {
     fPerformBAtk = aPerformBAtk
     fPerformPunch = aPerformPunch
@@ -296,13 +295,13 @@ async function startBattle(
     
         await sleep(1000)
         if (turn1.hp > turn2.hp) {
-            endBattle(turn1.id)
+            endBattle(turn1.id, false)
             return rounds;
         } else if (turn1.hp < turn2.hp) {
-            endBattle(turn2.id)
+            endBattle(turn2.id, false)
             return rounds;
         } else {
-            isDraw()
+            endBattle(undefined, true)
             card1.reset()
             card2.reset()
             await sleep(3000)
