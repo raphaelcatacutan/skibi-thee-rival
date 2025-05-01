@@ -16,7 +16,6 @@ type CardGeneratorProps = {
 const isBrowser = typeof window !== "undefined";
 
 const CardGenerator: React.FC<CardGeneratorProps> = ({ cardConfig, cardId }) => {
-	console.log(cardConfig.skillNames)
 	// Constants from original implementation
 	const cardWidth = 750;
 	const cardHeight = 1050;
@@ -107,9 +106,9 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardConfig, cardId }) => 
 
 	// Fetch real data on page load
 	useEffect(() => {
-		if (!cardElementsLoaded) return;
+		if (!cardElementsLoaded) return console.log("Elements not yet loaded");
 		applyConfiguration(cardConfig).then(async (applied) => {
-			if (!applied) return;
+			if (!applied) return console.log("Configs not yet applied");
 			const base64Image = stageRef.current.toDataURL().toString();
 			if (!base64Image) return console.log("Image not rendered");
 			try {
@@ -181,7 +180,6 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardConfig, cardId }) => 
 
 			imageObj.onerror = () => {
 				console.error("Failed to load image:", cardConfig.imageSrc);
-				setCardElementsLoaded(true);
 			};
 		}
 	}, [

@@ -23,7 +23,6 @@ export default function CardPreviewPage() {
     fetch(`http://localhost:3000/api/images?filter=${imagePath}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(imagePath, data[imagePath]);
         setCardConfig(data[imagePath]);
       })
       .catch((err) => {
