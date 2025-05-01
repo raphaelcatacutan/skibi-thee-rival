@@ -1,5 +1,6 @@
 import React, { use, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import Scene from '../components/Scene'
 import styles from '../styles/page-Battle.module.css'
 import Healthbar from '../components/Healthbar' 
 import CardDisplay from '../components/CardDisplay'
@@ -121,13 +122,13 @@ export default function Battle(props: Cards){
   }, []);
 
   // for bg music
-  useEffect(() => {
-    const audio = document.getElementById("bg_music") as HTMLAudioElement;
-    if (hasInteracted){
-      audio.volume = 0.5;
-      audio.play();
-    }
-  }, [hasInteracted])
+  // useEffect(() => {
+  //   const audio = document.getElementById("bg_music") as HTMLAudioElement;
+  //   if (hasInteracted){
+  //     audio.volume = 0.5;
+  //     audio.play();
+  //   }
+  // }, [hasInteracted])
 
   const triggerScreenShake = () => {
     setScreenShake(true);
@@ -354,11 +355,12 @@ export default function Battle(props: Cards){
 
   return (
     <div className={styles.background_cont}>
-      <motion.div 
+      {/* <motion.div 
         className={styles.background_img} 
         variants={animation.shakeAnimation} 
-        animate={doScreenShake ? "screenshake" : ""}></motion.div>
-      <audio id="bg_music" src="/assets/sounds/battle_bgmusic.mp3" loop={true}/>
+        animate={doScreenShake ? "screenshake" : ""}></motion.div> */}
+      <Scene quake={doScreenShake} playMusic={hasInteracted}></Scene>
+      {/* <audio id="bg_music" src="/assets/sounds/battle_bgmusic.mp3" loop={true}/> // to be changed */}
       <audio id="dice_sfx" src="/assets/sounds/dice.mp3"/>
       <audio id="catk_sfx" src="/assets/sounds/catk_3.mp3"/>
       <audio id="batk_sfx" src="/assets/sounds/batk_4.mp3"/>

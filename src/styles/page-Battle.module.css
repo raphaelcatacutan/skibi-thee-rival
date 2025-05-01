@@ -21,7 +21,7 @@
 }
 
 .background_img {
-  background-image: url('../assets/images/scenes/bg_arena.jpg');
+  background-color: black;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
