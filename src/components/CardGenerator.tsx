@@ -115,33 +115,32 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 			.then(async (data) => {
 				setConfigText(JSON.stringify(data[cardId]));
 				applyConfiguration(data[cardId]).then(async (applied) => {
-          if (!applied) return
-          const base64Image = stageRef.current.toDataURL().toString();
-          if (!base64Image) return
-          try {
-            const res = await fetch(
-              "http://localhost:3000/api/preview",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
+					if (!applied) return;
+					const base64Image = stageRef.current.toDataURL().toString();
+					if (!base64Image) return;
+					try {
+						const res = await fetch(
+							"http://localhost:3000/api/preview",
+							{
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+								},
 
-                body: JSON.stringify({
-                  base64Image,
-                  imageName: cardId,
-                }),
-              }
-            );
+								body: JSON.stringify({
+									base64Image,
+									imageName: cardId,
+								}),
+							}
+						);
 
-            const data = await res.json();
+						const data = await res.json();
 
-            console.log("Image Saving:", data.message);
-          } catch (error) {
-            console.error("Save error:", error);
-          }
-        });
-				
+						console.log("Image Saving:", data.message);
+					} catch (error) {
+						console.error("Save error:", error);
+					}
+				});
 			})
 			.catch((err) => {
 				console.error("Failed to fetch card data:", err);
@@ -167,8 +166,8 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 	useEffect(() => {
 		if (isBrowser) {
 			const imageObj = new window.Image();
-      imageObj.crossOrigin = "Anonymous";
-			imageObj.src = cardConfig.imageSrc;
+			imageObj.crossOrigin = "Anonymous";
+			imageObj.src = `http://localhost:5000/output/${cardConfig.imageSrc}`;
 
 			imageObj.onload = () => {
 				if (imageRef.current) {
@@ -260,10 +259,9 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 		}
 
 		// Update image if provided and different
-		// if (mergedConfig.imageSrc && mergedConfig.imageSrc !== cardConfig.imageSrc) {
 		const newImage = new window.Image();
-    newImage.crossOrigin = "Anonymous";
-		newImage.src = mergedConfig.imageSrc;
+		newImage.crossOrigin = "Anonymous";
+		newImage.src = `http://localhost:5000/output/${mergedConfig.imageSrc}`;
 
 		// Update skills
 		// In React we'll recreate the skills array in the render function
@@ -288,7 +286,7 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 
 					const layer = imageRef.current.getLayer();
 					if (layer) layer.draw();
-          resolve(newImage);
+					resolve(newImage);
 				}
 				// };
 
@@ -297,46 +295,46 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ cardId }) => {
 						"Failed to load image:",
 						mergedConfig.imageSrc
 					);
-          resolve(newImage);
+					resolve(newImage);
 				};
 			};
 		});
 	};
 	const applyConfiguration = (config: any): Promise<boolean> => {
-    return new Promise((resolve, reject) => {
-      try {
-        setCardConfig(config);
+		return new Promise((resolve, reject) => {
+			try {
+				setCardConfig(config);
 
-        if (!cardElementsLoaded) {
-          console.log(
-            "Card elements not yet loaded, saving configuration for later application"
-          );
-          resolve(false);
-          return
-        }
+				if (!cardElementsLoaded) {
+					console.log(
+						"Card elements not yet loaded, saving configuration for later application"
+					);
+					resolve(false);
+					return;
+				}
 
-        // Update card elements with new configuration
-        configureCard(config).then(() => {
-          // Also update the overlay and border settings from the parsed config
-          if (config.overlay) {
-            const overlayType = config.overlay.toLowerCase() as OverlayType;
-            setCurrentOverlay(overlayType);
-            setOverlayEffect(overlayType);
-          }
-    
-          if (config.borderColor) {
-            setBorderGradient(config.borderColor as BorderColor);
-          }
-    
-          console.log("Configuration applied successfully:", config);
-          resolve(true)
-        });
-        
-      } catch (error) {
-        console.error("Error applying configuration:", error);
-        resolve(false)
-      }
-    })
+				// Update card elements with new configuration
+				configureCard(config).then(() => {
+					// Also update the overlay and border settings from the parsed config
+					if (config.overlay) {
+						const overlayType =
+							config.overlay.toLowerCase() as OverlayType;
+						setCurrentOverlay(overlayType);
+						setOverlayEffect(overlayType);
+					}
+
+					if (config.borderColor) {
+						setBorderGradient(config.borderColor as BorderColor);
+					}
+
+					console.log("Configuration applied successfully:", config);
+					resolve(true);
+				});
+			} catch (error) {
+				console.error("Error applying configuration:", error);
+				resolve(false);
+			}
+		});
 	};
 	const setOverlayEffect = (effectType: OverlayType) => {
 		// If current overlay is foil and we're changing to something else, restore border color
