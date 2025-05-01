@@ -19,7 +19,7 @@ export default function () {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const imagePath = searchParams.get("imagePath");
-  const name = searchParams.get("name");
+  const cardId = searchParams.get("id");
 
   const fetchCards = () => {
     setLoading(true);
@@ -91,28 +91,33 @@ export default function () {
       </div>
 
       <div className={styling.content_area}>
-        <div className={styling.loading_cont}>
+        {/* <div className={styling.loading_cont}>
           <img
             src="/assets/images/textLogo.png"
             alt="logo"
             className="winner-image"
           />
-        </div>
+        </div> */}
         <div className={styling.card_grid}>
-          {Object.entries(cards).map(([key, card]) => (
-            <div
-              key={key}
-              className={styling.card_item}
-              onClick={() => handleCardClick(card)}
-            >
-              <img
-                src="/assets/images/textLogo.png"
-                alt="logo"
-                className="winner-image"
-              />
-              <div id={styling.loading_list}></div>
-            </div>
-          ))}
+          {Object.entries(cards).map(([key, card]) => {
+            console.log(key)
+            if (cardId == key) return // di niya pwedeng labanan sarili niya
+            return (
+              // yung card id ng bawat cards is yung key so yun yung ipapasa mo sa battle kasama ng cardId ng current card
+              <div
+                key={key}
+                className={styling.card_item}
+                onClick={() => handleCardClick(card)}
+              >
+                <img
+                  src={`http://localhost:5000/output/${cardId}-preview.png`}
+                  alt="logo"
+                  className="winner-image"
+                />
+                <div>Raphael</div>
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>
