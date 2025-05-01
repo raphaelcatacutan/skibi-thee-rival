@@ -63,7 +63,7 @@ export default function () {
 
   const handleCardClick = (key: string) => {
 
-    navigate(`/Battle?card1=${cardId}&card2${key}`)
+    navigate(`/Battle?card1=${cardId}&card2=${key}`)
   };
   if (loading) return <div className={styling.loading}>Loading cards...</div>;
 

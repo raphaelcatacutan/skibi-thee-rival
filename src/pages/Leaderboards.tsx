@@ -81,7 +81,7 @@ export default function () {
             .map(([key, player], index) => (
               <div className={styling.rank_slot} key={key}>
                 <div className={styling.rank_count}>{index + 1}</div>
-                <div className={styling.rank_name}>{player.name}</div>
+                <div className={styling.rank_name}>{player.cardTitle}</div>
                 <div className={styling.rank_win}>{player.score}</div>
               </div>
             ))}
