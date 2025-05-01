@@ -8,18 +8,30 @@
   src: url(../assets/fonts/10_gremlins.ttf);
 }
 
+:root {
+  overflow-x: hidden;
+}
+
+.background_cont {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .background_img {
   background-image: url('../assets/images/scenes/bg_arena.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 105vw;
   height: 100vh;
-  width: 100vw;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  z-index: -1;
+  
 }
 
 .mask_layer {
@@ -40,6 +52,7 @@
   font-size: 5em;
   text-align: center;
   font-family: header;
+  visibility: hidden;
 }
 
 #battle_area {
@@ -80,14 +93,6 @@
   width: 360px;
   height: 505px;  
   background-color: rgba(0, 0, 0, 0.3);
-
-  /* width: 550px;
-  height: 770px; */
-}
-
-
-Healthbar {
-
 }
 
 .vfx_layer {

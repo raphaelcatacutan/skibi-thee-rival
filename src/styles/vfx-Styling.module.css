@@ -1,3 +1,13 @@
+@font-face {
+  font-family: header;
+  src: url(../assets/fonts/31_War\ Machine.ttf);
+}
+
+@font-face {
+  font-family: subtitle;
+  src: url(../assets/fonts/10_gremlins.ttf);
+}
+
 #BasicAtkC1 {
   position: absolute;
   top: 120px;
@@ -52,6 +62,7 @@
   left: 280px;
   width: 0;
   height: 0;
+  opacity: 0.3;
 }
 
 #SelfCareC2 {
@@ -60,6 +71,7 @@
   left: 940px;
   width: 0;
   height: 0;
+  opacity: 0.3;
 }
 
 #DStrikeC1 {
@@ -100,6 +112,7 @@
   left: 290px;
   width: 0;
   height: 0;
+  opacity: 0.3;
 }
 
 #ZuccC2 {
@@ -108,4 +121,123 @@
   left: 950px;
   width: 0;
   height: 0;
+  opacity: 0.3;
+}
+
+#DiceC1 {
+  position: absolute;
+  top: 175px;
+  left: 50px;
+  width: 0;
+  height: 0;
+}
+
+#DiceC2 {
+  position: absolute;
+  top: 175px;
+  left: 1325px;
+  width: 0;
+  height: 0;
+}
+
+#DiceCountC1 {
+  position: absolute;
+  top: 175px;
+  left: 50px;
+  width: 150px;
+  height: 150px;
+  z-index: 1;
+}
+
+#DiceCountC2 {
+  position: absolute;
+  top: 175px;
+  left: 1325px;
+  width: 150px;
+  height: 150px;
+  z-index: 1;
+}
+
+.mid_text {
+  position: absolute;
+  font-family: subtitle;
+  font-size: 3em;
+  text-align: center;
+  color: white;
+  top: 160px;
+  left: 700px;
+  width: 150px;
+  height: 150px;
+  z-index: 2;
+}
+
+.c1_top_text {
+  position: absolute;
+  font-family: subtitle;
+  font-size: 3em;
+  text-align: center;
+  color: red;
+  top: 125px;
+  left: 260px;
+  width: 350px;
+  height: auto;
+  z-index: 2;
+  /* background-color: red; */
+}
+
+.c2_top_text {
+  position: absolute;
+  font-family: subtitle;
+  font-size: 3em;
+  text-align: center;
+  color: red;
+  top: 125px;
+  left: 925px;
+  width: 350px;
+  height: fit-content;
+  z-index: 2;
+}
+
+.c1_side_text {
+  position: absolute;
+  font-family: subtitle;
+  font-size: 2em;
+  text-align: center;
+  color: white;
+  top: 250px;
+  left: 160px;
+  width: 100px;
+  height: fit-content;
+  z-index: 2;
+  /* background-color: red; */
+}
+
+.c2_side_text {
+  position: absolute;
+  font-family: subtitle;
+  font-size: 2em;
+  text-align: center;
+  color: white;
+  top: 250px;
+  left: 1280px;
+  width: 100px;
+  height: fit-content;
+  z-index: 2;
+  /* background-color: red; */
+}
+
+#BonkAtkC1 {
+  position: absolute;
+  top: 120px;
+  left: 800px;
+  width: 300px;
+  height: 300px;
+}
+
+#BonkAtkC2 {
+  position: absolute;
+  top: 120px;
+  left: 400px;
+  width: 300px;
+  height: 300px;
 }
