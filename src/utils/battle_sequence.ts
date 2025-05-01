@@ -22,16 +22,16 @@ function sleep(ms: number): Promise<void> {
 }
 
 let leftCardId: string = ""
-let performBAtk = (index: number) => {}
-let performPunch = (index: number) => {}
-let performCAtk = (index: number) => {}
-let performBonk = (index: number) => {}
-let performMaldquake = (index: number) => {}
-let performDeluluStrike = (index: number) => {}
-let performSelfCare = (index: number) => {}
-let performHarden = (index: number) => {}
-let performZucc = (index: number) => {}
-let applyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {}
+let f_performBAtk = (index: number, damage: number) => {}
+let f_performPunch = (index: number, skillName: string, damage: number) => {}
+let f_performCAtk = (index: number, damage: number) => {}
+let f_performBonk = (index: number, skillName: string, damage: number) => {}
+let f_performMaldquake = (index: number, skillname: string, dmgtoC1: number, dmgtoC2: number) => {}
+let f_performDeluluStrike = (index: number, skillname: string) => {}
+let f_performSelfCare = (index: number, heal: number) => {}
+let f_performHarden = (index: number) => {}
+let f_performZucc = (index: number) => {}
+let f_applyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {}
 
 function getIndex(id: string) {
     if (leftCardId == id) return 0
@@ -49,6 +49,7 @@ class CardMechanics {
     private isDelulu: boolean = false;
     private gyattHardness: number = 0;
     private isZucc: boolean = false;
+    cardInfo: Card
 
     constructor(id: string, cardInfo: Card) {
         this.id = id;
@@ -57,6 +58,14 @@ class CardMechanics {
         this.hp = this.maxHp;
         this.attackDamage = cardInfo.damageValue!;
         this.critAtk = cardInfo.critRateValue!
+        this.cardInfo = cardInfo
+    }
+
+    reset() {
+        this.maxHp = this.cardInfo.hpValue!;
+        this.hp = this.maxHp;
+        this.attackDamage = this.cardInfo.damageValue!;
+        this.critAtk = this.cardInfo.critRateValue!
     }
 
     damage(damage: number): void {
@@ -65,14 +74,13 @@ class CardMechanics {
         if (this.gyattHardness > 0 && damage > 0) {
             damage = Math.round(damage * this.gyattHardness);
             console.log(`${this.name} is Gyatt Harden! Damage reduced to ${damage}.`);
-            performHarden(getIndex(this.id))
+            f_performHarden(getIndex(this.id))
             this.gyattHarden(false);
-            this.gyattHardness -= 0.3
         }
 
         const prevHp = this.hp;
         this.hp = Math.max(0, Math.min(this.maxHp, this.hp - damage));
-        applyHealthChange(getIndex(this.id), this.hp, this.maxHp)
+        f_applyHealthChange(getIndex(this.id), this.hp, this.maxHp)
         console.log(`${this.name} took ${damage} damage. HP: ${prevHp} → ${this.hp}`);
     }
 
@@ -80,9 +88,9 @@ class CardMechanics {
         const multiplier = isCritical ? this.critAtk : 1;
         const damage = Math.round(this.attackDamage * multiplier);
         if (isCritical) { 
-            performCAtk(getIndex(this.id))
+            f_performCAtk(getIndex(this.id), damage)
         } else {
-            performBAtk(getIndex(this.id))
+            f_performBAtk(getIndex(this.id), damage)
         }
         console.log(`${this.name} attacks ${target.name} for ${damage} damage${isCritical ? " (CRITICAL!)" : ""}`);
         target.damage(damage);
@@ -93,10 +101,10 @@ class CardMechanics {
         console.group(`Consecutive Attack: Number of Strikes: ${strikes}`);
         for (let i = 1; i <= strikes && cardTarget.hp > 0; i++) {
             const damage = Math.round(this.attackDamage * 0.7);
-            await sleep(1000);
-            performPunch(getIndex(this.id))
+            f_performPunch(getIndex(this.id), this.cardInfo.skillNames![0], damage)
             console.log(`Hit ${i}: ${cardTarget.name} takes ${damage} damage`);
             cardTarget.damage(damage);
+            await sleep(1000);
         }
         console.groupEnd();
     }
@@ -107,7 +115,7 @@ class CardMechanics {
         const damage = Math.round(this.attackDamage * multiplier);
         console.log(`${cardTarget.name} is burned and takes ${damage} damage`);
         cardTarget.damage(damage);
-        performBonk(getIndex(this.id))
+        f_performBonk(getIndex(this.id), this.cardInfo.skillNames![1], damage)
         console.groupEnd();
     }
 
@@ -119,31 +127,31 @@ class CardMechanics {
         this.damage(selfDamage);
         console.log(`${cardTarget.name} takes ${enemyDamage} damage`);
         cardTarget.damage(enemyDamage);
-        performMaldquake(getIndex(this.id))
+        f_performMaldquake(getIndex(this.id), this.cardInfo.skillNames![2], selfDamage, enemyDamage)
         console.groupEnd();
     }
 
     setDelulu(state = true): void {
-        performDeluluStrike(getIndex(this.id))
+        f_performDeluluStrike(getIndex(this.id), this.cardInfo.skillNames![3])
         console.log(`${this.name} is ${state ? "now" : "no longer"} Delulu!`);
         this.isDelulu = state;
     }
 
     gyattHarden(state = true): void {
-        performHarden(getIndex(this.id))
-        console.log(`${this.name} is ${state ? "now" : "no longer"} Gyatt Harden!`);
-        this.gyattHardness += 0.3;
+        f_performHarden(getIndex(this.id))
+        console.log(`${this.name} Gyatt Hardness is now ${state ? "increased" : "decreased"} to ${this.gyattHardness + (state ? 0.3 : -0.3)}!`);
+        this.gyattHardness += state ? 0.3 : -0.3;
     }
 
     setZucc(state = true): void {
-        performZucc(getIndex(this.id))
+        f_performZucc(getIndex(this.id))
         console.log(`${this.name} is ${state ? "now zuccing" : "no longer zuccing"}.`);
         this.isZucc = state;
     }
 
     heal(): void {
-        performSelfCare(getIndex(this.id))
         const healAmount = random(300, 500);
+        f_performSelfCare(getIndex(this.id), healAmount)
         console.log(`${this.name} heals for ${healAmount} HP!`);
         this.damage(-healAmount);
     }
@@ -207,37 +215,38 @@ async function startBattle(
     card2Key: string,
     card1Info: Card,
     card2Info: Card,
-    aperformBAtk = (index: number) => {},
-    aperformPunch = (index: number) => {},
-    aperformCAtk = (index: number) => {},
-    aperformBonk = (index: number) => {},
-    aperformMaldquake = (index: number) => {},
-    aperformDeluluStrike = (index: number) => {},
-    aperformSelfCare = (index: number) => {},
+    aperformBAtk = (index: number, damage: number) => {},
+    aperformPunch = (index: number, skillName: string, damage: number) => {},
+    aperformCAtk = (index: number, damage: number) => {},
+    aperformBonk = (index: number, skillName: string, damage: number) => {},
+    aperformMaldquake = (index: number, skillname: string, dmgtoC1: number, dmgtoC2: number) => {},
+    aperformDeluluStrike = (index: number, skillname: string) => {},
+    aperformSelfCare = (index: number, heal: number) => {},
     aperformHarden = (index: number) => {},
     aperformZucc = (index: number) => {},
     aapplyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {},
     afinishedBattle = (winnerId: string) => {},
-    aperformDiceRoll = (result1: number, result2: number, message: string) => {}
+    aperformDiceRoll = (result1: number, result2: number, message: string) => {},
+    agametie = () => {}
 ): Promise<number> {
-    performBAtk = aperformBAtk
-    performPunch = aperformPunch
-    performCAtk = aperformCAtk
-    performBonk = aperformBonk
-    performMaldquake = aperformMaldquake
-    performDeluluStrike = aperformDeluluStrike
-    performSelfCare = aperformSelfCare
-    performHarden = aperformHarden
-    performZucc = aperformZucc
-    applyHealthChange = aapplyHealthChange
+    f_performBAtk = aperformBAtk
+    f_performPunch = aperformPunch
+    f_performCAtk = aperformCAtk
+    f_performBonk = aperformBonk
+    f_performMaldquake = aperformMaldquake
+    f_performDeluluStrike = aperformDeluluStrike
+    f_performSelfCare = aperformSelfCare
+    f_performHarden = aperformHarden
+    f_performZucc = aperformZucc
+    f_applyHealthChange = aapplyHealthChange
 
     const card1 = new CardMechanics(card1Key, card1Info)
     const card2 = new CardMechanics(card2Key, card2Info)
 
+    leftCardId = card1.id
+
     let turn1 = card1
     let turn2 = card2
-
-    leftCardId = card1.id
     while (true) {
         const random1 = random(1, 6)
         const random2 = random(1, 6)
@@ -260,54 +269,40 @@ async function startBattle(
     console.log("⚔️ Battle Start!");
     console.log(`${turn1.name}: ${turn1.hp} HP ${turn1.attackDamage} Base Attack`);
     console.log(`${turn2.name}: ${turn2.hp} HP ${turn2.attackDamage} Base Attack`);
-    let rounds = 0;
+    while (true) {
+        let rounds = 0;
 
-    while (turn1.hp > 0 && turn2.hp > 0) {
-        rounds++;
-        console.log(`\n🌀 Round ${rounds}`);
-        console.group("🔁 Turn: Card 1");
-        await battleSequence(turn1, turn2);
-        console.groupEnd();
-        if (turn2.hp <= 0) break;
-        await sleep(1000);
-
-        console.group("🔁 Turn: Card 2");
-        await battleSequence(turn2, turn1);
-        console.groupEnd();
-        await sleep(1000);
+        while (turn1.hp > 0 && turn2.hp > 0) {
+            rounds++;
+            console.log(`\n🌀 Round ${rounds}`);
+            console.group("🔁 Turn: Card 1");
+            await battleSequence(turn1, turn2);
+            console.groupEnd();
+            if (turn2.hp <= 0) break;
+            await sleep(1000);
+    
+            console.group("🔁 Turn: Card 2");
+            await battleSequence(turn2, turn1);
+            console.groupEnd();
+            await sleep(1000);
+        }
+    
+        console.log("\n🏁 Battle Over!");
+        console.log(`${turn1.name}: ${turn1.hp} HP`);
+        console.log(`${turn2.name}: ${turn2.hp} HP`);
+    
+        await sleep(1000)
+        if (turn1.hp > turn2.hp) {
+            afinishedBattle(turn1.id)
+            return rounds;
+        } else if (turn1.hp < turn2.hp) {
+            afinishedBattle(turn2.id)
+            return rounds;
+        } else {
+            agametie()
+            await sleep(3000)
+        }
     }
-
-    console.log("\n🏁 Battle Over!");
-    console.log(`${turn1.name}: ${turn1.hp} HP`);
-    console.log(`${turn2.name}: ${turn2.hp} HP`);
-
-    await sleep(1000)
-    afinishedBattle((turn1.hp > turn2.hp) ? turn1.id : turn2.id)
-    return rounds;
 }
-// async function runSimulations(times = 10): Promise<void> {
-//     console.time("Simulation-Time");
-//     let totalRounds = 0;
-//     let maxRounds = 0;
-//     let minRounds = Infinity;
-
-//     for (let i = 1; i <= times; i++) {
-//         console.log("\n\n--------------------------------------------------------");
-//         console.log(`🔄 Simulation ${i}`);
-//         const rounds = await startBattle();
-//         console.log(`✅ Simulation ${i} finished in ${rounds} round(s)`);
-//         totalRounds += rounds;
-//         maxRounds = Math.max(maxRounds, rounds);
-//         minRounds = Math.min(minRounds, rounds);
-//     }
-
-//     const average = totalRounds / times;
-//     console.log(`\n📊 Average Rounds over ${times} simulations: ${average.toFixed(2)}`);
-//     console.log(`📊 Max Rounds: ${maxRounds}`);
-//     console.log(`📊 Min Rounds: ${minRounds}`);
-//     console.timeEnd("Simulation-Time");
-// }
-
-// runSimulations(100);
 
 export { startBattle };
