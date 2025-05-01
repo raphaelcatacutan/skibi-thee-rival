@@ -6,7 +6,7 @@ import bg3 from "../assets/images/scenes/bg_dojo.jpeg";
 import Lottie from "lottie-react";
 import loadingAnimation from "../assets/animations/loading.json"; // Adjust path if needed
 import { jsonToExtraction } from "../utils/parser";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 const images = [bg1, bg2, bg3];
 
@@ -14,6 +14,8 @@ export default function () {
   const [audioPlayed, setAudioPlayed] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const [fetchedText, setFetchedText] = useState("Loading...");
+  const [showButton, setShowButton] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const randomImage = images[Math.floor(Math.random() * images.length)];
@@ -70,6 +72,14 @@ export default function () {
       });
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowButton(true);
+    }, 5000); // Show button after 5 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className={styling.page_wrapper}>
       <div className={styling.background_wrapper}>
@@ -87,6 +97,16 @@ export default function () {
         />
         <div id={styling.loading_list}></div>
       </div>
+
+      {showButton && (
+        <button
+          className={`${styling.proceedButton} ${styling.show}`}
+          onClick={() => navigate("/CardPreview")}
+          style={{ zIndex: 10 }}
+        >
+          Proceed to Preview
+        </button>
+      )}
 
       {/* Bottom Left Lottie Animation */}
       <div className={styling.bottom_left}>

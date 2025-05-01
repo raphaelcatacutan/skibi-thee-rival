@@ -17,6 +17,13 @@ export default function CardPreviewPage() {
   useEffect(() => {
     const randomVideo = videos[Math.floor(Math.random() * videos.length)];
     setSelectedVideo(randomVideo);
+
+    // Add timer to show buttons after 2 seconds
+    const timer = setTimeout(() => {
+      setShowButtons(true);
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -31,7 +38,7 @@ export default function CardPreviewPage() {
         console.error("Failed to fetch image config", err);
       });
   }, [imagePath]);
-  
+
   return (
     <p>
       <div className="button-header">
