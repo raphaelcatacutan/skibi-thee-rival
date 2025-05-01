@@ -97,6 +97,7 @@ export default function Battle(props: Cards){
       currHealthC2: number = 1;
   let maxHealthC1: number = 1,
       maxHealthC2: number = 1;
+  let speedControl: number = 500;
   const navigate = useNavigate()
   const bg_scenes: string[] = [];
 
@@ -194,12 +195,12 @@ export default function Battle(props: Cards){
       setC2SideTextString(dmg.toString());
       setC2SideTextColor("#ff0000");
       animation.triggerVFX('C1BasicAttack');
-      animation.triggerVFX('C2SideText');
+      animation.triggerVFX('C2SideText', speedControl);
     } else {
       setC1SideTextString(dmg.toString())
       setC1SideTextColor("#ff0000")
       animation.triggerVFX('C2BasicAttack');
-      animation.triggerVFX('C1SideText');
+      animation.triggerVFX('C1SideText', speedControl);
     }
     audio.play();
   }
@@ -212,17 +213,17 @@ export default function Battle(props: Cards){
       setC2TopTextString("Critical!")
       setC2SideTextString(dmg.toString())
       setC2SideTextColor("#ff0000")
-      animation.triggerVFX('C2TopText');
+      animation.triggerVFX('C2SideText', speedControl);
+      animation.triggerVFX('C2TopText', speedControl);
       animation.triggerVFX('C1CritAttack');
-      animation.triggerVFX('C2SideText');
       // C2triggerShake() redundant
     } else {
       setC1TopTextString("Critical!")
       setC1SideTextString(dmg.toString())
       setC1SideTextColor("#ff0000")
-      animation.triggerVFX('C1TopText');
+      animation.triggerVFX('C1SideText', speedControl);
+      animation.triggerVFX('C1TopText', speedControl);
       animation.triggerVFX('C2CritAttack');
-      animation.triggerVFX('C1SideText');
       // C1triggerShake() redundant
     }
     triggerScreenShake();
@@ -404,7 +405,7 @@ export default function Battle(props: Cards){
       <div id={styles.battle_area}>
         <div id={styles.card_cont}>
           <CardDisplay path={props.card1_src} attackedState={C1isAttacked}></CardDisplay>
-          <CardDisplay path={props.card1_src} attackedState={C2isAttacked}></CardDisplay>
+          <CardDisplay path={props.card2_src} attackedState={C2isAttacked}></CardDisplay>
         </div>
         <div id={styles.heart_cont}>          
           <Healthbar health={currHealthC1} maxHealth={maxHealthC1}></Healthbar>
@@ -412,8 +413,8 @@ export default function Battle(props: Cards){
         </div>
       </div>
       
-      <button onClick={() => {performBAtk(1, 123)}}>C1 Attack!</button>
-      <button onClick={() => {endBattle("123", true)}}>C2 Attack!</button>
+      <button style={{backgroundColor: 'transparent'}} onClick={() => {performCAtk(0, 123)}}>C1 Attack!</button>
+      <button style={{backgroundColor: 'transparent'}} onClick={() => {performCAtk(1, 123)}}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
       <C2DiceCount isVisible={doDiceCountC2} dice_no={showDiceCountValC2}/>

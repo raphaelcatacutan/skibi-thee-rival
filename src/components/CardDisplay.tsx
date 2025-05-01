@@ -15,10 +15,11 @@ export default function CardDisplay(props: Props) {
     return ""
   }
 
+
   return(
     <motion.div 
       className={styles.card_holder} 
-      style={{ backgroundImage: `url(${cutPath(props.path)})` }} 
+      style={{ backgroundImage: `url("/assets/images/winner-image.png")` }} // `url(${cutPath(props.path)})`
       variants={shakeAnimation}
       animate={props.attackedState ? "shake" : ""} 
     
