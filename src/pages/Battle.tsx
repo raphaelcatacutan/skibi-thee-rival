@@ -32,6 +32,7 @@ import C2SideText from '../components/VFX/C2SideText'
 import C1BonkAttack from '../components/VFX/C1BonkAttack'
 import C2BonkAttack from '../components/VFX/C2BonkAttack'
 import { Navigate, useNavigate, useNavigation } from 'react-router-dom'
+import {speak} from '../utils/ttsUtil'
 
 interface Cards {
   card1_src?: string;
@@ -238,17 +239,18 @@ export default function Battle(props: Cards){
       setC1TopTextString(skillname)
       setC2SideTextString(dmg.toString())
       setC2SideTextColor("#ff0000")
-      animation.triggerVFX('C1TopText')
-      animation.triggerVFX('C2SideText')
+      animation.triggerVFX('C1TopText', speedControl)
+      animation.triggerVFX('C2SideText', speedControl)
       animation.triggerVFX('C1Punch');
     } else {
       setC2TopTextString(skillname)
       setC1SideTextString(dmg.toString())
       setC1SideTextColor("#ff0000")
-      animation.triggerVFX('C2TopText')
-      animation.triggerVFX('C1SideText')
+      animation.triggerVFX('C2TopText', speedControl)
+      animation.triggerVFX('C1SideText', speedControl)
       animation.triggerVFX('C2Punch');
     }
+    speak({text: skillname})
     audio.play();
   }
 
@@ -260,17 +262,18 @@ export default function Battle(props: Cards){
       setC1TopTextString(skillname)
       setC2SideTextString(dmg.toString())
       setC2SideTextColor("#ff0000")
-      animation.triggerVFX('C1TopText', 500)
-      animation.triggerVFX('C1BonkAttack', 500)
-      setTimeout(() => animation.triggerVFX('C2SideText'), 300)
+      animation.triggerVFX('C1TopText', speedControl)
+      animation.triggerVFX('C1BonkAttack')
+      setTimeout(() => animation.triggerVFX('C2SideText', speedControl), 300)
     } else {
       setC2TopTextString(skillname)
       setC1SideTextString(dmg.toString())
       setC1SideTextColor("#ff0000")
-      animation.triggerVFX('C2TopText', 500)
-      animation.triggerVFX('C2BonkAttack', 500)
-      setTimeout(() => animation.triggerVFX('C1SideText'), 300)
+      animation.triggerVFX('C2TopText', speedControl)
+      animation.triggerVFX('C2BonkAttack')
+      setTimeout(() => animation.triggerVFX('C1SideText', speedControl), 300)
     }
+    speak({text: skillname})
     setTimeout(() => 
       audio.play(), 90
     )
@@ -282,20 +285,21 @@ export default function Battle(props: Cards){
     audio.pause();
     if (index == 0){
       setC1TopTextString(skillname)
-      animation.triggerVFX('C1TopText')
+      animation.triggerVFX('C1TopText', speedControl)
     } else {
       setC2TopTextString(skillname)
-      animation.triggerVFX('C2TopText')
+      animation.triggerVFX('C2TopText', speedControl)
     }
     setC1SideTextString(dmgtoC1.toString())
     setC1SideTextColor("#ff0000")
     setC2SideTextString(dmgtoC2.toString())
     setC2SideTextColor("#ff0000")
-    animation.triggerVFX('C1SideText')
-    animation.triggerVFX('C2SideText')
+    animation.triggerVFX('C1SideText', speedControl)
+    animation.triggerVFX('C2SideText', speedControl)
     C1triggerShake()
     C2triggerShake()
     triggerScreenShake()
+    speak({text: skillname})
     audio.play();
   }
 
@@ -305,31 +309,33 @@ export default function Battle(props: Cards){
     audio.pause();
     if (index == 0){
       setC1TopTextString(skillname)
-      animation.triggerVFX('C1TopText')
+      animation.triggerVFX('C1TopText', speedControl)
       animation.triggerVFX('C2DeluluStrike');
     } else {
       setC2TopTextString(skillname)
-      animation.triggerVFX('C2TopText')
+      animation.triggerVFX('C2TopText', speedControl)
       animation.triggerVFX('C1DeluluStrike');
     }
+    speak({text: skillname})
     audio.play();
   }
 
-  function performSelfCare(index: number, heal: number){
+  function performSelfCare(index: number, skillname: string, heal: number){
     const audio = document.getElementById("selfcare_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
     audio.pause();
     if (index == 0){
       setC1SideTextString(heal.toString())
       setC1SideTextColor("#FF98FB98")
-      animation.triggerVFX('C1SideText')
+      animation.triggerVFX('C1SideText', speedControl)
       animation.triggerVFX('C1SelfCare');
     } else {
       setC2SideTextString(heal.toString())
       setC2SideTextColor("#FF98FB98")
-      animation.triggerVFX('C2SideText')
+      animation.triggerVFX('C2SideText', speedControl)
       animation.triggerVFX('C2SelfCare');
     }
+    speak({text: skillname})
     audio.play();
   }
 
@@ -339,23 +345,31 @@ export default function Battle(props: Cards){
     audio.pause();
     if (index == 0){
       setC1TopTextString(skillname)
-      animation.triggerVFX('C1TopText')
-      animation.triggerVFX('C1Harden');
+      animation.triggerVFX('C1TopText', speedControl)
+      animation.triggerVFX('C1Harden', speedControl);
     } else {
-      animation.triggerVFX('C2Harden');
+      setC2TopTextString(skillname)
+      animation.triggerVFX('C2TopText', speedControl)
+      animation.triggerVFX('C2Harden', speedControl);
     }
+    speak({text: skillname})
     audio.play();
   }
 
-  function performZucc(index: number){
+  function performZucc(index: number, skillname: string){
     const audio = document.getElementById("zucc_sfx") as HTMLAudioElement;
     audio.currentTime = 0;
     audio.pause();
     if (index == 0){
-      animation.triggerVFX('C2Zucc');
+      setC1TopTextString(skillname)
+      animation.triggerVFX('C1TopText', speedControl)
+      animation.triggerVFX('C2Zucc', speedControl);
     } else {
-      animation.triggerVFX('C1Zucc');
+      setC2TopTextString(skillname)
+      animation.triggerVFX('C2TopText', speedControl)
+      animation.triggerVFX('C1Zucc', speedControl);
     }
+    speak({text: skillname})
     audio.play();
   }
 
@@ -413,8 +427,8 @@ export default function Battle(props: Cards){
         </div>
       </div>
       
-      <button style={{backgroundColor: 'transparent'}} onClick={() => {performCAtk(0, 123)}}>C1 Attack!</button>
-      <button style={{backgroundColor: 'transparent'}} onClick={() => {performCAtk(1, 123)}}>C2 Attack!</button>
+      <button style={{backgroundColor: 'transparent'}} onClick={() => {performPunch(0, "SUPER PUNCH", 312)}}>C1 Attack!</button>
+      <button style={{backgroundColor: 'transparent'}} onClick={() => {performZucc(1, "ZUCC")}}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
       <C2DiceCount isVisible={doDiceCountC2} dice_no={showDiceCountValC2}/>

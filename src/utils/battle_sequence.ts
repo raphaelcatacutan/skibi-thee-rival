@@ -1,4 +1,4 @@
-import { Card, CardPrompt } from "./types";
+import { Card } from "./types";
 
 function random(min: number, max: number, isInt = true): number {
     const value = Math.random() * (max - min) + min;
@@ -22,16 +22,16 @@ function sleep(ms: number): Promise<void> {
 }
 
 let leftCardId: string = ""
-let f_performBAtk = (index: number, damage: number) => {}
-let f_performPunch = (index: number, skillName: string, damage: number) => {}
-let f_performCAtk = (index: number, damage: number) => {}
-let f_performBonk = (index: number, skillName: string, damage: number) => {}
-let f_performMaldquake = (index: number, skillname: string, dmgtoC1: number, dmgtoC2: number) => {}
-let f_performDeluluStrike = (index: number, skillname: string) => {}
-let f_performSelfCare = (index: number, heal: number) => {}
-let f_performHarden = (index: number) => {}
-let f_performZucc = (index: number) => {}
-let f_applyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {}
+let fPerformBAtk = (_index: number, _damage: number) => {}
+let fPerformPunch = (_index: number, _skillName: string, _damage: number) => {}
+let fPerformCAtk = (_index: number, _damage: number) => {}
+let fPerformBonk = (_index: number, _skillName: string, _damage: number) => {}
+let fPerformMaldquake = (_index: number, _skillname: string, _dmgtoC1: number, _dmgtoC2: number) => {}
+let fPerformDeluluStrike = (_index: number, _skillname: string) => {}
+let fPerformSelfCare = (_index: number, _heal: number) => {}
+let fPerformHarden = (_index: number) => {}
+let fPerformZucc = (_index: number) => {}
+let fApplyHealthChange = (_index: number, _currentHealth: number, _maxHealth: number) => {}
 
 function getIndex(id: string) {
     if (leftCardId == id) return 0
@@ -66,6 +66,9 @@ class CardMechanics {
         this.hp = this.maxHp;
         this.attackDamage = this.cardInfo.damageValue!;
         this.critAtk = this.cardInfo.critRateValue!
+
+        fApplyHealthChange(0, this.maxHp, this.maxHp)
+        fApplyHealthChange(1, this.maxHp, this.maxHp)
     }
 
     damage(damage: number): void {
@@ -74,13 +77,13 @@ class CardMechanics {
         if (this.gyattHardness > 0 && damage > 0) {
             damage = Math.round(damage * this.gyattHardness);
             console.log(`${this.name} is Gyatt Harden! Damage reduced to ${damage}.`);
-            f_performHarden(getIndex(this.id))
+            fPerformHarden(getIndex(this.id))
             this.gyattHarden(false);
         }
 
         const prevHp = this.hp;
         this.hp = Math.max(0, Math.min(this.maxHp, this.hp - damage));
-        f_applyHealthChange(getIndex(this.id), this.hp, this.maxHp)
+        fApplyHealthChange(getIndex(this.id), this.hp, this.maxHp)
         console.log(`${this.name} took ${damage} damage. HP: ${prevHp} → ${this.hp}`);
     }
 
@@ -88,9 +91,9 @@ class CardMechanics {
         const multiplier = isCritical ? this.critAtk : 1;
         const damage = Math.round(this.attackDamage * multiplier);
         if (isCritical) { 
-            f_performCAtk(getIndex(this.id), damage)
+            fPerformCAtk(getIndex(this.id), damage)
         } else {
-            f_performBAtk(getIndex(this.id), damage)
+            fPerformBAtk(getIndex(this.id), damage)
         }
         console.log(`${this.name} attacks ${target.name} for ${damage} damage${isCritical ? " (CRITICAL!)" : ""}`);
         target.damage(damage);
@@ -101,7 +104,7 @@ class CardMechanics {
         console.group(`Consecutive Attack: Number of Strikes: ${strikes}`);
         for (let i = 1; i <= strikes && cardTarget.hp > 0; i++) {
             const damage = Math.round(this.attackDamage * 0.7);
-            f_performPunch(getIndex(this.id), this.cardInfo.skillNames![0], damage)
+            fPerformPunch(getIndex(this.id), this.cardInfo.skillNames![0], damage)
             console.log(`Hit ${i}: ${cardTarget.name} takes ${damage} damage`);
             cardTarget.damage(damage);
             await sleep(1000);
@@ -115,7 +118,7 @@ class CardMechanics {
         const damage = Math.round(this.attackDamage * multiplier);
         console.log(`${cardTarget.name} is burned and takes ${damage} damage`);
         cardTarget.damage(damage);
-        f_performBonk(getIndex(this.id), this.cardInfo.skillNames![1], damage)
+        fPerformBonk(getIndex(this.id), this.cardInfo.skillNames![1], damage)
         console.groupEnd();
     }
 
@@ -127,31 +130,31 @@ class CardMechanics {
         this.damage(selfDamage);
         console.log(`${cardTarget.name} takes ${enemyDamage} damage`);
         cardTarget.damage(enemyDamage);
-        f_performMaldquake(getIndex(this.id), this.cardInfo.skillNames![2], selfDamage, enemyDamage)
+        fPerformMaldquake(getIndex(this.id), this.cardInfo.skillNames![2], selfDamage, enemyDamage)
         console.groupEnd();
     }
 
     setDelulu(state = true): void {
-        f_performDeluluStrike(getIndex(this.id), this.cardInfo.skillNames![3])
+        fPerformDeluluStrike(getIndex(this.id), this.cardInfo.skillNames![3])
         console.log(`${this.name} is ${state ? "now" : "no longer"} Delulu!`);
         this.isDelulu = state;
     }
 
     gyattHarden(state = true): void {
-        f_performHarden(getIndex(this.id))
+        fPerformHarden(getIndex(this.id))
         console.log(`${this.name} Gyatt Hardness is now ${state ? "increased" : "decreased"} to ${this.gyattHardness + (state ? 0.3 : -0.3)}!`);
         this.gyattHardness += state ? 0.3 : -0.3;
     }
 
     setZucc(state = true): void {
-        f_performZucc(getIndex(this.id))
+        fPerformZucc(getIndex(this.id))
         console.log(`${this.name} is ${state ? "now zuccing" : "no longer zuccing"}.`);
         this.isZucc = state;
     }
 
     heal(): void {
         const healAmount = random(300, 500);
-        f_performSelfCare(getIndex(this.id), healAmount)
+        fPerformSelfCare(getIndex(this.id), healAmount)
         console.log(`${this.name} heals for ${healAmount} HP!`);
         this.damage(-healAmount);
     }
@@ -215,30 +218,30 @@ async function startBattle(
     card2Key: string,
     card1Info: Card,
     card2Info: Card,
-    aperformBAtk = (index: number, damage: number) => {},
-    aperformPunch = (index: number, skillName: string, damage: number) => {},
-    aperformCAtk = (index: number, damage: number) => {},
-    aperformBonk = (index: number, skillName: string, damage: number) => {},
-    aperformMaldquake = (index: number, skillname: string, dmgtoC1: number, dmgtoC2: number) => {},
-    aperformDeluluStrike = (index: number, skillname: string) => {},
-    aperformSelfCare = (index: number, heal: number) => {},
-    aperformHarden = (index: number) => {},
-    aperformZucc = (index: number) => {},
-    aapplyHealthChange = (index: number, currentHealth: number, maxHealth: number) => {},
-    afinishedBattle = (winnerId: string) => {},
-    aperformDiceRoll = (result1: number, result2: number, message: string) => {},
-    agametie = () => {}
+    aPerformBAtk = (_index: number, _damage: number) => {},
+    aPerformPunch = (_index: number, _skillName: string, _damage: number) => {},
+    aPerformCAtk = (_index: number, _damage: number) => {},
+    aPerformBonk = (_index: number, _skillName: string, _damage: number) => {},
+    aPerformMaldquake = (_index: number, _skillname: string, _dmgtoC1: number, _dmgtoC2: number) => {},
+    aPerformDeluluStrike = (_index: number, _skillname: string) => {},
+    aPerformSelfCare = (_index: number, _heal: number) => {},
+    aPerformHarden = (_index: number) => {},
+    aPerformZucc = (_index: number) => {},
+    aApplyHealthChange = (_index: number, _currentHealth: number, _maxHealth: number) => {},
+    endBattle = (_winnerId: string) => {},
+    aPerformDiceRoll = (_result1: number, _result2: number, _message: string) => {},
+    isDraw = () => {}
 ): Promise<number> {
-    f_performBAtk = aperformBAtk
-    f_performPunch = aperformPunch
-    f_performCAtk = aperformCAtk
-    f_performBonk = aperformBonk
-    f_performMaldquake = aperformMaldquake
-    f_performDeluluStrike = aperformDeluluStrike
-    f_performSelfCare = aperformSelfCare
-    f_performHarden = aperformHarden
-    f_performZucc = aperformZucc
-    f_applyHealthChange = aapplyHealthChange
+    fPerformBAtk = aPerformBAtk
+    fPerformPunch = aPerformPunch
+    fPerformCAtk = aPerformCAtk
+    fPerformBonk = aPerformBonk
+    fPerformMaldquake = aPerformMaldquake
+    fPerformDeluluStrike = aPerformDeluluStrike
+    fPerformSelfCare = aPerformSelfCare
+    fPerformHarden = aPerformHarden
+    fPerformZucc = aPerformZucc
+    fApplyHealthChange = aApplyHealthChange
 
     const card1 = new CardMechanics(card1Key, card1Info)
     const card2 = new CardMechanics(card2Key, card2Info)
@@ -252,13 +255,13 @@ async function startBattle(
         const random2 = random(1, 6)
 
         if (random1 == random2) {
-            aperformDiceRoll(random1, random2, "Cards tied")
+            aPerformDiceRoll(random1, random2, "Cards tied")
             await sleep(3000)
             continue
         }
         else {
             const message = random1 > random2 ? "Card 1 will attack first" : "Card 2 will attack first"  
-            aperformDiceRoll(random1, random2, message)
+            aPerformDiceRoll(random1, random2, message)
             await sleep(3000)
             turn1 = random1 > random2 ? card1 : card2
             turn2 = random1 > random2 ? card2 : card1
@@ -293,14 +296,17 @@ async function startBattle(
     
         await sleep(1000)
         if (turn1.hp > turn2.hp) {
-            afinishedBattle(turn1.id)
+            endBattle(turn1.id)
             return rounds;
         } else if (turn1.hp < turn2.hp) {
-            afinishedBattle(turn2.id)
+            endBattle(turn2.id)
             return rounds;
         } else {
-            agametie()
+            isDraw()
+            card1.reset()
+            card2.reset()
             await sleep(3000)
+            continue
         }
     }
 }

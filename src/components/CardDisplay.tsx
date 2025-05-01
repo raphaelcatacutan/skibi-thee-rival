@@ -15,7 +15,6 @@ export default function CardDisplay(props: Props) {
     return ""
   }
 
-
   return(
     <motion.div 
       className={styles.card_holder} 
