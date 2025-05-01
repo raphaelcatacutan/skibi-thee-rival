@@ -77,6 +77,8 @@ const CardGallery: React.FC = () => {
             className="winner-image"
           />
         </div>
+        
+        <div className={styling.loading_text}>Choose a New Challenger!</div>
 
         <div className={styling.card_grid}>
           {Object.entries(cards).map(([key, card]) => (
