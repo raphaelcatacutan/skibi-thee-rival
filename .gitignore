@@ -27,8 +27,8 @@ package-lock.json
 **/.gitignore
 **/uploads/
 **/tests/
-**/output/**.txt
-**/output/**.jpg
-**/output/**.png
-**/data/**.jpg
-**/data/**.txt
+**/output/**
+**/data/**
+!**/output/init
+!**/data/init
+.env
