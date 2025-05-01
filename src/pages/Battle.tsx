@@ -1,4 +1,5 @@
 import React, { use, useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import styles from '../styles/page-Battle.module.css'
 import Healthbar from '../components/Healthbar' 
 import CardDisplay from '../components/CardDisplay'
@@ -29,16 +30,16 @@ import C2SideText from '../components/VFX/C2SideText'
 import C1BonkAttack from '../components/VFX/C1BonkAttack'
 import C2BonkAttack from '../components/VFX/C2BonkAttack'
 
-import { time } from 'console'
-import { TIMEOUT } from 'dns'
-import { number } from 'framer-motion'
-
 interface Cards {
   card1_src?: string;
   card2_src?: string;
 }
 
 export default function Battle(props: Cards){
+  const [getScene, setScene] = useState("");
+
+  const [doDiceCountC1, setDiceCountC1] = useState(false);
+  const [doDiceCountC2, setDiceCountC2] = useState(false);
   const [doBasicAtkC1, setBasicAtkC1] = useState(false);
   const [doBasicAtkC2, setBasicAtkC2] = useState(false);
   const [doCritAtkC1, setCritAtkC1] = useState(false);
@@ -55,10 +56,9 @@ export default function Battle(props: Cards){
   const [doPunchC2, setPunchC2] = useState(false);
   const [doBonkC1, setBonkC1] = useState(false);
   const [doBonkC2, setBonkC2] = useState(false);
+  const [doScreenShake, setScreenShake] = useState(false);
   const [doDiceC1, setDiceC1] = useState(false);
   const [doDiceC2, setDiceC2] = useState(false);
-  const [doDiceCountC1, setDiceCountC1] = useState(false);
-  const [doDiceCountC2, setDiceCountC2] = useState(false);
   const [doMiddleText, setMiddleText] = useState(false);
   const [showMiddleTextString, setMiddleTextString] = useState("");
   const [doC1TopText, setC1TopText] = useState(false);
@@ -81,10 +81,12 @@ export default function Battle(props: Cards){
   var cardC2: string = "/assets/images/winner-image.png"
 
 
-  let currHealthC1: number = 1,
+  let currHealthC1: number = 1, // default
       currHealthC2: number = 1;
   let maxHealthC1: number = 1,
       maxHealthC2: number = 1;
+
+  const bg_scenes: string[] = [];
 
   // const batk_audio_cont: string[] = ["batk_1", "batk_2", "batk_3"];
   // const catk_audio_cont: string[] = ["catk_1", "catk_2", "catk_3"];
@@ -126,6 +128,11 @@ export default function Battle(props: Cards){
       audio.play();
     }
   }, [hasInteracted])
+
+  const triggerScreenShake = () => {
+    setScreenShake(true);
+    setTimeout(() => setScreenShake(false), 600);
+  };
 
   const C1triggerShake = () => {
     C1setAttacked(true);
@@ -200,6 +207,7 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C2TopText');
       animation.triggerVFX('C1CritAttack');
       animation.triggerVFX('C2SideText');
+      // C2triggerShake() redundant
     } else {
       setC1TopTextString("Critical!")
       setC1SideTextString(dmg.toString())
@@ -207,7 +215,9 @@ export default function Battle(props: Cards){
       animation.triggerVFX('C1TopText');
       animation.triggerVFX('C2CritAttack');
       animation.triggerVFX('C1SideText');
+      // C1triggerShake() redundant
     }
+    triggerScreenShake();
     audio.play();
   }
 
@@ -276,6 +286,7 @@ export default function Battle(props: Cards){
     animation.triggerVFX('C2SideText')
     C1triggerShake()
     C2triggerShake()
+    triggerScreenShake()
     audio.play();
   }
 
@@ -342,7 +353,11 @@ export default function Battle(props: Cards){
   }
 
   return (
-    <div className={styles.background_img}>
+    <div className={styles.background_cont}>
+      <motion.div 
+        className={styles.background_img} 
+        variants={animation.shakeAnimation} 
+        animate={doScreenShake ? "screenshake" : ""}></motion.div>
       <audio id="bg_music" src="/assets/sounds/battle_bgmusic.mp3" loop={true}/>
       <audio id="dice_sfx" src="/assets/sounds/dice.mp3"/>
       <audio id="catk_sfx" src="/assets/sounds/catk_3.mp3"/>
@@ -369,8 +384,8 @@ export default function Battle(props: Cards){
         </div>
       </div>
       
-      <button onClick={() => {performBonk(0, "asd", 123)}}>C1 Attack!</button>
-      <button onClick={() => {performBonk(1, "asd", 123)}}>C2 Attack!</button>
+      <button onClick={() => {performBAtk(0, 123)}}>C1 Attack!</button>
+      <button onClick={() => {performCAtk(0, 123)}}>C2 Attack!</button>
 
       <C1DiceCount isVisible={doDiceCountC1} dice_no={showDiceCountValC1}/>
       <C2DiceCount isVisible={doDiceCountC2} dice_no={showDiceCountValC2}/>

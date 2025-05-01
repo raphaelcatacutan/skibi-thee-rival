@@ -26,6 +26,13 @@ export const shakeAnimation = {
       ease: "easeInOut",
     },
   },
+  screenshake: {
+    x: [0, -20, -10, -20, -10, -20, -10, -20, -10, -20, 0],
+    transition: {
+      duration: 1,
+      ease: "easeInOut",
+    },
+  },
   C1BonkAttack: {
     rotate: [0, , -20, 30],
     transition: {
@@ -39,6 +46,9 @@ export const shakeAnimation = {
       duration:0.3,
       ease: "backIn"
     }
+  },
+  dmgtext: {
+    
   }
 };
 
