@@ -29,7 +29,7 @@ router.post("/score", async (req: Request, res: Response): Promise<void> => {
             data = {};
         }
 
-        data.score = typeof data.score === "number" ? data.score + 1 : 1;
+        data.score = typeof data.score === "number" ? data.score + 0.5 : 1;
 
         fs.writeFileSync(txtFilePath, JSON.stringify(data, null, 4));
 

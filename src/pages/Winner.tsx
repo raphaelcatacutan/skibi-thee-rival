@@ -33,9 +33,12 @@ export default function () {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ imagePath }),
+			body: JSON.stringify({ imageId: imagePath }),
 		})
-			.then((res) => console.log(res.json))
+			.then(async (res) => {
+				const data = await res.json();
+				console.log(data)
+			})
 			.catch((error) => console.error("Error:", error));
 		fetch(`http://localhost:3000/api/images?filter=${imagePath}`)
 			.then((res) => res.json())

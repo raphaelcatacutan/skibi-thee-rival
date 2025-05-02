@@ -83,7 +83,6 @@ class CardMechanics {
 
         const prevHp = this.hp;
         this.hp = Math.max(0, Math.min(this.maxHp, this.hp - damage));
-        console.debug("Health should change")
         fApplyHealthChange(getIndex(this.id), this.hp, this.maxHp)
         console.log(`${this.name} took ${damage} damage. HP: ${prevHp} → ${this.hp}`);
     }
