@@ -16,6 +16,7 @@ export default function () {
   const [fetchedText, setFetchedText] = useState("Loading...");
   const [showButton, setShowButton] = useState(false);
   const navigate = useNavigate();
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     const randomImage = images[Math.floor(Math.random() * images.length)];
@@ -47,6 +48,8 @@ export default function () {
   const lastId = searchParams.get("lastID");
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
     // Simulate API fetch
     if (!imagePath || !name) {
       console.error("Invalid Image Path and Name");

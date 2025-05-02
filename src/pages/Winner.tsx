@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "../styles/Winner.css";
 import { jsonToCards } from "../utils/parser";
@@ -13,7 +13,9 @@ export default function () {
 
 	const [searchParams] = useSearchParams();
 	const imagePath = searchParams.get("id") || "";
-
+	const [hasInteracted, setHasInteracted] = useState(false);
+	const hasFetched = useRef(false);
+	
 	useEffect(() => {
 		const randomVideo = videos[Math.floor(Math.random() * videos.length)];
 		setSelectedVideo(randomVideo);
@@ -26,6 +28,8 @@ export default function () {
 	}, []);
 
 	useEffect(() => {
+		if (hasFetched.current) return;
+  hasFetched.current = true;
 		if (!imagePath) return;
 
 		fetch("http://localhost:3000/api/score", {
@@ -53,34 +57,57 @@ export default function () {
 			});
 	}, [imagePath]);
 
+	function displayWinner(e: React.MouseEvent<HTMLDivElement>){
+		const a1 = document.getElementById("winner_bgm") as HTMLAudioElement;
+		const a2 = document.getElementById("winner_cheer") as HTMLAudioElement;
+		const a3 = document.getElementById("winner_ez") as HTMLAudioElement;
+
+		setHasInteracted(true)
+		e.currentTarget.style.visibility = 'visible';
+		a1.play()
+		setTimeout(() => {
+		}, 200);
+		setTimeout(() => {
+			a2.play()
+		}, 500);
+		setTimeout(() => {
+			a3.play()
+		}, 1000);
+	}
+
 	return (
-		<div className="winner-container">
-			<video
-				src={`/assets/videos/bg1.mov`}
-				autoPlay
-				loop
-				muted
-				className="winner-video"
-			/>
+		<div className="winner-container" onClick={displayWinner}>
+				<div style={{visibility: hasInteracted ? 'visible' : 'hidden'}} className="mask-winner">
+					<audio id="winner_bgm" src="/assets/sounds/winner_bgm.mp3"/>
+					<audio id="winner_cheer" src="/assets/sounds/winner_cheer.mp3"/>
+					<audio id="winner_ez" src="/assets/sounds/winner_ez.mp3"/>
+					<video
+						src={`/assets/videos/bg1.mov`}
+						autoPlay
+						loop
+						muted
+						className="winner-video"
+					/>
 
-			<div className="winner-foreground">
-				{/* fetch winner name*/}
-				<h2 className="winner-text">{winnerName} Win</h2>
-				<img
-					src={`http://localhost:5000/output/${imagePath}-preview.png`} //fetch winner image
-					alt="Winner"
-					className="winner-image"
-				/>
-			</div>
+					<div className="winner-foreground">
+						{/* fetch winner name*/}
+						<h2 className="winner-text">{winnerName} Win</h2>
+						<img
+							src={`http://localhost:5000/output/${imagePath}-preview.png`} //fetch winner image
+							alt="Winner"
+							className="winner-image"
+						/>
+					</div>
 
-			{showButton && (
-				<button
-					className="proceed-button"
-					onClick={() => navigate("/Leaderboards")}
-				>
-					Proceed to Leaderboards
-				</button>
-			)}
+					{showButton && (
+						<button
+							className="proceed-button"
+							onClick={() => navigate("/Leaderboards")}
+						>
+							Proceed to Leaderboards
+						</button>
+					)}
+				</div>
 		</div>
 	);
 }
