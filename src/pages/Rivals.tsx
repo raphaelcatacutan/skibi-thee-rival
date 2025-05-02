@@ -113,7 +113,7 @@ export default function () {
                 }
               >
                 <img
-                  src={`http://localhost:5000/data/${cardId}.jpg`}
+                  src={`http://localhost:5000/output/${key}-preview.png`}
                   alt={card.cardTitle}
                   style={{
                     width: "100%",

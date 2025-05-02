@@ -19,7 +19,7 @@ router.post("/generate", async (req: Request, res: Response): Promise<void> => {
 
         const ai = new GoogleGenAI({ apiKey: API_KEY });
 
-        const imageData = fs.readFileSync(`./data/${imagePath}`);
+        const imageData = fs.readFileSync(`./data/${imagePath}.jpg`);
         const base64Image = imageData.toString("base64");
 
         const contents = [

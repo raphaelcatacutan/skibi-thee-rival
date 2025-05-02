@@ -400,7 +400,9 @@ export default function Battle(){
       animation.triggerVFX('C2TopText', speedControl)
       animation.triggerVFX('C2Harden', speedControl);
     }
-    audio.play();
+    setTimeout(() => {
+      audio.play();
+    }, 400);
   }
 
   function performZucc(index: number, skillname: string){
