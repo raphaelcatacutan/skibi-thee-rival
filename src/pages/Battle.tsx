@@ -168,6 +168,7 @@ export default function Battle(props: Cards){
   function removeMask(e: React.MouseEvent<HTMLDivElement>){
     setisReady(false);
     setisStart(true);
+    speak({text: "..."})
     introCards("Robante Balante", "Saging Bading")
     setTimeout(() => {
       setisStart(false);
