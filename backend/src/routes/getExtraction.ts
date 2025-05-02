@@ -56,6 +56,7 @@ router.get("/extract", async (req: Request, res: Response): Promise<void> => {
 
         try {
             const jsonString = response.text?.replace(/```json\s*([\s\S]*?)\s*```/, "$1");
+            console.log(jsonString)
             const parsed = JSON.parse(jsonString ?? "");
             const dynamicKey = Object.keys(parsed)[0];
             const cardPrompt = JSON.stringify(parsed[dynamicKey].card_prompt, null, 4);

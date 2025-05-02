@@ -10,15 +10,10 @@ interface Props {
 
 export default function CardDisplay(props: Props) {
 
-  function cutPath(path?: string): string{
-    const newPath: string = ""
-    return ""
-  }
-
   return(
     <motion.div 
       className={styles.card_holder} 
-      style={{ backgroundImage: `url("/assets/images/winner-image.png")` }} // `url(${cutPath(props.path)})`
+      style={{ backgroundImage: `url("${props.path}")` }} // `url(${cutPath(props.path)})`
       variants={shakeAnimation}
       animate={props.attackedState ? "shake" : ""} 
     

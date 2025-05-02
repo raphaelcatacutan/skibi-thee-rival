@@ -225,8 +225,8 @@ async function startBattle(
     aPerformMaldquake = (_index: number, _skillname: string, _dmgtoC1: number, _dmgtoC2: number) => {},
     aPerformDeluluStrike = (_index: number, _skillname: string) => {},
     aPerformSelfCare = (_index: number, _skillName: string, _heal: number) => {},
-    aPerformHarden = (_index: number) => {},
-    aPerformZucc = (_index: number) => {},
+    aPerformHarden = (_index: number, _skillName: string) => {},
+    aPerformZucc = (_index: number, _skillName: string) => {},
     aApplyHealthChange = (_index: number, _currentHealth: number, _maxHealth: number) => {},
     endBattle = (_winnerId: string|undefined, _isDraw: boolean) => {},
     aPerformDiceRoll = (_result1: number, _result2: number, _message: string) => {}
@@ -249,6 +249,8 @@ async function startBattle(
 
     let turn1 = card1
     let turn2 = card2
+    card1.reset()
+    card2.reset()
     while (true) {
         const random1 = random(1, 6)
         const random2 = random(1, 6)
@@ -274,6 +276,8 @@ async function startBattle(
     while (true) {
         let rounds = 0;
 
+        card1.reset()
+        card2.reset()
         while (turn1.hp > 0 && turn2.hp > 0) {
             rounds++;
             console.log(`\n🌀 Round ${rounds}`);
@@ -302,8 +306,6 @@ async function startBattle(
             return rounds;
         } else {
             endBattle(undefined, true)
-            card1.reset()
-            card2.reset()
             await sleep(3000)
             continue
         }

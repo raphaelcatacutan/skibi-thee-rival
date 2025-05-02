@@ -13,6 +13,7 @@ export default function CardPreviewPage() {
   const [cardConfig, setCardConfig] = useState<CardConfig>(defaultCardConfig);
   const [selectedVideo, setSelectedVideo] = useState("");
   const [showButtons, setShowButtons] = useState(false);
+  const lastId = searchParams.get("lastId");
 
   useEffect(() => {
     const randomVideo = videos[Math.floor(Math.random() * videos.length)];
@@ -46,7 +47,10 @@ export default function CardPreviewPage() {
         {showButtons && (
           <button
             className="proceed-button"
-            onClick={() => navigate("/NewChallenger")}
+            disabled={!!lastId}
+            onClick={() => {
+              navigate(`/NewChallenger?lastId=${imagePath}`)
+            }}
           >
             Go Back to Choose New Challenger
           </button>
@@ -54,9 +58,12 @@ export default function CardPreviewPage() {
         {showButtons && (
           <button
             className="proceed-button"
-            onClick={() => navigate("/Rivals")}
+            onClick={() => {
+              if (lastId) navigate(`/Battle?card1=${lastId}&card2=${imagePath}`) 
+              else navigate(`/Rivals?id=${imagePath}`)
+            }}
           >
-            Proceed to Choose Rival
+            {lastId ? "Proceed to Battle" : "Proceed to Choose Rival"}
           </button>
         )}
       </div>

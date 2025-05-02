@@ -13,16 +13,17 @@
   position: relative;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 .background_wrapper {
   position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden; /* <-- IMPORTANT: clip the blurred background */
+  overflow: scroll; /*<-- IMPORTANT: clip the blurred background*/
   z-index: 1;
 }
 
@@ -31,6 +32,7 @@
   height: 100%;
   background-size: cover;
   background-position: center;
+  background-attachment: fixed; 
   background-repeat: no-repeat;
   filter: blur(8px);
   transform: scale(1.05); /* <-- Slight scale up to hide blur edges */
@@ -223,7 +225,7 @@
 /* Responsive Design */
 @media (max-width: 1200px) {
   .card_grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
   }
 }
 
