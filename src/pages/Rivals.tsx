@@ -61,24 +61,10 @@ export default function () {
     };
   }, [audioPlayed]);
 
-  const handleCardClick = (card: Card) => {
-    setSelectedCard(card);
-    setShowConfirmation(true);
-  };
+  const handleCardClick = (key: string) => {
 
-  const handleConfirm = () => {
-    // Navigate to battle page with both cards
-    if (selectedCard && imagePath) {
-      //navigate(`/battle?card1=${cardId}&card2=${selectedCard.cardId}`);
-    }
-    setShowConfirmation(false);
+    navigate(`/Battle?card1=${cardId}&card2=${key}`)
   };
-
-  const handleCancel = () => {
-    setSelectedCard(null);
-    setShowConfirmation(false);
-  };
-
   if (loading) return <div className={styling.loading}>Loading cards...</div>;
 
   return (
@@ -101,28 +87,57 @@ export default function () {
 
         <div className={styling.loading_text}>Choose Your Rival!</div>
 
-        <div className={styling.card_grid}>
-          {Object.entries(cards).map(([key, card]) => {
-            console.log(key);
+				<div className={styling.card_grid}>
+					{Object.entries(cards).map(([key, card]) => {
             if (cardId == key) return; // di niya pwedeng labanan sarili niya
             return (
-              // yung card id ng bawat cards is yung key so yun yung ipapasa mo sa battle kasama ng cardId ng current card
-              <div
+						<div
                 key={key}
-                className={styling.card_item}
-                onClick={() => handleCardClick(card)}
+                onClick={() => handleCardClick(key)}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  background: "#00000050", // dark forest green
+                  padding: "16px",
+                  borderRadius: "12px",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+                  transition: "transform 0.2s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.transform =
+                    "scale(1.05)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.transform = "scale(1)")
+                }
               >
                 <img
-                  src={`http://localhost:5000/output/${cardId}-preview.png`}
-                  alt="logo"
-                  className="winner-image"
+                  src={`http://localhost:5000/data/${cardId}.jpg`}
+                  alt={card.cardTitle}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                  }}
                 />
-                <div>Raphael</div>
+                <div
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                    textAlign: "center",
+                    marginTop: "8px",
+                    color: "white",
+                  }}
+                >
+                  {card.cardTitle}
+                </div>
               </div>
-            );
+            )
           })}
-        </div>
-      </div>
+				</div>
+			</div>
     </div>
   );
 }

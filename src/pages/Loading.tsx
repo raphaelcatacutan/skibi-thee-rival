@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styling from "../styles/page-Loading.module.css";
 import bg1 from "../assets/images/scenes/bg_arena.jpg";
 import bg2 from "../assets/images/scenes/bg_disco.jpg";
@@ -44,6 +44,7 @@ export default function () {
   const [searchParams] = useSearchParams();
   const imagePath = searchParams.get("imagePath");
   const name = searchParams.get("name");
+  const lastId = searchParams.get("lastId");
 
   useEffect(() => {
     // Simulate API fetch
@@ -54,17 +55,38 @@ export default function () {
     }
     console.log(imagePath);
     console.log(name);
-    // return
+    
     fetch(
       `http://localhost:3000/api/extract?imagePath=${imagePath}.jpg&name=${name}`
     )
       .then((res) => res.json())
-      .then((data) => {
+      .then(async (data) => {
         console.log(data);
         const parsed = jsonToExtraction(data);
-        const keys = Object.keys(parsed)[0];
-        console.log(Object.values(parsed[keys].logInformation).join("\n"));
-        setFetchedText(Object.values(parsed[keys].logInformation).join("\n"));
+        const key = Object.keys(parsed)[0];
+        console.log(Object.values(parsed[key].logInformation).join("\n"));
+        setFetchedText(Object.values(parsed[key].logInformation).join("\n"));
+        
+        const body = {
+          imagePath,
+          textContent: parsed[key].imagePrompt,
+          outputImagePath: parsed[key].cardPrompt.imageSrc,
+        };
+        
+        try {
+          const res = await fetch("http://localhost:3000/api/generate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          });
+        
+          const data = await res.json();
+          console.log(data)
+        } catch (error) {
+          console.error("Error:", error);
+        } 
       })
       .catch((err) => {
         console.error("Error fetching text:", err);
@@ -101,7 +123,7 @@ export default function () {
       {showButton && (
         <button
           className={`${styling.proceedButton} ${styling.show}`}
-          onClick={() => navigate("/CardPreview")}
+          onClick={() => navigate(`/CardPreview?id=${imagePath}` + lastId ? `&lastId=${lastId}`: "")}
           style={{ zIndex: 10 }}
         >
           Proceed to Card Preview
@@ -126,13 +148,20 @@ function AnimatedText({ text }: { text: string }) {
 
   useEffect(() => {
     let index = 0;
+    let currentText = "";
+
+    setDisplayedText(""); // reset if `text` changes
+
     const interval = setInterval(() => {
-      setDisplayedText((prev) => prev + text[index]);
+      currentText += text[index];
+      setDisplayedText(currentText);
+
       index++;
       if (index >= text.length) {
         clearInterval(interval);
       }
-    }, 100); // moderate fast (100ms per character)
+    }, 100);
+
     return () => clearInterval(interval);
   }, [text]);
 
