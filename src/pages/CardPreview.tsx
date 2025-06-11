@@ -47,10 +47,10 @@ export default function CardPreviewPage() {
         {showButtons && (
           <button
             className="proceed-button"
-            disabled={!!lastId}
             onClick={() => {
               navigate(`/NewChallenger?lastId=${imagePath}`)
             }}
+            style={{visibility: !!lastId ? 'hidden' : 'visible'}}
           >
             Go Back to Choose New Challenger
           </button>

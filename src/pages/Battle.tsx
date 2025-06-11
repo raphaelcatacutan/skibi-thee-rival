@@ -169,6 +169,7 @@ export default function Battle(){
   function removeMask(e: React.MouseEvent<HTMLDivElement>){
     setisReady(false);
     setisStart(true);
+    speak({text: "..."})
     introCards("Robante Balante", "Saging Bading")
     setTimeout(() => {
       setisStart(false);
@@ -399,7 +400,9 @@ export default function Battle(){
       animation.triggerVFX('C2TopText', speedControl)
       animation.triggerVFX('C2Harden', speedControl);
     }
-    audio.play();
+    setTimeout(() => {
+      audio.play();
+    }, 400);
   }
 
   function performZucc(index: number, skillname: string){

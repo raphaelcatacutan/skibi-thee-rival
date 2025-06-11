@@ -5,8 +5,8 @@
 }
 
 @font-face {
-  font-family: rankname;
-  src: url(../assets/fonts/10_gremlins.ttf);
+  font-family: loading;
+  src: url(../assets/fonts/1584_Tahoma.ttf);
 }
 
 .page_wrapper {
@@ -69,13 +69,13 @@
 .loading_count {
   width: 50px;
   text-align: center;
-  font-family: rankname;
+  font-family: loading;
 }
 
 .loading_text {
   width: 100%;
   text-align: center;
-  font-family: rankname;
+  font-family: loading;
 }
 
 .bottom_left {
@@ -96,7 +96,7 @@
 }
 
 .animated_text {
-  font-family: rankname;
+  font-family: loading;
   color: white;
   font-size: 36px;
 }

@@ -16,6 +16,7 @@ export default function () {
   const [fetchedText, setFetchedText] = useState("Loading...");
   const [showButton, setShowButton] = useState(false);
   const navigate = useNavigate();
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     const randomImage = images[Math.floor(Math.random() * images.length)];
@@ -44,9 +45,11 @@ export default function () {
   const [searchParams] = useSearchParams();
   const imagePath = searchParams.get("imagePath");
   const name = searchParams.get("name");
-  const lastId = searchParams.get("lastId");
+  const lastId = searchParams.get("lastID");
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
     // Simulate API fetch
     if (!imagePath || !name) {
       console.error("Invalid Image Path and Name");
@@ -55,6 +58,7 @@ export default function () {
     }
     console.log(imagePath);
     console.log(name);
+    console.log("lasId: " + lastId)
     
     fetch(
       `http://localhost:3000/api/extract?imagePath=${imagePath}.jpg&name=${name}`
@@ -84,6 +88,7 @@ export default function () {
         
           const data = await res.json();
           console.log(data)
+          setShowButton(true);
         } catch (error) {
           console.error("Error:", error);
         } 
@@ -94,13 +99,13 @@ export default function () {
       });
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowButton(true);
-    }, 5000); // Show button after 5 seconds
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setShowButton(true);
+  //   }, 5000); // Show button after 5 seconds
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   return (
     <div className={styling.page_wrapper}>
@@ -123,7 +128,7 @@ export default function () {
       {showButton && (
         <button
           className={`${styling.proceedButton} ${styling.show}`}
-          onClick={() => navigate(`/CardPreview?id=${imagePath}` + lastId ? `&lastId=${lastId}`: "")}
+          onClick={() => navigate(`/CardPreview?id=${imagePath}` + (!!lastId ? `&lastId=${lastId}`: ""))}
           style={{ zIndex: 10 }}
         >
           Proceed to Card Preview

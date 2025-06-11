@@ -44,6 +44,10 @@ export default function () {
       .catch((err) => {
         console.error("Failed to fetch card data:", err);
       });
+
+    setTimeout(() => {
+      navigate("/newchallenger")
+    }, 10000)
   }, []);
 
   useEffect(() => {

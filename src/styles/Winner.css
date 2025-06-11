@@ -1,3 +1,4 @@
+
 @font-face {
   font-family: buttonFont;
   src: url(../assets/fonts/10_gremlins.ttf);
@@ -8,6 +9,7 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  background-color: #0073f6;
 }
 
 .winner-video {
@@ -92,4 +94,11 @@
 
 .winner-container .proceed-button {
   opacity: 1; /* Make it visible after 5 seconds */
+}
+
+.mask-winner {
+  width: 100vw;
+  height: 100vh;
+  visibility: visible;
+  background-color: red;
 }
