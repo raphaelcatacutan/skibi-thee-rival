@@ -1,46 +1,44 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<br>
+<p align="center">
+  <img src="images/logo.png" alt="demo 3" width="500" hspace="5"/>
+</p>
+<br>
 
-## Available Scripts
+# Skibi-Thee Rival - AI-Powered Battle Card Game
 
-In the project directory, you can run:
 
-### `npm start`
+## 💡 About the Project
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+**Skibi-Thee Rival** is an AI-powered web application where users can create, customize, and compete with digital battle cards generated from their own images and usernames. The platform is powered by the **Gemini API**, which analyzes user-provided images and text to generate creative card stats, descriptions, and visual prompts.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+<p align="center">
+  <img src="images/1.png" alt="demo 3" width="300" hspace="5"/>
+  <img src="images/3.png" alt="demo 2" width="300" hspace="5"/>
+  <img src="images/2.png" alt="demo 2" width="300" hspace="5"/>
+</p>
 
-### `npm test`
+### **⚙ Tools and Technologies Used**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Gemini API** - Core AI service for extracting features, generating card stats, and creating creative prompts from user images and text.
+2. **React** - Frontend UI for uploading images, interacting with cards, and viewing leaderboards.
+3. **Node.js & Express** - Backend server for API endpoints, image processing, and card data management.
+4. **WebSockets** - Real-time notifications for new uploads and leaderboard updates.
 
-### `npm run build`
+## ❗❗ Disclaimer
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+This project was made as part of the final requirement for Application Development class at Pamantasan ng Lungsod ng Maynila. It is for learning purposes only and not meant for real-world or production use. This was a one-time submission and may not update or maintain this project regularly.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 👥 Developers
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+<b>20242 BSCS 2-3
 
-### `npm run eject`
+<b>LEADER: IWAG, John
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+-   CATACUTAN, Raphael
+-   FRIAS, Railey
+-   LAO, Jieco
+-   LIBANG, Michael
+-   MANGUNI, John
+-   Oquendo, Zyryll
+-   ROBANTE, Floyd
