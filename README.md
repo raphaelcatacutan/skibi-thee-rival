@@ -15,7 +15,6 @@
 <p align="center">
   <img src="images/1.png" alt="demo 3" width="300" hspace="5"/>
   <img src="images/3.png" alt="demo 2" width="300" hspace="5"/>
-  <img src="images/2.png" alt="demo 2" width="300" hspace="5"/>
 </p>
 
 ### **⚙ Tools and Technologies Used**
